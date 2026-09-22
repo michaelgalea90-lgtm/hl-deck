@@ -326,7 +326,7 @@
     pe.className = "v " + (pnl >= 0 ? "up" : "down");
     var cost = value - pnl;
     document.getElementById("t-pnl-sub").textContent =
-      cost > 0 ? pct((pnl / cost) * 100) + " on the account" : " ";
+      cost > 0 ? pct((pnl / cost) * 100) + " on the money tied up" : " ";
 
     document.getElementById("t-lev").textContent = lev.toFixed(2) + "×";
     document.getElementById("t-lev-sub").textContent = money(notional, 0) + " exposure";
