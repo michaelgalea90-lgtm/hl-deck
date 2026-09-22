@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex, nofollow">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>HL Scanner Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg:        #F4F6F7;
+    --surface:   #FFFFFF;
+    --surface-2: #EDF1F2;
+    --line:      #D8E0E2;
+    --line-soft: #E7EDEE;
+    --ink:       #12191C;
+    --ink-2:     #47565B;
+    --ink-3:     #74858B;
+    --accent:    #0E7C86;
+    --accent-sf: #E2F2F3;
+    --up:        #15803D;
+    --up-sf:     #E4F3E9;
+    --down:      #B4241C;
+    --down-sf:   #FBE8E6;
+    --warn:      #A45B06;
+    --warn-sf:   #FBEEDC;
+    --radius: 10px;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, Segoe UI, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:        #0D1214;
+      --surface:   #141C1F;
+      --surface-2: #1B2528;
+      --line:      #27343800;
+      --line:      #273438;
+      --line-soft: #1F2B2E;
+      --ink:       #EAF1F2;
+      --ink-2:     #A3B3B7;
+      --ink-3:     #7A8A8F;
+      --accent:    #5CCFD6;
+      --accent-sf: #123134;
+      --up:        #4ADE80;
+      --up-sf:     #12301F;
+      --down:      #F87171;
+      --down-sf:   #341716;
+      --warn:      #FBBF24;
+      --warn-sf:   #332614;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:        #0D1214;
+    --surface:   #141C1F;
+    --surface-2: #1B2528;
+    --line:      #273438;
+    --line-soft: #1F2B2E;
+    --ink:       #EAF1F2;
+    --ink-2:     #A3B3B7;
+    --ink-3:     #7A8A8F;
+    --accent:    #5CCFD6;
+    --accent-sf: #123134;
+    --up:        #4ADE80;
+    --up-sf:     #12301F;
+    --down:      #F87171;
+    --down-sf:   #341716;
+    --warn:      #FBBF24;
+    --warn-sf:   #332614;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 0 48px; }
+
+  header.top {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line-soft);
+    margin-inline: -16px; padding: 12px 16px;
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  }
+  .brand { font-weight: 700; letter-spacing: -0.02em; font-size: 17px; }
+  .brand span { color: var(--accent); }
+  .stamp { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin-left: auto; }
+
+  h2 {
+    font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.09em;
+    color: var(--ink-3); font-weight: 600; margin: 32px 0 10px;
+  }
+  h2 .qual { text-transform: none; letter-spacing: 0; color: var(--ink-3); font-weight: 400; }
+
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 620px) { .tiles { grid-template-columns: 1fr; } }
+  .tile {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 14px 16px;
+  }
+  .tile .k { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-3); font-weight: 600; }
+  .tile .v {
+    font-family: var(--mono); font-size: 26px; font-weight: 500;
+    letter-spacing: -0.02em; margin-top: 4px; font-variant-numeric: tabular-nums;
+  }
+  .tile .sub { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+  .meter { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 10px; }
+  .meter > i { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
+  .meter.over > i { background: var(--warn); }
+
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  th, td { text-align: right; padding: 9px 12px; white-space: nowrap; font-size: 13.5px; }
+  th {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--ink-3); font-weight: 600; border-bottom: 1px solid var(--line);
+  }
+  th:first-child, td:first-child { text-align: left; }
+  tbody tr + tr td { border-top: 1px solid var(--line-soft); }
+  td.num { font-family: var(--mono); }
+  .coin { font-weight: 600; letter-spacing: -0.01em; }
+  .up { color: var(--up); }
+  .down { color: var(--down); }
+
+  .pill {
+    display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em;
+    padding: 2px 7px; border-radius: 999px; text-transform: uppercase;
+  }
+  .pill.long  { background: var(--up-sf);   color: var(--up); }
+  .pill.short { background: var(--down-sf); color: var(--down); }
+  .pill.tag   { background: var(--surface-2); color: var(--ink-2); }
+  .pill.live  { background: var(--accent-sf); color: var(--accent); }
+
+  /* signal radar rows */
+  .radar { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+  .row {
+    display: grid; grid-template-columns: 84px 1fr 96px; align-items: center;
+    gap: 12px; padding: 10px 14px;
+  }
+  .row + .row { border-top: 1px solid var(--line-soft); }
+  .row .who { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+  .row .who .coin { font-size: 14px; }
+  .row .who .tf { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
+  .track { position: relative; height: 22px; }
+  .track .base { position: absolute; inset: 9px 0 auto; height: 4px; border-radius: 2px; background: var(--surface-2); }
+  .track .fill { position: absolute; top: 9px; height: 4px; border-radius: 2px; background: var(--accent); }
+  .track .trig { position: absolute; top: 4px; right: 0; width: 2px; height: 14px; background: var(--ink-3); border-radius: 1px; }
+  .dist { font-family: var(--mono); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
+  .row.blocked { opacity: 0.5; }
+  .row.hot .fill { background: var(--up); }
+
+  .note { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; }
+  .note code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+  label.fld { display: block; font-size: 12.5px; color: var(--ink-2); margin-bottom: 6px; }
+  .addr-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  input[type="text"] {
+    flex: 1 1 260px; min-width: 0; font-family: var(--mono); font-size: 13px;
+    padding: 9px 11px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--bg); color: var(--ink);
+  }
+  input[type="text"]:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button {
+    font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer;
+    padding: 9px 14px; border-radius: 8px; border: 1px solid var(--accent);
+    background: var(--accent); color: var(--surface);
+  }
+  button.ghost { background: transparent; color: var(--accent); }
+  button:disabled { opacity: 0.5; cursor: default; }
+
+  .msg { font-size: 13px; color: var(--ink-2); padding: 14px 2px; }
+  .msg.err { color: var(--down); }
+  .banner {
+    margin-top: 16px; padding: 12px 14px; border-radius: var(--radius);
+    background: var(--warn-sf); border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent);
+    color: var(--ink); font-size: 13px; line-height: 1.5;
+  }
+  .banner strong { color: var(--warn); }
+  footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 12px; color: var(--ink-3); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">HL Scanner <span>Deck</span></div>
+    <button class="ghost" id="refresh" type="button">Refresh</button>
+    <div class="stamp" id="stamp">—</div>
+  </header>
+
+  <div class="banner" id="blocked" hidden>
+    <strong>Live data is blocked here.</strong>
+    This browser couldn't reach Hyperliquid's API — usually a dropped connection,
+    a VPN, or a blocker. Everything below is layout only until it connects.
+  </div>
+
+  <h2>Your Hyperliquid account</h2>
+  <div id="acct-setup" class="panel">
+    <label class="fld" for="addr">Public wallet address — read-only. It cannot sign or move anything.</label>
+    <div class="addr-row">
+      <input type="text" id="addr" placeholder="0x…" spellcheck="false" autocomplete="off">
+      <button id="save" type="button">Load account</button>
+    </div>
+    <div class="note" id="addr-msg">Stored in this browser only. Never sent anywhere except Hyperliquid's public API.</div>
+  </div>
+
+  <div id="acct" hidden>
+    <div class="tiles">
+      <div class="tile">
+        <div class="k">Account value</div>
+        <div class="v" id="t-value">—</div>
+        <div class="sub" id="t-value-sub">&nbsp;</div>
+      </div>
+      <div class="tile">
+        <div class="k">Unrealised P/L</div>
+        <div class="v" id="t-pnl">—</div>
+        <div class="sub" id="t-pnl-sub">&nbsp;</div>
+      </div>
+      <div class="tile">
+        <div class="k">Leverage</div>
+        <div class="v" id="t-lev">—</div>
+        <div class="sub" id="t-lev-sub">&nbsp;</div>
+        <div class="meter" id="t-lev-meter"><i style="width:0%"></i></div>
+      </div>
+    </div>
+    <div id="pos-wrap" style="margin-top:12px"></div>
+    <div class="note">
+      Live from Hyperliquid. <strong>This is your real account</strong> — separate from the paper bot,
+      whose ledger and closed trades still report into Discord.
+    </div>
+  </div>
+
+  <h2>Signal radar <span class="qual">— how far each watchlist coin is from its trigger</span></h2>
+  <div id="radar-wrap"><div class="msg" id="radar-msg">Loading live candles…</div></div>
+  <div class="note">
+    <strong>1D Breakout</strong> fires above the 40-day high close while price holds above the 200-day average.
+    <strong>1H Breakout</strong> fires above the 48-hour high close, same daily gate.
+    Dimmed rows are below their 200-day average, so the gate blocks them whatever the breakout does.
+    <strong>4H Pullback</strong> isn't shown — it triggers on an RSI cross, not a price level, so "distance" doesn't apply.
+  </div>
+
+  <footer>
+    Read-only. Prices and account data pulled straight from Hyperliquid's public API each time you load or refresh.
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var API = "https://api.hyperliquid.xyz/info";
+  var COINS_1D = ["BTC","ETH","SOL","DOGE","AVAX","HBAR","TRX","kSHIB","ALGO","ATOM","SUI","INJ","OP","AR","ENA"];
+  var COINS_1H = ["ZEC","MEGA","WLD","VVV","ENA"];
+  var KEY = "hl-deck-addr";
+
+  function hl(body) {
+    return fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (!r.ok) throw new Error("Hyperliquid returned " + r.status);
+      return r.json();
+    });
+  }
+
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function recall(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  function money(n, dp) {
+    if (n === null || n === undefined || isNaN(n)) return "—";
+    var d = dp === undefined ? 2 : dp;
+    return "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+  }
+  function signed(n) {
+    if (n === null || n === undefined || isNaN(n)) return "—";
+    return (n >= 0 ? "+" : "−") + money(Math.abs(n));
+  }
+  function px(n) {
+    var a = Math.abs(n);
+    var dp = a >= 1000 ? 1 : a >= 1 ? 3 : a >= 0.01 ? 5 : 7;
+    return Number(n).toFixed(dp).replace(/0+$/, "").replace(/\.$/, "");
+  }
+  function pct(n) { return (n >= 0 ? "+" : "−") + Math.abs(n).toFixed(1) + "%"; }
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt !== undefined) e.textContent = txt;
+    return e;
+  }
+  function stamp() {
+    var d = new Date();
+    document.getElementById("stamp").textContent =
+      "updated " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
+
+  // ---------- account ----------
+  function drawAccount(state) {
+    var ms = (state && state.marginSummary) || {};
+    var value = parseFloat(ms.accountValue || 0);
+    var notional = parseFloat(ms.totalNtlPos || 0);
+    var raw = (state && state.assetPositions) || [];
+
+    var rows = raw.map(function (ap) { return ap.position; }).filter(Boolean);
+    var pnl = rows.reduce(function (a, p) { return a + parseFloat(p.unrealizedPnl || 0); }, 0);
+    var lev = value > 0 ? notional / value : 0;
+
+    document.getElementById("t-value").textContent = money(value);
+    document.getElementById("t-value-sub").textContent =
+      rows.length + (rows.length === 1 ? " open position" : " open positions");
+
+    var pe = document.getElementById("t-pnl");
+    pe.textContent = signed(pnl);
+    pe.className = "v " + (pnl >= 0 ? "up" : "down");
+    var cost = value - pnl;
+    document.getElementById("t-pnl-sub").textContent =
+      cost > 0 ? pct((pnl / cost) * 100) + " on the account" : " ";
+
+    document.getElementById("t-lev").textContent = lev.toFixed(2) + "×";
+    document.getElementById("t-lev-sub").textContent = money(notional, 0) + " exposure";
+    var meter = document.getElementById("t-lev-meter");
+    meter.firstElementChild.style.width = Math.max(2, Math.min(100, (lev / 5) * 100)) + "%";
+    meter.classList.toggle("over", lev > 3);
+
+    var wrap = document.getElementById("pos-wrap");
+    wrap.textContent = "";
+    if (!rows.length) {
+      wrap.appendChild(el("div", "msg", "No open perp positions on this account."));
+      return;
+    }
+
+    rows.sort(function (a, b) {
+      return Math.abs(parseFloat(b.positionValue || 0)) - Math.abs(parseFloat(a.positionValue || 0));
+    });
+
+    var sc = el("div", "scroller");
+    var tb = el("table");
+    var head = el("thead");
+    var hr = el("tr");
+    ["Coin", "Side", "Size", "Entry", "Value", "Unrealised", "Liq price"].forEach(function (h) {
+      hr.appendChild(el("th", null, h));
+    });
+    head.appendChild(hr);
+    tb.appendChild(head);
+
+    var body = el("tbody");
+    rows.forEach(function (p) {
+      var szi = parseFloat(p.szi || 0);
+      var long = szi >= 0;
+      var up = parseFloat(p.unrealizedPnl || 0);
+      var tr = el("tr");
+
+      var c = el("td");
+      c.appendChild(el("span", "coin", p.coin));
+      tr.appendChild(c);
+
+      var s = el("td");
+      s.appendChild(el("span", "pill " + (long ? "long" : "short"), long ? "Long" : "Short"));
+      tr.appendChild(s);
+
+      tr.appendChild(el("td", "num", px(Math.abs(szi))));
+      tr.appendChild(el("td", "num", p.entryPx ? px(parseFloat(p.entryPx)) : "—"));
+      tr.appendChild(el("td", "num", money(Math.abs(parseFloat(p.positionValue || 0)), 0)));
+
+      var u = el("td", "num " + (up >= 0 ? "up" : "down"), signed(up));
+      tr.appendChild(u);
+
+      tr.appendChild(el("td", "num", p.liquidationPx ? px(parseFloat(p.liquidationPx)) : "—"));
+      body.appendChild(tr);
+    });
+    tb.appendChild(body);
+    sc.appendChild(tb);
+    wrap.appendChild(sc);
+  }
+
+  function loadAccount(addr) {
+    return hl({ type: "clearinghouseState", user: addr }).then(function (st) {
+      document.getElementById("acct-setup").hidden = true;
+      document.getElementById("acct").hidden = false;
+      drawAccount(st);
+    });
+  }
+
+  // ---------- signal radar ----------
+  function closedCloses(rows, ms) {
+    var now = Date.now();
+    var out = [];
+    for (var i = 0; i < rows.length; i++) {
+      if (Number(rows[i].t) + ms <= now) out.push(parseFloat(rows[i].c));
+    }
+    return out;
+  }
+  function mean(a) { var s = 0; for (var i = 0; i < a.length; i++) s += a[i]; return s / a.length; }
+
+  function candles(coin, interval, bars) {
+    var msPer = { "1h": 3600000, "1d": 86400000 }[interval];
+    var now = Date.now();
+    return hl({
+      type: "candleSnapshot",
+      req: { coin: coin, interval: interval, startTime: now - (bars + 2) * msPer, endTime: now }
+    }).then(function (rows) { return closedCloses(rows || [], msPer); });
+  }
+
+  function inBatches(items, size, worker) {
+    var out = [];
+    var i = 0;
+    function step() {
+      if (i >= items.length) return Promise.resolve(out);
+      var slice = items.slice(i, i + size);
+      i += size;
+      return Promise.all(slice.map(worker)).then(function (res) {
+        out = out.concat(res);
+        return step();
+      });
+    }
+    return step();
+  }
+
+  function radarRow(d) {
+    var row = el("div", "row" + (d.gate ? "" : " blocked") + (d.dist >= -1.5 && d.gate ? " hot" : ""));
+
+    var who = el("div", "who");
+    who.appendChild(el("span", "coin", d.coin === "kSHIB" ? "SHIB" : d.coin));
+    who.appendChild(el("span", "tf", d.tf));
+    row.appendChild(who);
+
+    var track = el("div", "track");
+    track.appendChild(el("span", "base"));
+    var fill = el("span", "fill");
+    // how far price has travelled toward the trigger, floored at 0
+    var reach = Math.max(0, Math.min(100, 100 + d.dist * 4));
+    fill.style.width = reach + "%";
+    track.appendChild(fill);
+    track.appendChild(el("span", "trig"));
+    row.appendChild(track);
+
+    var dv = el("div", "dist " + (d.dist >= 0 ? "up" : ""), pct(d.dist));
+    row.appendChild(dv);
+    return row;
+  }
+
+  function loadRadar(mids) {
+    var jobs = [];
+    COINS_1D.forEach(function (c) { jobs.push({ coin: c, tf: "1D" }); });
+    COINS_1H.forEach(function (c) { jobs.push({ coin: c, tf: "1H" }); });
+
+    return inBatches(jobs, 4, function (j) {
+      var daily = candles(j.coin, "1d", 260);
+      if (j.tf === "1D") {
+        return daily.then(function (cl) {
+          if (cl.length < 210) return null;
+          var price = parseFloat(mids[j.coin]);
+          if (!price) return null;
+          var trigger = Math.max.apply(null, cl.slice(-40));
+          var sma200 = mean(cl.slice(-200));
+          return { coin: j.coin, tf: "1D", dist: (price / trigger - 1) * 100, gate: price > sma200 };
+        }).catch(function () { return null; });
+      }
+      return Promise.all([daily, candles(j.coin, "1h", 60)]).then(function (r) {
+        var dcl = r[0], hcl = r[1];
+        if (dcl.length < 200 || hcl.length < 49) return null;
+        var price = parseFloat(mids[j.coin]);
+        if (!price) return null;
+        var trigger = Math.max.apply(null, hcl.slice(-48));
+        var sma200 = mean(dcl.slice(-200));
+        return { coin: j.coin, tf: "1H", dist: (price / trigger - 1) * 100, gate: price > sma200 };
+      }).catch(function () { return null; });
+    }).then(function (res) {
+      var rows = res.filter(Boolean).sort(function (a, b) { return b.dist - a.dist; });
+      var wrap = document.getElementById("radar-wrap");
+      wrap.textContent = "";
+      if (!rows.length) {
+        wrap.appendChild(el("div", "msg err", "Couldn't load candle data from Hyperliquid."));
+        return;
+      }
+      var box = el("div", "radar");
+      rows.forEach(function (d) { box.appendChild(radarRow(d)); });
+      wrap.appendChild(box);
+    });
+  }
+
+  // ---------- boot ----------
+  function refreshAll() {
+    var btn = document.getElementById("refresh");
+    btn.disabled = true;
+    var addr = recall(KEY);
+    var tasks = [hl({ type: "allMids" }).then(loadRadar)];
+    if (addr) {
+      tasks.push(loadAccount(addr).catch(function (e) {
+        document.getElementById("acct-setup").hidden = false;
+        document.getElementById("addr-msg").textContent = "Couldn't load that account: " + e.message;
+        document.getElementById("addr-msg").className = "note err";
+      }));
+    }
+    return Promise.all(tasks).then(stamp).catch(function (e) {
+      // A blocked fetch in a sandboxed host throws TypeError "Failed to fetch"
+      // with no status - say what that actually means rather than leaking it raw.
+      var blocked = (e instanceof TypeError) || /failed to fetch|networkerror/i.test(e.message || "");
+      document.getElementById("blocked").hidden = !blocked;
+      var m = document.getElementById("radar-msg");
+      if (m) {
+        m.textContent = blocked
+          ? "Radar needs live candles, which this host won't allow."
+          : "Couldn't reach Hyperliquid: " + e.message;
+        m.className = "msg err";
+      }
+    }).then(function () { btn.disabled = false; });
+  }
+
+  document.getElementById("save").addEventListener("click", function () {
+    var v = document.getElementById("addr").value.trim();
+    if (!/^0x[a-fA-F0-9]{40}$/.test(v)) {
+      var m = document.getElementById("addr-msg");
+      m.textContent = "That doesn't look like a wallet address — it should be 0x followed by 40 characters.";
+      m.className = "note err";
+      return;
+    }
+    store(KEY, v);
+    loadAccount(v).then(stamp).catch(function (e) {
+      var m = document.getElementById("addr-msg");
+      m.textContent = "Couldn't load that account: " + e.message;
+      m.className = "note err";
+    });
+  });
+  document.getElementById("addr").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") document.getElementById("save").click();
+  });
+  document.getElementById("refresh").addEventListener("click", refreshAll);
+
+  var saved = recall(KEY);
+  if (saved) document.getElementById("addr").value = saved;
+  refreshAll();
+})();
+</script>
+
+</body>
+</html>
