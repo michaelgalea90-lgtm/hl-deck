@@ -297,23 +297,43 @@
     });
   }
 
-  // Hyperliquid has several account modes. In Unified Account mode spot USDC
-  // collateralises perps and the PERP clearinghouse reports 0.00 while the
-  // money sits in the SPOT one. Reading only marginSummary.accountValue shows
-  // $0 for an account that trades perfectly well, so add both sides.
+  // Do NOT add the perp and spot balances together. On a unified account they
+  // are two views of ONE pot: spot USDC is the collateral, and the perp side
+  // reports the same money a second time as position value minus borrow.
+  // Adding them showed $1,001 for an account Hyperliquid itself values at $633.
+  //
+  // Hyperliquid publishes that number: the portfolio endpoint's "day" series,
+  // whose last point is now. Use it. Only fall back to reading the two
+  // clearinghouses if it is unavailable, and then take the LARGER side rather
+  // than the sum - a balance that reads too high is the dangerous mistake.
   function tradeable(addr) {
     return Promise.all([
+      hl({ type: "portfolio", user: addr }).catch(function () { return null; }),
       hl({ type: "clearinghouseState", user: addr }).catch(function () { return null; }),
       hl({ type: "spotClearinghouseState", user: addr }).catch(function () { return null; })
     ]).then(function (r) {
-      var perp = r[0] ? parseFloat(r[0].marginSummary.accountValue || 0) : 0;
+      var perp = r[1] ? parseFloat(r[1].marginSummary.accountValue || 0) : 0;
       var usdc = 0;
-      if (r[1] && r[1].balances) {
-        r[1].balances.forEach(function (b) {
+      if (r[2] && r[2].balances) {
+        r[2].balances.forEach(function (b) {
           if (b.coin === "USDC") usdc += parseFloat(b.total || 0);
         });
       }
-      return { perp: perp, spot: usdc, total: perp + usdc, state: r[0], reachable: !!(r[0] || r[1]) };
+      var total = null;
+      if (r[0]) {
+        for (var i = 0; i < r[0].length; i++) {
+          if (r[0][i][0] === "day") {
+            var h = (r[0][i][1] || {}).accountValueHistory || [];
+            if (h.length) {
+              var v = parseFloat(h[h.length - 1][1]);
+              if (v > 0) total = v;
+            }
+          }
+        }
+      }
+      if (total === null) total = Math.max(perp, usdc);
+      return { perp: perp, spot: usdc, total: total, state: r[1],
+               reachable: !!(r[0] || r[1] || r[2]) };
     });
   }
 
