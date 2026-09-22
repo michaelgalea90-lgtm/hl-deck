@@ -101,7 +101,9 @@
   }
   h2 .qual { text-transform: none; letter-spacing: 0; color: var(--ink-3); font-weight: 400; }
 
-  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
+  .tile.bot { border-color: var(--accent); }
   @media (max-width: 620px) { .tiles { grid-template-columns: 1fr; } }
   .tile {
     background: var(--surface); border: 1px solid var(--line);
@@ -214,16 +216,26 @@
   <div id="acct-setup" class="panel">
     <label class="fld" for="addr">Public wallet address — read-only. It cannot sign or move anything.</label>
     <div class="addr-row">
-      <input type="text" id="addr" placeholder="0x…" spellcheck="false" autocomplete="off">
+      <input type="text" id="addr" placeholder="0x… your main account" spellcheck="false" autocomplete="off">
       <button id="save" type="button">Load account</button>
     </div>
-    <div class="note" id="addr-msg">Stored in this browser only. Never sent anywhere except Hyperliquid's public API.</div>
+    <label class="fld" for="subaddr" style="margin-top:10px">Bot sub-account — optional, shown separately.</label>
+    <div class="addr-row">
+      <input type="text" id="subaddr" placeholder="0x… bot sub-account" spellcheck="false" autocomplete="off">
+      <button id="savesub" type="button">Save</button>
+    </div>
+    <div class="note" id="addr-msg">Both stored in this browser only. Never sent anywhere except Hyperliquid's public API.</div>
   </div>
 
   <div id="acct" hidden>
     <div class="tiles">
+      <div class="tile bot">
+        <div class="k">Bot account</div>
+        <div class="v" id="t-bot">—</div>
+        <div class="sub" id="t-bot-sub">&nbsp;</div>
+      </div>
       <div class="tile">
-        <div class="k">Account value</div>
+        <div class="k">Your account</div>
         <div class="v" id="t-value">—</div>
         <div class="sub" id="t-value-sub">&nbsp;</div>
       </div>
@@ -270,6 +282,9 @@
   // mirrors shorts_1d / shorts_1h in the bot's config.json
   var SHORTS = { "1D": true, "1H": false };
   var KEY = "hl-deck-addr";
+  var SUBKEY = "hl-deck-subaddr";
+  // What the bot may size against. Mirrors live_pot_usd in the bot config.
+  var BOT_ALLOCATION = 50;
 
   function hl(body) {
     return fetch(API, {
@@ -279,6 +294,26 @@
     }).then(function (r) {
       if (!r.ok) throw new Error("Hyperliquid returned " + r.status);
       return r.json();
+    });
+  }
+
+  // Hyperliquid has several account modes. In Unified Account mode spot USDC
+  // collateralises perps and the PERP clearinghouse reports 0.00 while the
+  // money sits in the SPOT one. Reading only marginSummary.accountValue shows
+  // $0 for an account that trades perfectly well, so add both sides.
+  function tradeable(addr) {
+    return Promise.all([
+      hl({ type: "clearinghouseState", user: addr }).catch(function () { return null; }),
+      hl({ type: "spotClearinghouseState", user: addr }).catch(function () { return null; })
+    ]).then(function (r) {
+      var perp = r[0] ? parseFloat(r[0].marginSummary.accountValue || 0) : 0;
+      var usdc = 0;
+      if (r[1] && r[1].balances) {
+        r[1].balances.forEach(function (b) {
+          if (b.coin === "USDC") usdc += parseFloat(b.total || 0);
+        });
+      }
+      return { perp: perp, spot: usdc, total: perp + usdc, state: r[0], reachable: !!(r[0] || r[1]) };
     });
   }
 
@@ -313,24 +348,38 @@
   }
 
   // ---------- account ----------
-  function drawAccount(state) {
+  function drawBot(b) {
+    var e = document.getElementById("t-bot");
+    var s = document.getElementById("t-bot-sub");
+    if (!b) { e.textContent = "—"; s.textContent = "not set"; return; }
+    e.textContent = money(b.total);
+    s.textContent = b.total > 0
+      ? money(Math.min(BOT_ALLOCATION, b.total), 0) + " allocated to trade"
+      : "nothing to trade with yet";
+  }
+
+  function drawAccount(state, combined) {
     var ms = (state && state.marginSummary) || {};
-    var value = parseFloat(ms.accountValue || 0);
+    var value = combined == null ? parseFloat(ms.accountValue || 0) : combined;
     var notional = parseFloat(ms.totalNtlPos || 0);
     var raw = (state && state.assetPositions) || [];
 
     var rows = raw.map(function (ap) { return ap.position; }).filter(Boolean);
     var pnl = rows.reduce(function (a, p) { return a + parseFloat(p.unrealizedPnl || 0); }, 0);
-    var lev = value > 0 ? notional / value : 0;
+    // leverage and P/L belong to the perp book, so they use the perp value
+    // even when the tile above shows perps plus spot
+    var perpValue = parseFloat(ms.accountValue || 0);
+    var lev = perpValue > 0 ? notional / perpValue : 0;
 
     document.getElementById("t-value").textContent = money(value);
     document.getElementById("t-value-sub").textContent =
-      rows.length + (rows.length === 1 ? " open position" : " open positions");
+      rows.length + (rows.length === 1 ? " open position" : " open positions")
+      + " · perps + spot USDC";
 
     var pe = document.getElementById("t-pnl");
     pe.textContent = signed(pnl);
     pe.className = "v " + (pnl >= 0 ? "up" : "down");
-    var cost = value - pnl;
+    var cost = perpValue - pnl;
     document.getElementById("t-pnl-sub").textContent =
       cost > 0 ? pct((pnl / cost) * 100) + " on the money tied up" : " ";
 
@@ -392,10 +441,17 @@
   }
 
   function loadAccount(addr) {
-    return hl({ type: "clearinghouseState", user: addr }).then(function (st) {
+    var sub = recall(SUBKEY);
+    return Promise.all([
+      tradeable(addr),
+      sub ? tradeable(sub) : Promise.resolve(null)
+    ]).then(function (r) {
+      var mine = r[0];
+      if (!mine.reachable) throw new Error("Hyperliquid did not answer for that address");
       document.getElementById("acct-setup").hidden = true;
       document.getElementById("acct").hidden = false;
-      drawAccount(st);
+      drawBot(r[1]);
+      drawAccount(mine.state, mine.total);
     });
   }
 
@@ -557,6 +613,21 @@
       m.className = "note err";
     });
   });
+  document.getElementById("savesub").addEventListener("click", function () {
+    var v = document.getElementById("subaddr").value.trim();
+    var m = document.getElementById("addr-msg");
+    if (v && !/^0x[a-fA-F0-9]{40}$/.test(v)) {
+      m.textContent = "That sub-account doesn't look like a wallet address.";
+      m.className = "note err";
+      return;
+    }
+    store(SUBKEY, v);
+    m.textContent = v ? "Bot sub-account saved." : "Bot sub-account cleared.";
+    m.className = "note";
+    var main = recall(KEY);
+    if (main) loadAccount(main).then(stamp).catch(function () {});
+  });
+
   document.getElementById("addr").addEventListener("keydown", function (e) {
     if (e.key === "Enter") document.getElementById("save").click();
   });
@@ -564,6 +635,8 @@
 
   var saved = recall(KEY);
   if (saved) document.getElementById("addr").value = saved;
+  var savedSub = recall(SUBKEY);
+  if (savedSub) document.getElementById("subaddr").value = savedSub;
   refreshAll();
 })();
 </script>
