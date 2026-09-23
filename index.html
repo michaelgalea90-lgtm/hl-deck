@@ -259,6 +259,16 @@
     </div>
   </div>
 
+  <h2 id="gmx-h" hidden>Your GMX positions <span class="qual">— Arbitrum, same wallet</span></h2>
+  <div id="gmx" hidden>
+    <div class="note" id="gmx-sum"></div>
+    <div id="gmx-wrap" style="margin-top:8px"></div>
+    <div class="note">
+      Live from GMX's public data. Profit/loss is <strong>before GMX's borrowing and
+      funding fees</strong>, so the real figure is a little lower.
+    </div>
+  </div>
+
   <h2>Signal radar <span class="qual">— how far each watchlist coin is from its trigger</span></h2>
   <div id="radar-wrap"><div class="msg" id="radar-msg">Loading live candles…</div></div>
   <div class="note">
@@ -485,7 +495,135 @@
       document.getElementById("acct").hidden = false;
       drawBot(r[1]);
       drawAccount(mine.state, mine.total, r[1] && r[1].state);
+      return loadGmx(addr);   // never throws - GMX trouble shows in its own section
     });
+  }
+
+  // ---------- GMX (Arbitrum) ----------
+  // Read-only. Positions come from GMX's public indexer; coin names, decimals
+  // and live prices from GMX's own price API. Nothing is signed or sent.
+  var GMX_SQUID = "https://gmx.squids.live/gmx-synthetics-arbitrum:prod/api/graphql";
+  var GMX_API = "https://arbitrum-api.gmxinfra.io";
+  var gmxRef = null;   // markets + tokens, fetched once per page load
+
+  function getJSON(u) {
+    return fetch(u).then(function (r) {
+      if (!r.ok) throw new Error("GMX returned " + r.status);
+      return r.json();
+    });
+  }
+  function units(big, dec) {
+    // BigInt with `dec` decimals -> Number, keeping 6 decimals of precision
+    var b = BigInt(big), neg = b < 0n;
+    if (neg) b = -b;
+    var v = Number(b * 1000000n / (10n ** BigInt(dec))) / 1e6;
+    return neg ? -v : v;
+  }
+
+  function loadGmx(addr) {
+    var ref = gmxRef ? Promise.resolve(gmxRef) : Promise.all([
+      getJSON(GMX_API + "/markets"), getJSON(GMX_API + "/tokens")
+    ]).then(function (r) {
+      var mk = {}, tk = {};
+      r[0].markets.forEach(function (m) { mk[m.marketToken.toLowerCase()] = m; });
+      r[1].tokens.forEach(function (t) { tk[t.address.toLowerCase()] = t; });
+      gmxRef = { mk: mk, tk: tk };
+      return gmxRef;
+    });
+    // the indexer matches the address exactly as checksummed, so it is passed
+    // through untouched; it is validated as a plain 0x address first
+    if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) return Promise.resolve();
+    var q = '{ positions(where:{account_eq:"' + addr + '", sizeInUsd_gt:"0", isSnapshot_eq:false}, limit:50)' +
+            ' { market isLong collateralToken collateralAmount sizeInUsd sizeInTokens openedAt } }';
+    var pos = fetch(GMX_SQUID, { method: "POST", headers: { "Content-Type": "application/json" },
+                                 body: JSON.stringify({ query: q }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j.errors) throw new Error("GMX indexer: " + j.errors[0].message);
+        return j.data.positions;
+      });
+    return Promise.all([ref, pos, getJSON(GMX_API + "/prices/tickers")])
+      .then(function (r) { drawGmx(addr, r[0], r[1], r[2]); })
+      .catch(function (e) {
+        document.getElementById("gmx-h").hidden = false;
+        document.getElementById("gmx").hidden = false;
+        document.getElementById("gmx-wrap").textContent = "";
+        var m = document.getElementById("gmx-sum");
+        m.textContent = "Couldn't reach GMX just now: " + e.message;
+        m.className = "note err";
+      });
+  }
+
+  function drawGmx(addr, ref, positions, tickers) {
+    document.getElementById("gmx-h").hidden = false;
+    document.getElementById("gmx").hidden = false;
+    var sum = document.getElementById("gmx-sum");
+    sum.className = "note";
+    var wrap = document.getElementById("gmx-wrap");
+    wrap.textContent = "";
+
+    var price = {};
+    tickers.forEach(function (t) { price[t.tokenAddress.toLowerCase()] = t; });
+
+    var rows = positions.map(function (p) {
+      var m = ref.mk[p.market.toLowerCase()];
+      var it = m && ref.tk[m.indexToken.toLowerCase()];
+      var ct = ref.tk[p.collateralToken.toLowerCase()];
+      var dec = it ? it.decimals : 18;
+      var sizeUsd = units(p.sizeInUsd, 30);
+      var sizeTok = units(p.sizeInTokens, dec);
+      var t = m && price[m.indexToken.toLowerCase()];
+      var now = t ? (Number(t.minPrice) + Number(t.maxPrice)) / 2 / Math.pow(10, 30 - dec) : null;
+      var coll = ct ? units(p.collateralAmount, ct.decimals) : null;
+      // stablecoin collateral is worth its face value; anything else at its price
+      var cp = ct && price[p.collateralToken.toLowerCase()];
+      var collUsd = coll == null ? null : (cp && !/USD/.test(ct.symbol)
+        ? coll * (Number(cp.minPrice) + Number(cp.maxPrice)) / 2 / Math.pow(10, 30 - ct.decimals)
+        : coll);
+      var pnl = now == null ? null : (p.isLong ? sizeTok * now - sizeUsd : sizeUsd - sizeTok * now);
+      return {
+        coin: it ? it.symbol : (m ? m.name.split("/")[0] : "?"),
+        long: p.isLong, sizeUsd: sizeUsd, entry: sizeTok > 0 ? sizeUsd / sizeTok : null,
+        now: now, pnl: pnl, collUsd: collUsd,
+        lev: (pnl != null && collUsd) ? sizeUsd / Math.max(collUsd + pnl, 0.01) : null
+      };
+    });
+
+    if (!rows.length) {
+      sum.textContent = /[A-F]/.test(addr)
+        ? "No open GMX positions on this wallet."
+        : "No open GMX positions found. GMX's data matches the address exactly as your wallet shows it (mixed upper and lower case) — try pasting it that way.";
+      return;
+    }
+
+    var tSize = 0, tPnl = 0, tColl = 0;
+    rows.forEach(function (r) { tSize += r.sizeUsd; tPnl += r.pnl || 0; tColl += r.collUsd || 0; });
+    sum.textContent = rows.length + (rows.length === 1 ? " position" : " positions") +
+      " · " + money(tSize, 0) + " total size · " + signed(tPnl) + " unrealised · " +
+      money(tColl, 0) + " of your money in";
+
+    rows.sort(function (a, b) { return b.sizeUsd - a.sizeUsd; });
+    var sc = el("div", "scroller");
+    var tb = el("table");
+    var head = el("thead"), hr = el("tr");
+    ["Coin", "Side", "Size", "Entry", "Now", "Unrealised", "Leverage"].forEach(function (h) {
+      hr.appendChild(el("th", null, h));
+    });
+    head.appendChild(hr); tb.appendChild(head);
+    var body = el("tbody");
+    rows.forEach(function (r) {
+      var tr = el("tr");
+      var c = el("td"); c.appendChild(el("span", "coin", r.coin)); tr.appendChild(c);
+      var s = el("td"); s.appendChild(el("span", "pill " + (r.long ? "long" : "short"), r.long ? "Long" : "Short"));
+      tr.appendChild(s);
+      tr.appendChild(el("td", "num", money(r.sizeUsd, 0)));
+      tr.appendChild(el("td", "num", r.entry ? px(r.entry) : "—"));
+      tr.appendChild(el("td", "num", r.now ? px(r.now) : "—"));
+      tr.appendChild(el("td", "num " + ((r.pnl || 0) >= 0 ? "up" : "down"), signed(r.pnl)));
+      tr.appendChild(el("td", "num", r.lev ? r.lev.toFixed(1) + "×" : "—"));
+      body.appendChild(tr);
+    });
+    tb.appendChild(body); sc.appendChild(tb); wrap.appendChild(sc);
   }
 
   // ---------- signal radar ----------
