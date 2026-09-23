@@ -121,6 +121,7 @@
   .meter.over > i { background: var(--warn); }
 
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .tag { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; background: var(--accent); color: var(--bg, #fff); vertical-align: 1px; }
   .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
   th, td { text-align: right; padding: 9px 12px; white-space: nowrap; font-size: 13.5px; }
   th {
@@ -284,7 +285,6 @@
   var KEY = "hl-deck-addr";
   var SUBKEY = "hl-deck-subaddr";
   // What the bot may size against. Mirrors live_pot_usd in the bot config.
-  var BOT_ALLOCATION = 50;
 
   function hl(body) {
     return fetch(API, {
@@ -373,12 +373,15 @@
     var s = document.getElementById("t-bot-sub");
     if (!b) { e.textContent = "—"; s.textContent = "not set"; return; }
     e.textContent = money(b.total);
+    var n = ((b.state && b.state.assetPositions) || []).filter(function (ap) {
+      return ap.position && parseFloat(ap.position.szi || 0) !== 0; }).length;
     s.textContent = b.total > 0
-      ? money(Math.min(BOT_ALLOCATION, b.total), 0) + " allocated to trade"
+      ? (n ? n + (n === 1 ? " open trade" : " open trades") : "no open trades")
+        + " · bot trades the whole balance"
       : "nothing to trade with yet";
   }
 
-  function drawAccount(state, combined) {
+  function drawAccount(state, combined, botState) {
     var ms = (state && state.marginSummary) || {};
     var value = combined == null ? parseFloat(ms.accountValue || 0) : combined;
     var notional = parseFloat(ms.totalNtlPos || 0);
@@ -408,6 +411,15 @@
     var meter = document.getElementById("t-lev-meter");
     meter.firstElementChild.style.width = Math.max(2, Math.min(100, (lev / 5) * 100)) + "%";
     meter.classList.toggle("over", lev > 3);
+
+    // the tiles above describe YOUR account only; the table below lists your
+    // positions and the bot's together, bot rows tagged so they can't be confused
+    rows.forEach(function (p) { p._bot = false; });
+    ((botState && botState.assetPositions) || []).forEach(function (ap) {
+      if (ap.position && parseFloat(ap.position.szi || 0) !== 0) {
+        ap.position._bot = true; rows.push(ap.position);
+      }
+    });
 
     var wrap = document.getElementById("pos-wrap");
     wrap.textContent = "";
@@ -439,6 +451,7 @@
 
       var c = el("td");
       c.appendChild(el("span", "coin", p.coin));
+      if (p._bot) c.appendChild(el("span", "tag", "bot"));
       tr.appendChild(c);
 
       var s = el("td");
@@ -471,7 +484,7 @@
       document.getElementById("acct-setup").hidden = true;
       document.getElementById("acct").hidden = false;
       drawBot(r[1]);
-      drawAccount(mine.state, mine.total);
+      drawAccount(mine.state, mine.total, r[1] && r[1].state);
     });
   }
 
