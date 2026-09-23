@@ -383,11 +383,13 @@
     var s = document.getElementById("t-bot-sub");
     if (!b) { e.textContent = "—"; s.textContent = "not set"; return; }
     e.textContent = money(b.total);
-    var n = ((b.state && b.state.assetPositions) || []).filter(function (ap) {
-      return ap.position && parseFloat(ap.position.szi || 0) !== 0; }).length;
+    var open = ((b.state && b.state.assetPositions) || []).filter(function (ap) {
+      return ap.position && parseFloat(ap.position.szi || 0) !== 0; });
+    var n = open.length;
+    var bp = open.reduce(function (a, ap) { return a + parseFloat(ap.position.unrealizedPnl || 0); }, 0);
     s.textContent = b.total > 0
-      ? (n ? n + (n === 1 ? " open trade" : " open trades") : "no open trades")
-        + " · bot trades the whole balance"
+      ? (n ? n + (n === 1 ? " open trade · " : " open trades · ") + signed(bp) + " unrealised"
+           : "no open trades")
       : "nothing to trade with yet";
   }
 
@@ -404,7 +406,7 @@
     var perpValue = parseFloat(ms.accountValue || 0);
     var lev = perpValue > 0 ? notional / perpValue : 0;
 
-    hlValue = value;
+    hlValue = value; hlPnl = pnl; hlCost = perpValue - pnl; hlNotional = notional;
     document.getElementById("t-value").textContent = money(value);
     document.getElementById("t-value-sub").textContent =
       rows.length + (rows.length === 1 ? " open position" : " open positions")
@@ -518,6 +520,7 @@
   var GMX_API = "https://arbitrum-api.gmxinfra.io";
   var gmxRef = null;   // markets + tokens, fetched once per page load
   var hlValue = null;  // Hyperliquid part of "Your account", so GMX can be added to it
+  var hlPnl = 0, hlCost = 0, hlNotional = 0;   // likewise for P/L and leverage
 
   function getJSON(u) {
     return fetch(u).then(function (r) {
@@ -623,6 +626,22 @@
       document.getElementById("t-value").textContent = money(hlValue + gEq);
       document.getElementById("t-value-sub").textContent =
         "Hyperliquid " + money(hlValue, 0) + " + GMX " + money(gEq, 0);
+
+      var allPnl = hlPnl + tPnl, allCost = hlCost + tColl;
+      var pe = document.getElementById("t-pnl");
+      pe.textContent = signed(allPnl);
+      pe.className = "v " + (allPnl >= 0 ? "up" : "down");
+      document.getElementById("t-pnl-sub").textContent =
+        "Hyperliquid " + signed(hlPnl) + " · GMX " + signed(tPnl) +
+        (allCost > 0 ? " · " + pct((allPnl / allCost) * 100) : "");
+
+      var exp = hlNotional + tSize, eq = hlValue + gEq;
+      var lev = eq > 0 ? exp / eq : 0;
+      document.getElementById("t-lev").textContent = lev.toFixed(2) + "×";
+      document.getElementById("t-lev-sub").textContent = money(exp, 0) + " exposure, both venues";
+      var meter = document.getElementById("t-lev-meter");
+      meter.firstElementChild.style.width = Math.max(2, Math.min(100, (lev / 5) * 100)) + "%";
+      meter.classList.toggle("over", lev > 3);
     }
 
     rows.sort(function (a, b) { return b.sizeUsd - a.sizeUsd; });
