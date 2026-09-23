@@ -391,7 +391,7 @@
       : "nothing to trade with yet";
   }
 
-  function drawAccount(state, combined, botState) {
+  function drawAccount(state, combined, botState, botStrat) {
     var ms = (state && state.marginSummary) || {};
     var value = combined == null ? parseFloat(ms.accountValue || 0) : combined;
     var notional = parseFloat(ms.totalNtlPos || 0);
@@ -428,7 +428,9 @@
     rows.forEach(function (p) { p._bot = false; });
     ((botState && botState.assetPositions) || []).forEach(function (ap) {
       if (ap.position && parseFloat(ap.position.szi || 0) !== 0) {
-        ap.position._bot = true; rows.push(ap.position);
+        ap.position._bot = true;
+        ap.position._strat = (botStrat || {})[ap.position.coin] || "";
+        rows.push(ap.position);
       }
     });
 
@@ -462,7 +464,7 @@
 
       var c = el("td");
       c.appendChild(el("span", "coin", p.coin));
-      if (p._bot) c.appendChild(el("span", "tag", "bot"));
+      if (p._bot) c.appendChild(el("span", "tag", p._strat ? "bot · " + p._strat : "bot"));
       tr.appendChild(c);
 
       var s = el("td");
@@ -488,14 +490,23 @@
     var sub = recall(SUBKEY);
     return Promise.all([
       tradeable(addr),
-      sub ? tradeable(sub) : Promise.resolve(null)
+      sub ? tradeable(sub) : Promise.resolve(null),
+      sub ? hl({ type: "frontendOpenOrders", user: sub }).catch(function () { return []; })
+          : Promise.resolve([])
     ]).then(function (r) {
+      // which strategy owns each bot position: the bot writes it into the
+      // first byte of every order id, and the stop order carries it
+      var TAGS = { d1: "1D", "44": "4H", "11": "1H" }, botStrat = {};
+      (r[2] || []).forEach(function (o) {
+        var t = o.cloid && o.cloid.length === 34 && TAGS[o.cloid.slice(2, 4).toLowerCase()];
+        if (t && o.reduceOnly) botStrat[o.coin] = t;
+      });
       var mine = r[0];
       if (!mine.reachable) throw new Error("Hyperliquid did not answer for that address");
       document.getElementById("acct-setup").hidden = true;
       document.getElementById("acct").hidden = false;
       drawBot(r[1]);
-      drawAccount(mine.state, mine.total, r[1] && r[1].state);
+      drawAccount(mine.state, mine.total, r[1] && r[1].state, botStrat);
       return loadGmx(addr);   // never throws - GMX trouble shows in its own section
     });
   }
