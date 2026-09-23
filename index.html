@@ -404,6 +404,7 @@
     var perpValue = parseFloat(ms.accountValue || 0);
     var lev = perpValue > 0 ? notional / perpValue : 0;
 
+    hlValue = value;
     document.getElementById("t-value").textContent = money(value);
     document.getElementById("t-value-sub").textContent =
       rows.length + (rows.length === 1 ? " open position" : " open positions")
@@ -505,6 +506,7 @@
   var GMX_SQUID = "https://gmx.squids.live/gmx-synthetics-arbitrum:prod/api/graphql";
   var GMX_API = "https://arbitrum-api.gmxinfra.io";
   var gmxRef = null;   // markets + tokens, fetched once per page load
+  var hlValue = null;  // Hyperliquid part of "Your account", so GMX can be added to it
 
   function getJSON(u) {
     return fetch(u).then(function (r) {
@@ -601,6 +603,16 @@
     sum.textContent = rows.length + (rows.length === 1 ? " position" : " positions") +
       " · " + money(tSize, 0) + " total size · " + signed(tPnl) + " unrealised · " +
       money(tColl, 0) + " of your money in";
+
+    // "Your account" = Hyperliquid + what your GMX positions are worth now
+    // (collateral plus unrealised P/L, before GMX fees)
+    if (hlValue != null) {
+      var gEq = 0;
+      rows.forEach(function (r) { gEq += (r.collUsd || 0) + (r.pnl || 0); });
+      document.getElementById("t-value").textContent = money(hlValue + gEq);
+      document.getElementById("t-value-sub").textContent =
+        "Hyperliquid " + money(hlValue, 0) + " + GMX " + money(gEq, 0);
+    }
 
     rows.sort(function (a, b) { return b.sizeUsd - a.sizeUsd; });
     var sc = el("div", "scroller");
