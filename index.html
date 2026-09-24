@@ -390,7 +390,14 @@
   }
 
   // ---------- account ----------
+  var botTotal = 0, botNtl = 0;   // bot account value + exposure, for the leverage tile
+  function botLine() {
+    if (!botNtl) return "";
+    return " · bot " + money(botNtl, 0) + " (" + (botTotal > 0 ? (botNtl / botTotal).toFixed(2) : "0") + "×)";
+  }
   function drawBot(b) {
+    botTotal = b ? (b.total || 0) : 0;
+    botNtl = b && b.state && b.state.marginSummary ? parseFloat(b.state.marginSummary.totalNtlPos || 0) : 0;
     var e = document.getElementById("t-bot");
     var s = document.getElementById("t-bot-sub");
     if (!b) { e.textContent = "—"; s.textContent = "not set"; return; }
@@ -416,7 +423,10 @@
     // leverage and P/L belong to the perp book, so they use the perp value
     // even when the tile above shows perps plus spot
     var perpValue = parseFloat(ms.accountValue || 0);
-    var lev = perpValue > 0 ? notional / perpValue : 0;
+    // Leverage = exposure / everything the account is worth. On a unified
+    // account the perp "accountValue" is only the margin slice (e.g. $377 of
+    // $559), so dividing by it overstated leverage (showed 3.00x, really 2.0x).
+    var lev = value > 0 ? notional / value : 0;
 
     hlValue = value; hlPnl = pnl; hlCost = perpValue - pnl; hlNotional = notional;
     document.getElementById("t-value").textContent = money(value);
@@ -432,7 +442,7 @@
       cost > 0 ? pct((pnl / cost) * 100) + " on the money tied up" : " ";
 
     document.getElementById("t-lev").textContent = lev.toFixed(2) + "×";
-    document.getElementById("t-lev-sub").textContent = money(notional, 0) + " exposure";
+    document.getElementById("t-lev-sub").textContent = money(notional, 0) + " your exposure" + botLine();
     var meter = document.getElementById("t-lev-meter");
     meter.firstElementChild.style.width = Math.max(2, Math.min(100, (lev / 5) * 100)) + "%";
     meter.classList.toggle("over", lev > 3);
@@ -822,7 +832,7 @@
       var exp = hlNotional + tSize, eq = hlValue + gEq;
       var lev = eq > 0 ? exp / eq : 0;
       document.getElementById("t-lev").textContent = lev.toFixed(2) + "×";
-      document.getElementById("t-lev-sub").textContent = money(exp, 0) + " exposure, both venues";
+      document.getElementById("t-lev-sub").textContent = money(exp, 0) + " your exposure, both venues" + botLine();
       var meter = document.getElementById("t-lev-meter");
       meter.firstElementChild.style.width = Math.max(2, Math.min(100, (lev / 5) * 100)) + "%";
       meter.classList.toggle("over", lev > 3);
