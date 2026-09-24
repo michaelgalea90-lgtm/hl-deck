@@ -914,11 +914,11 @@ function daily(coin,d){var c=d.map(function(x){return x.c}),last=c[c.length-1],m
  out.bo=up?row(coin,"L",[{t:"above 200-day",ok:true},{t:last>hi?"new 40-day high":"40-day high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}],pct(last,hi)):row(coin,"S",[{t:"below 200-day",ok:true},{t:last<lo?"new 40-day low":"40-day low \u00b7 "+f1(pct(last,lo))+" away",ok:last<lo}],-pct(last,lo));
  var r2=rsiS(c.slice(-80),2);r2=r2[r2.length-1];
  out.dip=row(coin,"L",[{t:up?"above 200-day":"below 200-day",ok:up},{t:"RSI(2) "+r2.toFixed(0)+" \u00b7 needs under 5",ok:r2<5}],-r2);return out}
-function fourH(coin,d,h){var dc=d.map(function(x){return x.c}),de=emaS(dc,200),L=dc.length,bull=dc[L-1]>de[L-1]&&de[L-1]>de[L-2],bear=dc[L-1]<de[L-1]&&de[L-1]<de[L-2];
- var c=h.map(function(x){return x.c}),e20=emaS(c,20),e50=emaS(c,50),R=rsiS(c,14),n=c.length,last=c[n-1],r=R[n-1],A=adx(h,14),recent=R.slice(-9,-1);
- if(bull)return row(coin,"L",[{t:"daily trend up",ok:true},{t:"short-term trend up",ok:last>e50[n-1]&&e20[n-1]>e50[n-1]},{t:"dip under 45",ok:recent.some(function(v){return v!=null&&v<45})},{t:"RSI back over 50",ok:r>=50},{t:"close over 20 EMA",ok:last>e20[n-1]},{t:"ADX "+A.toFixed(0)+" (18+)",ok:A>=18}]);
- if(bear)return row(coin,"S",[{t:"daily trend down",ok:true},{t:"short-term trend down",ok:last<e50[n-1]&&e20[n-1]<e50[n-1]},{t:"pop over 55",ok:recent.some(function(v){return v!=null&&v>55})},{t:"RSI back under 50",ok:r<=50},{t:"close under 20 EMA",ok:last<e20[n-1]},{t:"ADX "+A.toFixed(0)+" (18+)",ok:A>=18}]);
- return row(coin,"N",[{t:"no clear daily trend",ok:false}])}
+function fourH(coin,d,h){var dc=d.map(function(x){return x.c}),de=emaS(dc,200),L=dc.length,bull=dc[L-1]>=de[L-1];
+ var c=h.map(function(x){return x.c}),e20=emaS(c,20),e50=emaS(c,50),R=rsiS(c,14),n=c.length,r=R[n-1],rp=R[n-2],A=adx(h,14),recent=R.slice(-11,-1);
+ // Same rules as the bot (paper.py detect): daily close vs 200 EMA, 20 vs 50 EMA, RSI dip in the last 10 bars, RSI crossing 50 on this bar, ADX 18+
+ if(bull)return row(coin,"L",[{t:"daily above 200 EMA",ok:true},{t:"20 EMA over 50 EMA",ok:e20[n-1]>e50[n-1]},{t:"RSI dipped under 45",ok:recent.some(function(v){return v!=null&&v<45})},{t:"RSI crosses up through 50",ok:r>50&&rp<=50},{t:"ADX "+A.toFixed(0)+" (18+)",ok:A>=18}]);
+ return row(coin,"S",[{t:"daily below 200 EMA",ok:true},{t:"20 EMA under 50 EMA",ok:e20[n-1]<e50[n-1]},{t:"RSI popped over 55",ok:recent.some(function(v){return v!=null&&v>55})},{t:"RSI crosses down through 50",ok:r<50&&rp>=50},{t:"ADX "+A.toFixed(0)+" (18+)",ok:A>=18}])}
 function oneH(coin,d,h){var dc=d.map(function(x){return x.c}),m=sma(dc,200);if(!m)return null;var up=dc[dc.length-1]>m;var c=h.map(function(x){return x.c}),last=c[c.length-1],hi=Math.max.apply(null,c.slice(-49,-1));
  return row(coin,"L",[{t:up?"daily uptrend":"daily downtrend",ok:up},{t:last>hi?"new 48-hour high":"48-hour high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}],pct(last,hi))}
 function card(title,when,rows){rows=rows.filter(Boolean).sort(function(a,b){var fa=a.met/a.rules.length,fb=b.met/b.rules.length;return fb-fa||b.extra-a.extra});
@@ -941,6 +941,77 @@ function run(){var dCoins=Array.from(new Set(C1D.concat(C4H,C1H)));
   document.getElementById("fr-sum").innerHTML=s;
   document.getElementById("fr-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". Refreshes every 10 minutes. Coin lists match signals.py as of 24 Sep 2026.";
  })})}).catch(function(e){document.getElementById("fr-sum").textContent="Could not reach Hyperliquid. "+e})}
+run();setInterval(run,600000);
+})();
+</script>
+<!-- Live vs backtest - added 24 Sep 2026 -->
+<section id="lt" class="fr">
+<style>
+.fr .sum.warn{border-left-color:#FF6D00}
+.fr .tw{overflow-x:auto;border:1px solid var(--line,#30363d);border-radius:8px;margin:0 0 14px}
+.fr table{width:100%;border-collapse:collapse;font-size:13px}
+.fr th,.fr td{padding:7px 10px;border-bottom:1px solid var(--line-soft,#21262d);text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fr tbody tr:last-child td{border-bottom:0}
+.fr th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3,#8b949e);font-weight:600;background:var(--surface-2,#161b22)}
+.fr td small{color:var(--ink-3,#8b949e);font-size:11px}
+.fr td.good{color:#3b6cff;font-weight:600}
+.fr td.bad,.fr .bad{color:#FF6D00;font-weight:600}
+</style>
+<h2>Live vs backtest</h2>
+<p class="sub">Every bot trade checked against what its rules say should happen. Orange means something doesn't match.</p>
+<div id="lt-sum" class="sum">Loading the bot's trades&hellip;</div>
+<div id="lt-body"></div>
+<p class="note" id="lt-when"></p>
+</section>
+<script>
+(function(){
+// Live vs backtest. Uses the bot account address this dashboard already stores (hl-deck-subaddr).
+var TF={"1D":{iv:"1d",ms:864e5,k:3},"4H":{iv:"4h",ms:144e5,k:2},"1H":{iv:"1h",ms:36e5,k:5},"DIP":{iv:"1d",ms:864e5,k:5}};
+var TAG={"d1":"1D","44":"4H","11":"1H","d9":"DIP"};
+var NAME={"1D":"1 Day","4H":"4 Hour","1H":"1 Hour","DIP":"Dip Buy"};
+// Risk settings over time, from config.json history. Add a line when they change.
+var RISK_HIST=[{from:0,r:{"1D":6,"4H":6,"1H":3,"DIP":3}},{from:Date.UTC(2026,8,24,2,0),r:{"1D":1,"4H":6,"1H":1,"DIP":3}}];
+// Backtest per trade on the bot's exact rules, Jun 2023 - Sep 2026, costs included.
+var BT={"1D":{w:38,r:0.38},"4H":{w:41,r:0.26},"1H":{w:38,r:0.31},"DIP":{w:71,r:0.06}};
+function post(b){return fetch("https://api.hyperliquid.xyz/info",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json()})}
+function riskAt(t,s){var v=null;RISK_HIST.forEach(function(h){if(t>=h.from)v=h.r[s]});return v}
+function atrLast(b,n){var p=0;for(var i=0;i<b.length;i++){var tr=i===0?b[i].h-b[i].l:Math.max(b[i].h-b[i].l,Math.abs(b[i].h-b[i-1].c),Math.abs(b[i].l-b[i-1].c));if(i<n)p+=tr/n;else p=(p*(n-1)+tr)/n}return p}
+function eqAt(pf,t){var m={};(pf||[]).forEach(function(x){m[x[0]]=x[1]});var ks=["day","week","month","allTime"];for(var k=0;k<ks.length;k++){var o=m[ks[k]],h=o&&o.accountValueHistory;if(!h||!h.length||h[0][0]>t)continue;var v=null;for(var i=0;i<h.length;i++){if(h[i][0]<=t)v=+h[i][1];else break}if(v)return v}var a=m.allTime&&m.allTime.accountValueHistory;return a&&a.length?+a[0][1]:null}
+function before(coin,tf,t){return post({type:"candleSnapshot",req:{coin:coin,interval:tf.iv,startTime:t-90*tf.ms,endTime:t}}).then(function(j){return Array.isArray(j)?j.map(function(x){return{t:x.t,h:+x.h,l:+x.l,c:+x.c}}).filter(function(x){return x.t+tf.ms<=t}):[]})}
+function pct(x){return (x>=0?"+":"\u2212")+Math.abs(x).toFixed(1)+"%"}
+function rf(x){return (x>=0?"+":"\u2212")+Math.abs(x).toFixed(2)+"R"}
+function when(t){return new Date(t).toLocaleString([],{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
+function run(){var sum=document.getElementById("lt-sum"),box=document.getElementById("lt-body"),a=null;try{a=localStorage.getItem("hl-deck-subaddr")}catch(e){}
+ if(!a){sum.innerHTML="Add the bot account address at the top of the dashboard and this fills in.";return}
+ Promise.all([post({type:"userFills",user:a}),post({type:"frontendOpenOrders",user:a}),post({type:"portfolio",user:a}),post({type:"allMids"})]).then(function(res){
+  var fills=(res[0]||[]).slice().sort(function(x,y){return x.time-y.time}),trades=[],by={};
+  fills.forEach(function(f){var d=f.dir||"";if(d.indexOf("Open")!==0)return;if(!by[f.oid]){var tag=f.cloid&&f.cloid.length===34?f.cloid.slice(2,4).toLowerCase():"";by[f.oid]={coin:f.coin,dir:d.indexOf("Long")>-1?1:-1,t:f.time,sz:0,cost:0,fee:0,left:0,pnl:0,s:TAG[tag]||null};trades.push(by[f.oid])}var x=by[f.oid];x.sz+=+f.sz;x.cost+=(+f.sz)*(+f.px);x.fee+=+f.fee;x.left+=+f.sz});
+  trades.forEach(function(x){x.px=x.cost/x.sz});
+  // Older entries had no strategy code; fall back to the tag on the coin's stop order.
+  (res[1]||[]).forEach(function(o){if(!o.reduceOnly||!o.cloid)return;var s=TAG[o.cloid.slice(2,4).toLowerCase()];if(!s)return;trades.forEach(function(x){if(!x.s&&x.coin===o.coin)x.s=s})});
+  fills.forEach(function(f){if((f.dir||"").indexOf("Close")!==0)return;var q=+f.sz,tot=+f.sz;trades.forEach(function(x){if(q<=1e-12||x.coin!==f.coin||x.left<=1e-12||x.t>f.time)return;var k=Math.min(q,x.left),sh=k/tot;x.left-=k;x.pnl+=(+f.closedPnl)*sh-(+f.fee)*sh;q-=k})});
+  return Promise.all(trades.map(function(x){return before(x.coin,TF[x.s||"1D"],x.t).then(function(b){x.bars=b})})).then(function(){return{trades:trades,oo:res[1]||[],pf:res[2],mids:res[3]||{}}})
+ }).then(function(D){var issues=[],rows="",score={};
+  D.trades.slice().reverse().forEach(function(x){var s=x.s,tf=TF[s||"1D"],b=x.bars||[],last=b[b.length-1],A=b.length>20?atrLast(b,14):null,sig=last?last.c:null,slip=sig?x.dir*(x.px-sig)/sig*100:null;
+   var eq=eqAt(D.pf,x.t),ru=A?x.sz*tf.k*A:null,taken=ru&&eq?ru/eq*100:null,set=s?riskAt(x.t,s):null,open=x.left>1e-9,mid=+D.mids[x.coin]||null;
+   var stop=D.oo.filter(function(o){return o.coin===x.coin&&o.reduceOnly&&o.isTrigger})[0],R=null;
+   if(ru)R=open&&mid?(x.dir*(mid-x.px)*x.left+x.pnl-x.fee)/ru:(x.pnl-x.fee)/ru;
+   var riskOff=taken!=null&&set!=null&&(taken>set*1.4||taken<set*0.6),chased=slip!=null&&slip>1.5;
+   if(!s)issues.push(x.coin+": the order has no strategy code the bot recognises, so it may manage the exit with the wrong rules");
+   if(chased)issues.push(x.coin+": entered "+slip.toFixed(1)+"% past the signal price (the limit is 1.5%)");
+   if(riskOff)issues.push(x.coin+": risked about "+taken.toFixed(1)+"% against a "+set+"% setting");
+   if(open&&!stop)issues.push(x.coin+": open with NO stop on the exchange");
+   var stopTxt=open?(stop&&mid?"on exchange \u00b7 "+Math.abs((+stop.triggerPx-mid)/mid*100).toFixed(1)+"% away":'<span class="bad">missing</span>'):"\u2014";
+   rows+="<tr><td><b>"+x.coin+'</b> <span class="dir '+(x.dir>0?"L":"S")+'">'+(x.dir>0?"LONG":"SHORT")+"</span></td><td>"+(s?NAME[s]:'<span class="bad">unknown</span>')+"</td><td>"+when(x.t)+"</td><td"+(chased?' class="bad"':"")+">"+(slip==null?"\u2014":pct(slip))+"</td><td"+(riskOff?' class="bad"':"")+">"+(taken==null?"\u2014":taken.toFixed(1)+"% <small>of "+set+"%</small>")+"</td><td>"+stopTxt+"</td><td"+(R!=null?' class="'+(R>=0?"good":"bad")+'"':"")+">"+(R==null?"\u2014":rf(R))+(open?" <small>open</small>":"")+"</td></tr>";
+   if(s&&!open&&R!=null){var c=score[s]||(score[s]={n:0,w:0,r:0});c.n++;if(R>0)c.w++;c.r+=R}});
+  sum.className="sum"+(issues.length?" warn":"");
+  sum.innerHTML=issues.length?"<b>"+issues.length+" thing"+(issues.length>1?"s":"")+" to look at:</b><br>"+issues.join("<br>"):"<b>All checks pass.</b> Every open trade has a stop, sizes match your risk settings, and entries match the signals.";
+  var sh='<div class="tw"><table><thead><tr><th>Strategy</th><th>Closed trades</th><th>Wins</th><th>Avg result</th><th>Backtest expects</th></tr></thead><tbody>';
+  ["1D","DIP","4H","1H"].forEach(function(s){var c=score[s]||{n:0,w:0,r:0},bt=BT[s];sh+="<tr><td>"+NAME[s]+"</td><td>"+c.n+"</td><td>"+(c.n?Math.round(100*c.w/c.n)+"%":"\u2014")+"</td><td>"+(c.n?rf(c.r/c.n):"\u2014")+"</td><td>"+bt.w+"% wins \u00b7 "+rf(bt.r)+(c.n<20?" <small>compare after ~20 trades</small>":"")+"</td></tr>"});
+  box.innerHTML='<div class="tw"><table><thead><tr><th>Trade</th><th>Strategy</th><th>Opened</th><th>Entry vs signal</th><th>Risk taken</th><th>Stop</th><th>Result</th></tr></thead><tbody>'+(rows||'<tr><td colspan="7">No bot trades yet.</td></tr>')+"</tbody></table></div>"+sh+"</tbody></table></div>";
+  document.getElementById("lt-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". R = results in multiples of the risk taken: +1R means it made what it risked.";
+ }).catch(function(e){document.getElementById("lt-sum").textContent="Could not load the bot's trades: "+e})}
+var me=document.getElementById("lt"),fr=document.getElementById("fr");if(me&&fr&&fr.parentNode)fr.parentNode.insertBefore(me,fr.nextSibling);
 run();setInterval(run,600000);
 })();
 </script>
