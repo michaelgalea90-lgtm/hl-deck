@@ -970,7 +970,7 @@ var TF={"1D":{iv:"1d",ms:864e5,k:3},"4H":{iv:"4h",ms:144e5,k:2},"1H":{iv:"1h",ms
 var TAG={"d1":"1D","44":"4H","11":"1H","d9":"DIP"};
 var NAME={"1D":"1 Day","4H":"4 Hour","1H":"1 Hour","DIP":"Dip Buy"};
 // Risk settings over time, from config.json history. Add a line when they change.
-var RISK_HIST=[{from:0,r:{"1D":6,"4H":6,"1H":3,"DIP":3}},{from:Date.UTC(2026,8,24,2,0),r:{"1D":1,"4H":6,"1H":1,"DIP":3}}];
+var RISK_HIST=[{from:0,r:{"1D":6,"4H":6,"1H":3,"DIP":3}},{from:Date.UTC(2026,8,24,2,0),r:{"1D":1,"4H":6,"1H":1,"DIP":3}},{from:Date.UTC(2026,8,24,7,10),r:{"1D":3,"4H":6,"1H":1,"DIP":3}}];
 // Backtest per trade on the bot's exact rules, Jun 2023 - Sep 2026, costs included.
 var BT={"1D":{w:38,r:0.38},"4H":{w:41,r:0.26},"1H":{w:38,r:0.31},"DIP":{w:71,r:0.06}};
 function post(b){return fetch("https://api.hyperliquid.xyz/info",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json()})}
