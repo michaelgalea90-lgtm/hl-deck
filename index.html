@@ -637,6 +637,16 @@
       t.appendChild(el("div", "v " + (tot >= 0 ? "up" : "down"), signed(tot)));
       t.appendChild(el("div", "sub", parts.map(function (x) {
         return (x.k === "bot" ? "Bot " : "You ") + signed(x.v); }).join(" · ")));
+      // wins and losses shown separately, so it's clear losses are taken off
+      var won = 0, lost = 0;
+      acc.forEach(function (a) {
+        closes(a.fills, a.k).forEach(function (r) {
+          if (r.time < p.from) return;
+          var n = r.pnl - r.fee;
+          if (n >= 0) won += n; else lost += n;
+        });
+      });
+      t.appendChild(el("div", "sub", "won " + signed(won) + " · lost " + signed(lost)));
       box.appendChild(t);
     });
 
@@ -681,7 +691,7 @@
       wrap.appendChild(det);
     }
     document.getElementById("rp-note").textContent =
-      "Money actually banked from closed (or part-closed) trades, after trading fees. "
+      "Each total = money won on closed trades minus money lost, minus trading fees (opening fees included, which is why a total can sit slightly below won − lost). "
       + "Open trades aren't counted — they're in the table above. "
       + "Funding, last 30 days (not included above): "
       + fund.map(function (x) { return (x.k === "bot" ? "Bot " : "You ") + signed(x.v); }).join(" · ") + ".";
