@@ -858,6 +858,8 @@
 <!-- Will anything fire? - added 24 Sep 2026, covers all four strategies incl. Dip Buy -->
 <section id="fr" class="fr">
 <style>
+#radar-wrap,h2:has(+#radar-wrap),#radar-wrap+.note{display:none!important}
+.wrap>.fr{padding:0;margin:28px 0 0;max-width:none}
 .fr{max-width:820px;margin:28px auto 40px;padding:0 16px;font-family:inherit;font-size:14px;line-height:1.5;color:var(--ink,#e6edf3)}
 .fr h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3,#8b949e);margin:0 0 4px;font-weight:600}
 .fr .sub{color:var(--ink-2,#8b949e);font-size:12.5px;margin:0 0 10px;max-width:62ch}
@@ -891,6 +893,8 @@
 </section>
 <script>
 (function(){
+// Old % radar is hidden; this section takes its place on the page.
+var rw=document.getElementById("radar-wrap");if(rw){var ph=rw.previousElementSibling,nt=rw.nextElementSibling;[ph,rw,nt].forEach(function(e){if(e&&(e===rw||e.tagName==="H2"||String(e.className).indexOf("note")>-1))e.style.display="none"});var me=document.getElementById("fr");if(me)rw.parentNode.insertBefore(me,rw)}
 // Coin lists mirror signals.py as of 24 Sep 2026. Change them there, change them here.
 var C1D=["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","AVAX","ZEC","XLM","TRX","HBAR","kSHIB","ALGO","ICP","ATOM","LINK","NEAR","SUI","INJ","OP","AR","ENA"];
 var C4H=["BTC","XRP","TRUMP","PENGU","BERA","MORPHO"];
