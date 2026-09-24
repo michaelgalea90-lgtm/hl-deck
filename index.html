@@ -259,6 +259,16 @@
     </div>
   </div>
 
+  <h2 id="rp-h" hidden>Realised profit / loss <span class="qual">— closed trades, after fees</span></h2>
+  <div id="rp" hidden>
+    <div class="tiles" id="rp-tiles"></div>
+    <div id="rp-wrap" style="margin-top:12px"></div>
+    <div class="note" id="rp-note">
+      Money actually banked from closed (or part-closed) trades, after trading fees.
+      Open trades aren't counted here — they're in the table above. Funding payments are shown separately.
+    </div>
+  </div>
+
   <h2 id="gmx-h" hidden>Your GMX positions <span class="qual">— Arbitrum, same wallet</span></h2>
   <div id="gmx" hidden>
     <div class="note" id="gmx-sum"></div>
@@ -509,8 +519,164 @@
       document.getElementById("acct").hidden = false;
       drawBot(r[1]);
       drawAccount(mine.state, mine.total, r[1] && r[1].state, botStrat);
+      loadRealised(addr, sub);   // never throws - trouble shows in its own section
       return loadGmx(addr);   // never throws - GMX trouble shows in its own section
     });
+  }
+
+  // ---------- realised P/L ----------
+  // Read-only. Every fill Hyperliquid reports carries closedPnl (profit or
+  // loss banked by that fill) and fee. Realised = sum(closedPnl) - sum(fee).
+  // Fills are fetched in pages of up to 2000, newest window last.
+  var RP_DAYS = 90, DAY = 86400000;
+  var RP_TAGS = { d1: "1D", "44": "4H", "11": "1H", d9: "Dip" };
+
+  function fillsSince(user, start) {
+    var out = [];
+    function page(from) {
+      return hl({ type: "userFillsByTime", user: user, startTime: from, aggregateByTime: true })
+        .then(function (f) {
+          f = Array.isArray(f) ? f : [];
+          out = out.concat(f);
+          if (f.length >= 2000) {
+            var last = Math.max.apply(null, f.map(function (x) { return +x.time; }));
+            if (last > from) return page(last + 1);
+          }
+          return out;
+        });
+    }
+    return page(start);
+  }
+
+  function fundingSince(user, start) {
+    return hl({ type: "userFunding", user: user, startTime: start })
+      .then(function (f) { return Array.isArray(f) ? f : []; })
+      .catch(function () { return []; });
+  }
+
+  function sydMidnight() {
+    // start of today in Sydney, as a UTC timestamp
+    var now = new Date();
+    var parts = new Intl.DateTimeFormat("en-AU", { timeZone: "Australia/Sydney",
+      year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit",
+      hourCycle: "h23" }).formatToParts(now);
+    var g = {}; parts.forEach(function (p) { g[p.type] = p.value; });
+    var mins = (+g.hour) * 60 + (+g.minute);
+    return now.getTime() - mins * 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
+  }
+
+  // group a user's fills into closed trades: one row per order that banked P/L
+  function closes(fills, who) {
+    var by = {};
+    fills.forEach(function (f) {
+      var cp = parseFloat(f.closedPnl || 0);
+      var d = f.dir || "";
+      if (!cp && d.indexOf("Close") !== 0 && d.indexOf(">") < 0) return;
+      var k = who + ":" + (f.oid || f.hash || f.time);
+      var r = by[k] || (by[k] = { who: who, coin: f.coin, dir: d, time: 0, sz: 0,
+                                  pxsz: 0, pnl: 0, fee: 0, cloid: f.cloid });
+      var sz = Math.abs(parseFloat(f.sz || 0));
+      r.sz += sz; r.pxsz += sz * parseFloat(f.px || 0);
+      r.pnl += cp; r.fee += parseFloat(f.fee || 0);
+      r.time = Math.max(r.time, +f.time);
+    });
+    return Object.keys(by).map(function (k) { return by[k]; });
+  }
+
+  function sumPnl(fills, from) {
+    var t = 0;
+    fills.forEach(function (f) {
+      if (+f.time >= from) t += parseFloat(f.closedPnl || 0) - parseFloat(f.fee || 0);
+    });
+    return t;
+  }
+  function sumFunding(fund, from) {
+    var t = 0;
+    fund.forEach(function (f) {
+      if (+f.time >= from) t += parseFloat((f.delta && f.delta.usdc) || 0);
+    });
+    return t;
+  }
+
+  function loadRealised(main, sub) {
+    var start = Date.now() - RP_DAYS * DAY;
+    var who = [{ k: "you", a: main }];
+    if (sub) who.push({ k: "bot", a: sub });
+    return Promise.all(who.map(function (w) {
+      return Promise.all([fillsSince(w.a, start), fundingSince(w.a, start)])
+        .then(function (r) { return { k: w.k, fills: r[0], fund: r[1] }; });
+    })).then(drawRealised).catch(function (e) {
+      document.getElementById("rp-h").hidden = false;
+      document.getElementById("rp").hidden = false;
+      document.getElementById("rp-tiles").textContent = "";
+      var w = document.getElementById("rp-wrap");
+      w.textContent = "";
+      w.appendChild(el("div", "msg err", "Couldn't load closed trades: " + e.message));
+    });
+  }
+
+  function drawRealised(acc) {
+    document.getElementById("rp-h").hidden = false;
+    document.getElementById("rp").hidden = false;
+    var now = Date.now();
+    var periods = [
+      { k: "Today", from: sydMidnight() },
+      { k: "7 days", from: now - 7 * DAY },
+      { k: "30 days", from: now - 30 * DAY },
+      { k: RP_DAYS + " days", from: now - RP_DAYS * DAY }
+    ];
+    var box = document.getElementById("rp-tiles");
+    box.textContent = "";
+    periods.forEach(function (p) {
+      var parts = acc.map(function (a) { return { k: a.k, v: sumPnl(a.fills, p.from) }; });
+      var tot = parts.reduce(function (s, x) { return s + x.v; }, 0);
+      var t = el("div", "tile");
+      t.appendChild(el("div", "k", p.k));
+      t.appendChild(el("div", "v " + (tot >= 0 ? "up" : "down"), signed(tot)));
+      t.appendChild(el("div", "sub", parts.map(function (x) {
+        return (x.k === "bot" ? "Bot " : "You ") + signed(x.v); }).join(" · ")));
+      box.appendChild(t);
+    });
+
+    // table of the most recent closed trades
+    var rows = [];
+    acc.forEach(function (a) { rows = rows.concat(closes(a.fills, a.k)); });
+    rows.sort(function (a, b) { return b.time - a.time; });
+    var wrap = document.getElementById("rp-wrap");
+    wrap.textContent = "";
+    var fund = acc.map(function (a) { return { k: a.k, v: sumFunding(a.fund, now - 30 * DAY) }; });
+    if (!rows.length) {
+      wrap.appendChild(el("div", "msg", "No closed trades in the last " + RP_DAYS + " days yet."));
+    } else {
+      var sc = el("div", "scroller"), tb = el("table"), hd = el("thead"), hr = el("tr");
+      ["Coin", "Closed", "Size", "Exit", "Fees", "Realised"].forEach(function (h) {
+        hr.appendChild(el("th", null, h)); });
+      hd.appendChild(hr); tb.appendChild(hd);
+      var body = el("tbody");
+      rows.slice(0, 25).forEach(function (r) {
+        var tr = el("tr"), c = el("td"), net = r.pnl - r.fee;
+        c.appendChild(el("span", "coin", r.coin));
+        if (r.who === "bot") {
+          var tag = r.cloid && r.cloid.length === 34 && RP_TAGS[r.cloid.slice(2, 4).toLowerCase()];
+          c.appendChild(el("span", "tag", tag ? "bot · " + tag : "bot"));
+        }
+        tr.appendChild(c);
+        tr.appendChild(el("td", "num", new Date(r.time).toLocaleString([], {
+          day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })));
+        tr.appendChild(el("td", "num", px(r.sz)));
+        tr.appendChild(el("td", "num", r.sz ? px(r.pxsz / r.sz) : "—"));
+        tr.appendChild(el("td", "num", money(r.fee)));
+        tr.appendChild(el("td", "num " + (net >= 0 ? "up" : "down"), signed(net)));
+        body.appendChild(tr);
+      });
+      tb.appendChild(body); sc.appendChild(tb); wrap.appendChild(sc);
+      if (rows.length > 25) wrap.appendChild(el("div", "note", "Showing the latest 25 of " + rows.length + "."));
+    }
+    document.getElementById("rp-note").textContent =
+      "Money actually banked from closed (or part-closed) trades, after trading fees. "
+      + "Open trades aren't counted — they're in the table above. "
+      + "Funding, last 30 days (not included above): "
+      + fund.map(function (x) { return (x.k === "bot" ? "Bot " : "You ") + signed(x.v); }).join(" · ") + ".";
   }
 
   // ---------- GMX (Arbitrum) ----------
