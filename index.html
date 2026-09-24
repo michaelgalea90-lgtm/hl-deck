@@ -120,6 +120,8 @@
   .meter > i { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
   .meter.over > i { background: var(--warn); }
 
+  .rp-list > summary { cursor: pointer; font-size: 13px; color: var(--ink-2); padding: 8px 2px; list-style: revert; }
+  .rp-list[open] > summary { margin-bottom: 6px; }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
   .tag { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; background: var(--accent); color: var(--bg, #fff); vertical-align: 1px; }
   .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
@@ -259,7 +261,7 @@
     </div>
   </div>
 
-  <h2 id="rp-h" hidden>Realised profit / loss <span class="qual">— closed trades, after fees</span></h2>
+  <h2 id="rp-h" hidden>Realised profit / loss <span class="qual">— closed trades only, after fees (no open-trade P/L)</span></h2>
   <div id="rp" hidden>
     <div class="tiles" id="rp-tiles"></div>
     <div id="rp-wrap" style="margin-top:12px"></div>
@@ -669,8 +671,14 @@
         tr.appendChild(el("td", "num " + (net >= 0 ? "up" : "down"), signed(net)));
         body.appendChild(tr);
       });
-      tb.appendChild(body); sc.appendChild(tb); wrap.appendChild(sc);
-      if (rows.length > 25) wrap.appendChild(el("div", "note", "Showing the latest 25 of " + rows.length + "."));
+      tb.appendChild(body); sc.appendChild(tb);
+      // collapsed by default - the tiles above are the summary
+      var det = el("details", "rp-list");
+      var sm = el("summary", null, "Closed trades (" + rows.length + ") — tap to show");
+      det.appendChild(sm);
+      det.appendChild(sc);
+      if (rows.length > 25) det.appendChild(el("div", "note", "Showing the latest 25 of " + rows.length + "."));
+      wrap.appendChild(det);
     }
     document.getElementById("rp-note").textContent =
       "Money actually banked from closed (or part-closed) trades, after trading fees. "
