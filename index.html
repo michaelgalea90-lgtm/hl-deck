@@ -498,7 +498,7 @@
     ]).then(function (r) {
       // which strategy owns each bot position: the bot writes it into the
       // first byte of every order id, and the stop order carries it
-      var TAGS = { d1: "1D", "44": "4H", "11": "1H" }, botStrat = {};
+      var TAGS = { d1: "1D", "44": "4H", "11": "1H", d9: "DIP" }, botStrat = {};
       (r[2] || []).forEach(function (o) {
         var t = o.cloid && o.cloid.length === 34 && TAGS[o.cloid.slice(2, 4).toLowerCase()];
         if (t && o.reduceOnly) botStrat[o.coin] = t;
@@ -897,7 +897,7 @@
 var rw=document.getElementById("radar-wrap");if(rw){var ph=rw.previousElementSibling,nt=rw.nextElementSibling;[ph,rw,nt].forEach(function(e){if(e&&(e===rw||e.tagName==="H2"||String(e.className).indexOf("note")>-1))e.style.display="none"});var me=document.getElementById("fr");if(me)rw.parentNode.insertBefore(me,rw)}
 // Coin lists mirror signals.py as of 24 Sep 2026. Change them there, change them here.
 var C1D=["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","AVAX","ZEC","XLM","TRX","HBAR","kSHIB","ALGO","ICP","ATOM","LINK","NEAR","SUI","INJ","OP","AR","ENA"];
-var C4H=["BTC","XRP","TRUMP","PENGU","BERA","MORPHO"];
+var C4H=[]; // 4H Pullback retired 24 Sep 2026 (COINS_4H is empty in signals.py)
 var C1H=["ETH","AVAX","SOL","ZEC","XRP","MEGA","WLD","VVV","ENA"];
 function hl(coin,iv,days){var e=Date.now();return fetch("https://api.hyperliquid.xyz/info",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({type:"candleSnapshot",req:{coin:coin,interval:iv,startTime:e-days*86400000,endTime:e}})}).then(function(r){return r.json()}).then(function(j){if(!Array.isArray(j)||j.length<3)return null;var o=j.map(function(x){return{h:+x.h,l:+x.l,c:+x.c}});o.pop();return o}).catch(function(){return null})}
 function sma(a,n){if(a.length<n)return null;var s=0;for(var i=a.length-n;i<a.length;i++)s+=a[i];return s/n}
@@ -934,7 +934,7 @@ function run(){var dCoins=Array.from(new Set(C1D.concat(C4H,C1H)));
   C1H.forEach(function(c){if(D[c]&&H1[c])o1.push(oneH(c,D[c],H1[c]))});
   var dailyAt="checks daily at "+localHour(0);
   var fourAt="checks at "+[0,4,8,12,16,20].map(localHour).join(", ");
-  var cards=[card("1 Day \u00b7 breakout",dailyAt,bo),card("Dip Buy \u00b7 buys the panic",dailyAt,dp),card("4 Hour \u00b7 pullback",fourAt,f4),card("1 Hour \u00b7 breakout","checks every hour",o1)];
+  var cards=[card("1 Day \u00b7 breakout",dailyAt,bo),card("Dip Buy \u00b7 buys the panic",dailyAt,dp),card("1 Hour \u00b7 breakout","checks every hour",o1)];
   document.getElementById("fr-body").innerHTML=cards.map(function(k){return k.html}).join("");
   var ready=[],best=null;cards.forEach(function(k){k.rows.forEach(function(r){var f=r.met/r.rules.length;if(r.met===r.rules.length)ready.push(r.coin+" ("+k.title.split(" \u00b7")[0]+")");else if(!best||f>best.f)best={f:f,r:r,k:k}})});
   var s=ready.length?'<b>Ready to fire:</b> '+ready.join(", "):'<b>Nothing ready to fire.</b>'+(best?' Closest: <b>'+best.r.coin+'</b> on the '+best.k.title.split(" \u00b7")[0]+' \u2014 '+best.r.met+' of '+best.r.rules.length+' rules met.':'');
@@ -1007,7 +1007,7 @@ function run(){var sum=document.getElementById("lt-sum"),box=document.getElement
   sum.className="sum"+(issues.length?" warn":"");
   sum.innerHTML=issues.length?"<b>"+issues.length+" thing"+(issues.length>1?"s":"")+" to look at:</b><br>"+issues.join("<br>"):"<b>All checks pass.</b> Every open trade has a stop, sizes match your risk settings, and entries match the signals.";
   var sh='<div class="tw"><table><thead><tr><th>Strategy</th><th>Closed trades</th><th>Wins</th><th>Avg result</th><th>Backtest expects</th></tr></thead><tbody>';
-  ["1D","DIP","4H","1H"].forEach(function(s){var c=score[s]||{n:0,w:0,r:0},bt=BT[s];sh+="<tr><td>"+NAME[s]+"</td><td>"+c.n+"</td><td>"+(c.n?Math.round(100*c.w/c.n)+"%":"\u2014")+"</td><td>"+(c.n?rf(c.r/c.n):"\u2014")+"</td><td>"+bt.w+"% wins \u00b7 "+rf(bt.r)+(c.n<20?" <small>compare after ~20 trades</small>":"")+"</td></tr>"});
+  ["1D","DIP","1H"].forEach(function(s){var c=score[s]||{n:0,w:0,r:0},bt=BT[s];sh+="<tr><td>"+NAME[s]+"</td><td>"+c.n+"</td><td>"+(c.n?Math.round(100*c.w/c.n)+"%":"\u2014")+"</td><td>"+(c.n?rf(c.r/c.n):"\u2014")+"</td><td>"+bt.w+"% wins \u00b7 "+rf(bt.r)+(c.n<20?" <small>compare after ~20 trades</small>":"")+"</td></tr>"});
   box.innerHTML='<div class="tw"><table><thead><tr><th>Trade</th><th>Strategy</th><th>Opened</th><th>Entry vs signal</th><th>Risk taken</th><th>Stop</th><th>Result</th></tr></thead><tbody>'+(rows||'<tr><td colspan="7">No bot trades yet.</td></tr>')+"</tbody></table></div>"+sh+"</tbody></table></div>";
   document.getElementById("lt-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". R = results in multiples of the risk taken: +1R means it made what it risked.";
  }).catch(function(e){document.getElementById("lt-sum").textContent="Could not load the bot's trades: "+e})}
