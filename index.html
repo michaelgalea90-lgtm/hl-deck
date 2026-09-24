@@ -854,5 +854,91 @@
 })();
 </script>
 
+
+<!-- Will anything fire? - added 24 Sep 2026, covers all four strategies incl. Dip Buy -->
+<section id="fr" class="fr">
+<style>
+.fr{max-width:820px;margin:28px auto 40px;padding:0 16px;font-family:inherit;font-size:14px;line-height:1.5;color:var(--ink,#e6edf3)}
+.fr h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3,#8b949e);margin:0 0 4px;font-weight:600}
+.fr .sub{color:var(--ink-2,#8b949e);font-size:12.5px;margin:0 0 10px;max-width:62ch}
+.fr .key{display:flex;gap:10px;font-size:12px;color:var(--ink-3,#8b949e);margin:0 0 12px;flex-wrap:wrap;align-items:center}
+.fr .sum{border:1px solid var(--line,#30363d);border-left:4px solid #2962FF;background:var(--surface,#0f1520);border-radius:8px;padding:12px 14px;font-size:15px;margin:0 0 16px}
+.fr .sum b{color:var(--ink,#fff)}
+.fr .grp{border:1px solid var(--line,#30363d);border-radius:8px;margin:0 0 14px;overflow:hidden}
+.fr .gh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;padding:9px 12px;background:var(--surface-2,#161b22);border-bottom:1px solid var(--line,#30363d)}
+.fr .gh b{font-size:14px}
+.fr .gh span{font-size:12px;color:var(--ink-3,#8b949e)}
+.fr .row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line-soft,#21262d);flex-wrap:wrap;background:var(--surface,transparent)}
+.fr .row:last-child{border-bottom:0}
+.fr .coin{width:64px;font-weight:600}
+.fr .dir{font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:4px;min-width:44px;text-align:center}
+.fr .L{background:rgba(41,98,255,.18);color:#7da2ff}
+.fr .S{background:rgba(255,109,0,.18);color:#ff9a4d}
+.fr .N{background:var(--surface-2,#21262d);color:var(--ink-3,#6e7681)}
+.fr .pills{display:flex;gap:5px;flex-wrap:wrap;flex:1;min-width:210px}
+.fr .p{font-size:11.5px;padding:2px 9px;border-radius:999px;border:1px solid var(--line,#30363d);color:var(--ink-3,#7d8590);white-space:nowrap}
+.fr .p.ok{background:#2962FF;border-color:#2962FF;color:#fff}
+.fr .st{font-size:12px;color:var(--ink-3,#8b949e);min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
+.fr .st.go{color:#fff;background:#2962FF;border-radius:5px;padding:2px 8px;font-weight:700;text-align:center}
+.fr .note{font-size:11.5px;color:var(--ink-3,#6e7681);margin:6px 0 0}
+</style>
+<h2>Will anything fire?</h2>
+<p class="sub">Each box is one rule. A strategy only trades when <b>every box on a row is blue</b>. Checked on the last closed candle, the same way the bot does.</p>
+<div class="key"><span class="p ok">rule met</span><span class="p">not yet</span><span class="dir L">LONG</span><span class="dir S">SHORT</span></div>
+<div id="fr-sum" class="sum">Checking live prices&hellip;</div>
+<div id="fr-body"></div>
+<p class="note" id="fr-when"></p>
+</section>
+<script>
+(function(){
+// Coin lists mirror signals.py as of 24 Sep 2026. Change them there, change them here.
+var C1D=["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","AVAX","ZEC","XLM","TRX","HBAR","kSHIB","ALGO","ICP","ATOM","LINK","NEAR","SUI","INJ","OP","AR","ENA"];
+var C4H=["BTC","XRP","TRUMP","PENGU","BERA","MORPHO"];
+var C1H=["ETH","AVAX","SOL","ZEC","XRP","MEGA","WLD","VVV","ENA"];
+function hl(coin,iv,days){var e=Date.now();return fetch("https://api.hyperliquid.xyz/info",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({type:"candleSnapshot",req:{coin:coin,interval:iv,startTime:e-days*86400000,endTime:e}})}).then(function(r){return r.json()}).then(function(j){if(!Array.isArray(j)||j.length<3)return null;var o=j.map(function(x){return{h:+x.h,l:+x.l,c:+x.c}});o.pop();return o}).catch(function(){return null})}
+function sma(a,n){if(a.length<n)return null;var s=0;for(var i=a.length-n;i<a.length;i++)s+=a[i];return s/n}
+function emaS(a,n){var k=2/(n+1),p=a[0],o=[p];for(var i=1;i<a.length;i++){p=a[i]*k+p*(1-k);o.push(p)}return o}
+function rsiS(c,n){var o=[null],ag=0,al=0;for(var i=1;i<c.length;i++){var d=c[i]-c[i-1],g=d>0?d:0,l=d<0?-d:0;if(i<=n){ag+=g/n;al+=l/n;o.push(i===n?(al===0?100:100-100/(1+ag/al)):null)}else{ag=(ag*(n-1)+g)/n;al=(al*(n-1)+l)/n;o.push(al===0?100:100-100/(1+ag/al))}}return o}
+function adx(r,n){var len=r.length,pd=[],nd=[],tr=[];for(var i=0;i<len;i++){if(i===0){pd.push(0);nd.push(0);tr.push(r[i].h-r[i].l);continue}var up=r[i].h-r[i-1].h,dn=r[i-1].l-r[i].l;pd.push(up>dn&&up>0?up:0);nd.push(dn>up&&dn>0?dn:0);tr.push(Math.max(r[i].h-r[i].l,Math.abs(r[i].h-r[i-1].c),Math.abs(r[i].l-r[i-1].c)))}
+ function w(a){var p=null,o=[];for(var i=0;i<len;i++){if(i===n){var s=0;for(var k=1;k<=n;k++)s+=a[k];p=s}else if(i>n){p=p-p/n+a[i]}o.push(p)}return o}
+ var st=w(tr),sp=w(pd),sn=w(nd),p=null,cnt=0,sum=0;for(var j=0;j<len;j++){if(!st[j])continue;var a=100*sp[j]/st[j],b=100*sn[j]/st[j],s2=a+b,dx=s2>0?100*Math.abs(a-b)/s2:0;if(p===null){sum+=dx;cnt++;if(cnt===n)p=sum/n}else{p=(p*(n-1)+dx)/n}}return p}
+function pct(a,b){return (a/b-1)*100}
+function f1(x){return Math.abs(x).toFixed(1)+"%"}
+function localHour(utcH){var d=new Date();d.setUTCHours(utcH,0,0,0);return d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}).replace(" ","").toLowerCase()}
+function row(coin,dir,rules,extra){return {coin:coin,dir:dir,rules:rules,met:rules.filter(function(r){return r.ok}).length,extra:extra||0}}
+function daily(coin,d){var c=d.map(function(x){return x.c}),last=c[c.length-1],m200=sma(c,200);if(!m200)return null;var w=c.slice(-41,-1),hi=Math.max.apply(null,w),lo=Math.min.apply(null,w),up=last>m200,out={};
+ out.bo=up?row(coin,"L",[{t:"above 200-day",ok:true},{t:last>hi?"new 40-day high":"40-day high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}],pct(last,hi)):row(coin,"S",[{t:"below 200-day",ok:true},{t:last<lo?"new 40-day low":"40-day low \u00b7 "+f1(pct(last,lo))+" away",ok:last<lo}],-pct(last,lo));
+ var r2=rsiS(c.slice(-80),2);r2=r2[r2.length-1];
+ out.dip=row(coin,"L",[{t:up?"above 200-day":"below 200-day",ok:up},{t:"RSI(2) "+r2.toFixed(0)+" \u00b7 needs under 5",ok:r2<5}],-r2);return out}
+function fourH(coin,d,h){var dc=d.map(function(x){return x.c}),de=emaS(dc,200),L=dc.length,bull=dc[L-1]>de[L-1]&&de[L-1]>de[L-2],bear=dc[L-1]<de[L-1]&&de[L-1]<de[L-2];
+ var c=h.map(function(x){return x.c}),e20=emaS(c,20),e50=emaS(c,50),R=rsiS(c,14),n=c.length,last=c[n-1],r=R[n-1],A=adx(h,14),recent=R.slice(-9,-1);
+ if(bull)return row(coin,"L",[{t:"daily trend up",ok:true},{t:"short-term trend up",ok:last>e50[n-1]&&e20[n-1]>e50[n-1]},{t:"dip under 45",ok:recent.some(function(v){return v!=null&&v<45})},{t:"RSI back over 50",ok:r>=50},{t:"close over 20 EMA",ok:last>e20[n-1]},{t:"ADX "+A.toFixed(0)+" (18+)",ok:A>=18}]);
+ if(bear)return row(coin,"S",[{t:"daily trend down",ok:true},{t:"short-term trend down",ok:last<e50[n-1]&&e20[n-1]<e50[n-1]},{t:"pop over 55",ok:recent.some(function(v){return v!=null&&v>55})},{t:"RSI back under 50",ok:r<=50},{t:"close under 20 EMA",ok:last<e20[n-1]},{t:"ADX "+A.toFixed(0)+" (18+)",ok:A>=18}]);
+ return row(coin,"N",[{t:"no clear daily trend",ok:false}])}
+function oneH(coin,d,h){var dc=d.map(function(x){return x.c}),m=sma(dc,200);if(!m)return null;var up=dc[dc.length-1]>m;var c=h.map(function(x){return x.c}),last=c[c.length-1],hi=Math.max.apply(null,c.slice(-49,-1));
+ return row(coin,"L",[{t:up?"daily uptrend":"daily downtrend",ok:up},{t:last>hi?"new 48-hour high":"48-hour high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}],pct(last,hi))}
+function card(title,when,rows){rows=rows.filter(Boolean).sort(function(a,b){var fa=a.met/a.rules.length,fb=b.met/b.rules.length;return fb-fa||b.extra-a.extra});
+ var h='<div class="grp"><div class="gh"><b>'+title+'</b><span>'+when+'</span></div>';
+ rows.forEach(function(r){var all=r.met===r.rules.length;h+='<div class="row"><span class="coin">'+r.coin+'</span><span class="dir '+r.dir+'">'+(r.dir==="L"?"LONG":r.dir==="S"?"SHORT":"\u2014")+'</span><div class="pills">'+r.rules.map(function(x){return '<span class="p'+(x.ok?" ok":"")+'">'+x.t+'</span>'}).join("")+'</div><span class="st'+(all?" go":"")+'">'+(all?"READY":r.met+" of "+r.rules.length)+'</span></div>'});
+ return {html:h+'</div>',rows:rows,title:title}}
+function batch(list,fn){var out={},i=0;function next(){var ch=list.slice(i,i+6);i+=6;if(!ch.length)return Promise.resolve(out);return Promise.all(ch.map(function(c){return fn(c).then(function(v){out[c]=v})})).then(next)}return next()}
+function run(){var dCoins=Array.from(new Set(C1D.concat(C4H,C1H)));
+ batch(dCoins,function(c){return hl(c,"1d",420)}).then(function(D){return batch(C4H,function(c){return hl(c,"4h",90)}).then(function(H4){return batch(C1H,function(c){return hl(c,"1h",6)}).then(function(H1){
+  var bo=[],dp=[],f4=[],o1=[];
+  C1D.forEach(function(c){if(!D[c])return;var x=daily(c,D[c]);if(x){bo.push(x.bo);dp.push(x.dip)}});
+  C4H.forEach(function(c){if(D[c]&&H4[c])f4.push(fourH(c,D[c],H4[c]))});
+  C1H.forEach(function(c){if(D[c]&&H1[c])o1.push(oneH(c,D[c],H1[c]))});
+  var dailyAt="checks daily at "+localHour(0);
+  var fourAt="checks at "+[0,4,8,12,16,20].map(localHour).join(", ");
+  var cards=[card("1 Day \u00b7 breakout",dailyAt,bo),card("Dip Buy \u00b7 buys the panic",dailyAt,dp),card("4 Hour \u00b7 pullback",fourAt,f4),card("1 Hour \u00b7 breakout","checks every hour",o1)];
+  document.getElementById("fr-body").innerHTML=cards.map(function(k){return k.html}).join("");
+  var ready=[],best=null;cards.forEach(function(k){k.rows.forEach(function(r){var f=r.met/r.rules.length;if(r.met===r.rules.length)ready.push(r.coin+" ("+k.title.split(" \u00b7")[0]+")");else if(!best||f>best.f)best={f:f,r:r,k:k}})});
+  var s=ready.length?'<b>Ready to fire:</b> '+ready.join(", "):'<b>Nothing ready to fire.</b>'+(best?' Closest: <b>'+best.r.coin+'</b> on the '+best.k.title.split(" \u00b7")[0]+' \u2014 '+best.r.met+' of '+best.r.rules.length+' rules met.':'');
+  document.getElementById("fr-sum").innerHTML=s;
+  document.getElementById("fr-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". Refreshes every 10 minutes. Coin lists match signals.py as of 24 Sep 2026.";
+ })})}).catch(function(e){document.getElementById("fr-sum").textContent="Could not reach Hyperliquid. "+e})}
+run();setInterval(run,600000);
+})();
+</script>
 </body>
 </html>
