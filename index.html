@@ -215,6 +215,41 @@
     a VPN, or a blocker. Everything below is layout only until it connects.
   </div>
 
+  <h2>Strategies <span class="qual">— what the bot is running (as of 25 Sep 2026)</span></h2>
+  <div class="tiles" id="strat-tiles">
+    <div class="tile">
+      <div class="k">1 · 1D breakout longs <span class="pill live">LIVE</span></div>
+      <div class="sub">23 coins. Close above the 40-day high close and above the 200-day average. 3 ATR stop, 4 ATR trail. <strong>3% risk</strong>.</div>
+    </div>
+    <div class="tile">
+      <div class="k">2 · 1H breakout longs <span class="pill live">LIVE</span></div>
+      <div class="sub">9 coins. Close above the 96-hour high close. Gate: daily above 200-day <em>or</em> hourly 50-EMA over 200-EMA (bear-market rallies). 3 ATR stop, 5 ATR trail. <strong>1% risk</strong>.</div>
+    </div>
+    <div class="tile">
+      <div class="k">3 · Dip Buy <span class="pill live">LIVE</span></div>
+      <div class="sub">22 coins (1D list minus DOGE). RSI(2) under 5 while above the 200-day. Fixed 5 ATR stop; out on a close above the 10-day average or after 30 days. <strong>3% risk</strong>.</div>
+    </div>
+    <div class="tile">
+      <div class="k">4 · 1D shorts <span class="pill live" id="st-shorts">LIVE · checking BTC…</span></div>
+      <div class="sub">9 big coins only (BTC ETH ZEC SOL NEAR XRP DOGE LINK SUI). Mirror of #1, but only while BTC closes below its 200-day. Own 3 slots / 6% cap. <strong>2% risk</strong>.</div>
+    </div>
+    <div class="tile">
+      <div class="k">Paper only <span class="pill paper">FAKE MONEY</span></div>
+      <div class="sub">BTC 4H breakout · young-coin 1D breakout · crowd fade (OKX long/short extremes, BTC ETH SOL) · OI breakout (open interest +2% in 24h, BTC ETH SOL). Info only, never trade.</div>
+    </div>
+    <div class="tile">
+      <div class="k">Shared limits</div>
+      <div class="sub">10 long slots / 30% open risk shared by #1–#3. Shorts separate: 3 slots / 6%. Max 3 new orders per run, no chasing past 1.5%, daily loss stop 15%.</div>
+    </div>
+  </div>
+  <style>
+    .pill{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.3px;vertical-align:middle}
+    .pill.live{background:var(--up-sf,#E4F3E9);color:var(--up,#15803D);border:1px solid var(--up,#15803D)}
+    .pill.idle{background:var(--surface-2,#EDF1F2);color:var(--ink-3,#74858B);border:1px solid var(--line,#D8E0E2)}
+    .pill.paper{background:var(--surface-2,#EDF1F2);color:var(--ink-2,#47565B);border:1px dashed var(--line,#D8E0E2)}
+    #strat-tiles .sub{white-space:normal;line-height:1.35}
+  </style>
+
   <h2>Market <span class="qual">— alt-season gauge</span></h2>
   <div class="tiles" id="mkt-tiles">
     <div class="tile" id="t-others-tile">
@@ -1167,6 +1202,7 @@ function run(){var dCoins=Array.from(new Set(C1D.concat(C4H,C1H)));
  batch(dCoins,function(c){return hl(c,"1d",420)}).then(function(D){return batch(C4H,function(c){return hl(c,"4h",90)}).then(function(H4){return batch(C1H,function(c){return hl(c,"1h",26)}).then(function(H1){
   var bo=[],dp=[],f4=[],o1=[];
   if(D.BTC){var bc=D.BTC.map(function(x){return x.c}),bm=sma(bc,200);BTC_BEAR=!!bm&&bc[bc.length-1]<bm}
+  var sp=document.getElementById("st-shorts");if(sp){sp.textContent=BTC_BEAR?"LIVE · BTC below 200-day, shorts ON":"IDLE · BTC above 200-day";sp.className="pill "+(BTC_BEAR?"live":"idle")}
   C1D.forEach(function(c){if(!D[c])return;var x=daily(c,D[c]);if(x){bo.push(x.bo);if(CDIP.indexOf(c)>-1)dp.push(x.dip)}});
   C4H.forEach(function(c){if(D[c]&&H4[c])f4.push(fourH(c,D[c],H4[c]))});
   C1H.forEach(function(c){if(D[c]&&H1[c])o1.push(oneH(c,D[c],H1[c]))});
