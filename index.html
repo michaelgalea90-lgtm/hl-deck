@@ -241,7 +241,7 @@
   </div>
   <div class="note">
     <strong>Others dominance</strong> = every coin outside the top 10, as a share of the whole crypto market
-    (the same thing as TradingView's OTHERS.D, worked out from CoinGecko). Mike's rule: <strong>at 9% it's time to sell out of alts.</strong>
+    (the same thing as TradingView's OTHERS.D, worked out from CoinGecko). Mike's rule: <strong>at 13% it's time to sell out of alts</strong> (past cycle tops: ~13% in 2018 and 2024, ~14% May 2021, ~17% Jan 2022).
   </div>
 
   <h2>Your Hyperliquid account</h2>
@@ -1251,7 +1251,7 @@ run();setInterval(run,600000);
 (function(){
 // Market gauge: OTHERS dominance (= 100 - top-10 dominance, i.e. TradingView OTHERS.D),
 // BTC dominance and total cap, from CoinGecko's public /global endpoint.
-var SELL_AT=9.0, WARN_AT=8.0, METER_MAX=12.0;
+var SELL_AT=13.0, WARN_AT=11.0, METER_MAX=17.0;
 function $(id){return document.getElementById(id)}
 function fmtT(n){return n>=1e12?"$"+(n/1e12).toFixed(2)+"T":"$"+(n/1e9).toFixed(0)+"B"}
 function run(){
@@ -1263,7 +1263,7 @@ function run(){
   var gap=SELL_AT-others;
   $("t-others").textContent=others.toFixed(2)+"%";
   $("t-others").style.color=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--up)";
-  $("t-others-sub").textContent=others>=SELL_AT?"AT/ABOVE the 9% sell line":others>=WARN_AT?"close to the 9% sell line":"below the 9% sell line";
+  $("t-others-sub").textContent=others>=SELL_AT?"AT/ABOVE the 13% sell line":others>=WARN_AT?"close to the 13% sell line":"below the 13% sell line";
   var m=$("t-others-meter");m.className="meter"+(others>=WARN_AT?" over":"");m.firstElementChild.style.width=Math.min(100,others/METER_MAX*100).toFixed(1)+"%";
   $("t-btcd").textContent=btcd.toFixed(1)+"%";
   $("t-btcd-sub").textContent="ETH "+(p.eth||0).toFixed(1)+"% · stables "+(((p.usdt||0)+(p.usdc||0))).toFixed(1)+"%";
@@ -1272,7 +1272,7 @@ function run(){
   $("t-total-sub").style.color=chg>=0?"var(--up)":"var(--down)";
   $("t-others-gap").textContent=(gap>=0?"":"+")+(-gap).toFixed(2)+" pts";
   $("t-others-gap").style.color=gap<=0?"var(--down)":gap<=1?"var(--warn)":"var(--ink)";
-  $("t-others-gap-sub").textContent=gap>0?"below 9% · alts still on":"past 9% · sell-alts zone";
+  $("t-others-gap-sub").textContent=gap>0?"below 13% · alts still on":"past 13% · sell-alts zone";
   $("t-others-tile").style.borderColor=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--line)";
  }).catch(function(e){$("t-others-sub").textContent="CoinGecko unreachable ("+e.message+")"});
 }
