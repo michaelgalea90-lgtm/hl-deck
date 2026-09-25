@@ -301,7 +301,7 @@
 
   var API = "https://api.hyperliquid.xyz/info";
   var COINS_1D = ["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","AVAX","ZEC","XLM","TRX","HBAR","kSHIB","ALGO","ICP","ATOM","LINK","NEAR","SUI","INJ","OP","AR","ENA"];
-  var COINS_1H = ["ETH","AVAX","SOL","ZEC","XRP","MEGA","WLD","VVV","ENA"];
+  var COINS_1H = ["AVAX","ZEC","XRP","MEGA","WLD","VVV","ENA"];
   // mirrors shorts_1d / shorts_1h in the bot's config.json
   var SHORTS = { "1D": true, "1H": false };
   var KEY = "hl-deck-addr";
@@ -1089,10 +1089,14 @@
 (function(){
 // Old % radar is hidden; this section takes its place on the page.
 var rw=document.getElementById("radar-wrap");if(rw){var ph=rw.previousElementSibling,nt=rw.nextElementSibling;[ph,rw,nt].forEach(function(e){if(e&&(e===rw||e.tagName==="H2"||String(e.className).indexOf("note")>-1))e.style.display="none"});var me=document.getElementById("fr");if(me)rw.parentNode.insertBefore(me,rw)}
-// Coin lists mirror signals.py as of 24 Sep 2026. Change them there, change them here.
+// Coin lists mirror signals.py as of 25 Sep 2026. Change them there, change them here.
 var C1D=["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","AVAX","ZEC","XLM","TRX","HBAR","kSHIB","ALGO","ICP","ATOM","LINK","NEAR","SUI","INJ","OP","AR","ENA"];
 var C4H=[]; // 4H Pullback retired 24 Sep 2026 (COINS_4H is empty in signals.py)
-var C1H=["ETH","AVAX","SOL","ZEC","XRP","MEGA","WLD","VVV","ENA"];
+var C1H=["AVAX","ZEC","XRP","MEGA","WLD","VVV","ENA"]; // ETH, SOL removed 25 Sep 2026
+var CDIP=C1D.filter(function(c){return c!=="DOGE"}); // Dip = 1D list minus DOGE
+// 1D shorts: these big coins only, and only while BTC is below its 200-day average
+var CSHORT=["BTC","ETH","ZEC","SOL","NEAR","XRP","DOGE","LINK","SUI"];
+var BTC_BEAR=false;
 function hl(coin,iv,days){var e=Date.now();return fetch("https://api.hyperliquid.xyz/info",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({type:"candleSnapshot",req:{coin:coin,interval:iv,startTime:e-days*86400000,endTime:e}})}).then(function(r){return r.json()}).then(function(j){if(!Array.isArray(j)||j.length<3)return null;var o=j.map(function(x){return{h:+x.h,l:+x.l,c:+x.c}});o.pop();return o}).catch(function(){return null})}
 function sma(a,n){if(a.length<n)return null;var s=0;for(var i=a.length-n;i<a.length;i++)s+=a[i];return s/n}
 function emaS(a,n){var k=2/(n+1),p=a[0],o=[p];for(var i=1;i<a.length;i++){p=a[i]*k+p*(1-k);o.push(p)}return o}
@@ -1105,7 +1109,10 @@ function f1(x){return Math.abs(x).toFixed(1)+"%"}
 function localHour(utcH){var d=new Date();d.setUTCHours(utcH,0,0,0);return d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}).replace(" ","").toLowerCase()}
 function row(coin,dir,rules,extra){return {coin:coin,dir:dir,rules:rules,met:rules.filter(function(r){return r.ok}).length,extra:extra||0}}
 function daily(coin,d){var c=d.map(function(x){return x.c}),last=c[c.length-1],m200=sma(c,200);if(!m200)return null;var w=c.slice(-41,-1),hi=Math.max.apply(null,w),lo=Math.min.apply(null,w),up=last>m200,out={};
- out.bo=up?row(coin,"L",[{t:"above 200-day",ok:true},{t:last>hi?"new 40-day high":"40-day high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}],pct(last,hi)):row(coin,"S",[{t:"below 200-day",ok:true},{t:last<lo?"new 40-day low":"40-day low \u00b7 "+f1(pct(last,lo))+" away",ok:last<lo}],-pct(last,lo));
+ var lowPill={t:last<lo?"new 40-day low":"40-day low \u00b7 "+f1(pct(last,lo))+" away",ok:last<lo};
+ out.bo=up?row(coin,"L",[{t:"above 200-day",ok:true},{t:last>hi?"new 40-day high":"40-day high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}],pct(last,hi))
+  :CSHORT.indexOf(coin)>-1?row(coin,"S",[{t:"below 200-day",ok:true},{t:BTC_BEAR?"BTC below 200-day":"BTC above 200-day \u00b7 shorts off",ok:BTC_BEAR},lowPill],-pct(last,lo))
+  :row(coin,"-",[{t:"below 200-day \u00b7 no long; shorts are big coins only",ok:false}],-99);
  var r2=rsiS(c.slice(-80),2);r2=r2[r2.length-1];
  out.dip=row(coin,"L",[{t:up?"above 200-day":"below 200-day",ok:up},{t:"RSI(2) "+r2.toFixed(0)+" \u00b7 needs under 5",ok:r2<5}],-r2);return out}
 function fourH(coin,d,h){var dc=d.map(function(x){return x.c}),de=emaS(dc,200),L=dc.length,bull=dc[L-1]>=de[L-1];
@@ -1123,7 +1130,8 @@ function batch(list,fn){var out={},i=0;function next(){var ch=list.slice(i,i+6);
 function run(){var dCoins=Array.from(new Set(C1D.concat(C4H,C1H)));
  batch(dCoins,function(c){return hl(c,"1d",420)}).then(function(D){return batch(C4H,function(c){return hl(c,"4h",90)}).then(function(H4){return batch(C1H,function(c){return hl(c,"1h",6)}).then(function(H1){
   var bo=[],dp=[],f4=[],o1=[];
-  C1D.forEach(function(c){if(!D[c])return;var x=daily(c,D[c]);if(x){bo.push(x.bo);dp.push(x.dip)}});
+  if(D.BTC){var bc=D.BTC.map(function(x){return x.c}),bm=sma(bc,200);BTC_BEAR=!!bm&&bc[bc.length-1]<bm}
+  C1D.forEach(function(c){if(!D[c])return;var x=daily(c,D[c]);if(x){bo.push(x.bo);if(CDIP.indexOf(c)>-1)dp.push(x.dip)}});
   C4H.forEach(function(c){if(D[c]&&H4[c])f4.push(fourH(c,D[c],H4[c]))});
   C1H.forEach(function(c){if(D[c]&&H1[c])o1.push(oneH(c,D[c],H1[c]))});
   var dailyAt="checks daily at "+localHour(0);
@@ -1133,7 +1141,7 @@ function run(){var dCoins=Array.from(new Set(C1D.concat(C4H,C1H)));
   var ready=[],best=null;cards.forEach(function(k){k.rows.forEach(function(r){var f=r.met/r.rules.length;if(r.met===r.rules.length)ready.push(r.coin+" ("+k.title.split(" \u00b7")[0]+")");else if(!best||f>best.f)best={f:f,r:r,k:k}})});
   var s=ready.length?'<b>Ready to fire:</b> '+ready.join(", "):'<b>Nothing ready to fire.</b>'+(best?' Closest: <b>'+best.r.coin+'</b> on the '+best.k.title.split(" \u00b7")[0]+' \u2014 '+best.r.met+' of '+best.r.rules.length+' rules met.':'');
   document.getElementById("fr-sum").innerHTML=s;
-  document.getElementById("fr-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". Refreshes every 10 minutes. Coin lists match signals.py as of 24 Sep 2026.";
+  document.getElementById("fr-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". Refreshes every 10 minutes. Coin lists match signals.py as of 25 Sep 2026. BTC is "+(BTC_BEAR?"below":"above")+" its 200-day average, so 1D shorts are "+(BTC_BEAR?"ON":"OFF")+".";
  })})}).catch(function(e){document.getElementById("fr-sum").textContent="Could not reach Hyperliquid. "+e})}
 run();setInterval(run,600000);
 })();
