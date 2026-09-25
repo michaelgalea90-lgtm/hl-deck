@@ -241,7 +241,7 @@
   </div>
   <div class="note">
     <strong>Others dominance</strong> = every coin outside the top 10, as a share of the whole crypto market
-    (the same thing as TradingView's OTHERS.D, worked out from CoinGecko). Mike's rule: <strong>at 13% it's time to sell out of alts</strong> (past cycle tops: ~13% in 2018 and 2024, ~14% May 2021, ~17% Jan 2022).
+    (TradingView's OTHERS.D, worked out from CoinGecko and adjusted −0.5 pt so it matches TradingView; calibrated 25 Sep 2026). Mike's rule: <strong>at 13% it's time to sell out of alts</strong> (past cycle tops: ~13% in 2018 and 2024, ~14% May 2021, ~17% Jan 2022).
   </div>
 
   <h2>Your Hyperliquid account</h2>
@@ -1252,6 +1252,9 @@ run();setInterval(run,600000);
 // Market gauge: OTHERS dominance (= 100 - top-10 dominance, i.e. TradingView OTHERS.D),
 // BTC dominance and total cap, from CoinGecko's public /global endpoint.
 var SELL_AT=13.0, WARN_AT=11.0, METER_MAX=17.0;
+// CoinGecko's figure runs a little above TradingView's OTHERS.D (different total / top-10 basket).
+// Offset calibrated 25 Sep 2026: CoinGecko 8.93 vs TradingView 8.43. Re-check monthly.
+var TV_OFFSET=-0.50;
 function $(id){return document.getElementById(id)}
 function fmtT(n){return n>=1e12?"$"+(n/1e12).toFixed(2)+"T":"$"+(n/1e9).toFixed(0)+"B"}
 function run(){
@@ -1259,11 +1262,11 @@ function run(){
   var d=j.data,p=d.market_cap_percentage||{},top10=0,keys=Object.keys(p);
   keys.forEach(function(k){top10+=p[k]});
   if(keys.length<10||!top10)throw new Error("top-10 data missing");
-  var others=100-top10,btcd=p.btc||0,total=d.total_market_cap&&d.total_market_cap.usd,chg=d.market_cap_change_percentage_24h_usd;
+  var raw=100-top10,others=raw+TV_OFFSET,btcd=p.btc||0,total=d.total_market_cap&&d.total_market_cap.usd,chg=d.market_cap_change_percentage_24h_usd;
   var gap=SELL_AT-others;
   $("t-others").textContent=others.toFixed(2)+"%";
   $("t-others").style.color=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--up)";
-  $("t-others-sub").textContent=others>=SELL_AT?"AT/ABOVE the 13% sell line":others>=WARN_AT?"close to the 13% sell line":"below the 13% sell line";
+  $("t-others-sub").textContent=(others>=SELL_AT?"AT/ABOVE the 13% sell line":others>=WARN_AT?"close to the 13% sell line":"below the 13% sell line")+" · raw CoinGecko "+raw.toFixed(2)+"%";
   var m=$("t-others-meter");m.className="meter"+(others>=WARN_AT?" over":"");m.firstElementChild.style.width=Math.min(100,others/METER_MAX*100).toFixed(1)+"%";
   $("t-btcd").textContent=btcd.toFixed(1)+"%";
   $("t-btcd-sub").textContent="ETH "+(p.eth||0).toFixed(1)+"% · stables "+(((p.usdt||0)+(p.usdc||0))).toFixed(1)+"%";
