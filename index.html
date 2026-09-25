@@ -215,6 +215,35 @@
     a VPN, or a blocker. Everything below is layout only until it connects.
   </div>
 
+  <h2>Market <span class="qual">— alt-season gauge</span></h2>
+  <div class="tiles" id="mkt-tiles">
+    <div class="tile" id="t-others-tile">
+      <div class="k">Others dominance</div>
+      <div class="v" id="t-others">—</div>
+      <div class="sub" id="t-others-sub">loading…</div>
+      <div class="meter" id="t-others-meter"><i style="width:0%"></i></div>
+    </div>
+    <div class="tile">
+      <div class="k">BTC dominance</div>
+      <div class="v" id="t-btcd">—</div>
+      <div class="sub" id="t-btcd-sub">&nbsp;</div>
+    </div>
+    <div class="tile">
+      <div class="k">Total crypto market</div>
+      <div class="v" id="t-total">—</div>
+      <div class="sub" id="t-total-sub">&nbsp;</div>
+    </div>
+    <div class="tile">
+      <div class="k">Sell-alts line</div>
+      <div class="v" id="t-others-gap">—</div>
+      <div class="sub" id="t-others-gap-sub">&nbsp;</div>
+    </div>
+  </div>
+  <div class="note">
+    <strong>Others dominance</strong> = every coin outside the top 10, as a share of the whole crypto market
+    (the same thing as TradingView's OTHERS.D, worked out from CoinGecko). Mike's rule: <strong>at 9% it's time to sell out of alts.</strong>
+  </div>
+
   <h2>Your Hyperliquid account</h2>
   <div id="acct-setup" class="panel">
     <label class="fld" for="addr">Public wallet address — read-only. It cannot sign or move anything.</label>
@@ -1214,6 +1243,38 @@ function run(){var sum=document.getElementById("lt-sum"),box=document.getElement
   document.getElementById("lt-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". R = results in multiples of the risk taken: +1R means it made what it risked.";
  }).catch(function(e){document.getElementById("lt-sum").textContent="Could not load the bot's trades: "+e})}
 var me=document.getElementById("lt"),fr=document.getElementById("fr");if(me&&fr&&fr.parentNode)fr.parentNode.insertBefore(me,fr.nextSibling);
+run();setInterval(run,600000);
+})();
+</script>
+<script>
+(function(){
+// Market gauge: OTHERS dominance (= 100 - top-10 dominance, i.e. TradingView OTHERS.D),
+// BTC dominance and total cap, from CoinGecko's public /global endpoint.
+var SELL_AT=9.0, WARN_AT=8.0, METER_MAX=12.0;
+function $(id){return document.getElementById(id)}
+function fmtT(n){return n>=1e12?"$"+(n/1e12).toFixed(2)+"T":"$"+(n/1e9).toFixed(0)+"B"}
+function run(){
+ fetch("https://api.coingecko.com/api/v3/global").then(function(r){return r.json()}).then(function(j){
+  var d=j.data,p=d.market_cap_percentage||{},top10=0,keys=Object.keys(p);
+  keys.forEach(function(k){top10+=p[k]});
+  if(keys.length<10||!top10)throw new Error("top-10 data missing");
+  var others=100-top10,btcd=p.btc||0,total=d.total_market_cap&&d.total_market_cap.usd,chg=d.market_cap_change_percentage_24h_usd;
+  var gap=SELL_AT-others;
+  $("t-others").textContent=others.toFixed(2)+"%";
+  $("t-others").style.color=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--up)";
+  $("t-others-sub").textContent=others>=SELL_AT?"AT/ABOVE the 9% sell line":others>=WARN_AT?"close to the 9% sell line":"below the 9% sell line";
+  var m=$("t-others-meter");m.className="meter"+(others>=WARN_AT?" over":"");m.firstElementChild.style.width=Math.min(100,others/METER_MAX*100).toFixed(1)+"%";
+  $("t-btcd").textContent=btcd.toFixed(1)+"%";
+  $("t-btcd-sub").textContent="ETH "+(p.eth||0).toFixed(1)+"% · stables "+(((p.usdt||0)+(p.usdc||0))).toFixed(1)+"%";
+  $("t-total").textContent=total?fmtT(total):"—";
+  $("t-total-sub").textContent=chg==null?"":(chg>=0?"+":"")+chg.toFixed(1)+"% in 24h";
+  $("t-total-sub").style.color=chg>=0?"var(--up)":"var(--down)";
+  $("t-others-gap").textContent=(gap>=0?"":"+")+(-gap).toFixed(2)+" pts";
+  $("t-others-gap").style.color=gap<=0?"var(--down)":gap<=1?"var(--warn)":"var(--ink)";
+  $("t-others-gap-sub").textContent=gap>0?"below 9% · alts still on":"past 9% · sell-alts zone";
+  $("t-others-tile").style.borderColor=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--line)";
+ }).catch(function(e){$("t-others-sub").textContent="CoinGecko unreachable ("+e.message+")"});
+}
 run();setInterval(run,600000);
 })();
 </script>
