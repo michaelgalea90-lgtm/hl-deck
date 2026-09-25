@@ -1143,6 +1143,7 @@
 .fr .p{font-size:11.5px;padding:2px 9px;border-radius:999px;border:1px solid var(--line,#30363d);color:var(--ink-3,#7d8590);white-space:nowrap}
 .fr .p.ok{background:#2962FF;border-color:#2962FF;color:#fff}
 .fr .st{font-size:12px;color:var(--ink-3,#8b949e);min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
+.fr .row.held{opacity:.55}.fr .st.hold{color:var(--ink-2,#47856B);background:var(--surface-2,#EDF1F2);border-radius:5px;padding:2px 8px;font-weight:700;text-align:center}
 .fr .st.go{color:#fff;background:#2962FF;border-radius:5px;padding:2px 8px;font-weight:700;text-align:center}
 .fr .note{font-size:11.5px;color:var(--ink-3,#6e7681);margin:6px 0 0}
 </style>
@@ -1195,11 +1196,16 @@ function oneH(coin,d,h){var dc=d.map(function(x){return x.c}),m=sma(dc,200);if(!
  return row(coin,"L",[{t:gateTxt,ok:dUp||eUp},{t:last>hi?"new 96-hour high":"96-hour high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}],pct(last,hi))}
 function card(title,when,rows){rows=rows.filter(Boolean).sort(function(a,b){var fa=a.met/a.rules.length,fb=b.met/b.rules.length;return fb-fa||b.extra-a.extra});
  var h='<div class="grp"><div class="gh"><b>'+title+'</b><span>'+when+'</span></div>';
- rows.forEach(function(r){var all=r.met===r.rules.length;h+='<div class="row"><span class="coin">'+r.coin+'</span><span class="dir '+r.dir+'">'+(r.dir==="L"?"LONG":r.dir==="S"?"SHORT":"\u2014")+'</span><div class="pills">'+r.rules.map(function(x){return '<span class="p'+(x.ok?" ok":"")+'">'+x.t+'</span>'}).join("")+'</div><span class="st'+(all?" go":"")+'">'+(all?"READY":r.met+" of "+r.rules.length)+'</span></div>'});
+ rows.forEach(function(r){var all=r.met===r.rules.length,held=HELD[r.coin];h+='<div class="row'+(held?" held":"")+'"><span class="coin">'+r.coin+'</span><span class="dir '+r.dir+'">'+(r.dir==="L"?"LONG":r.dir==="S"?"SHORT":"\u2014")+'</span><div class="pills">'+r.rules.map(function(x){return '<span class="p'+(x.ok?" ok":"")+'">'+x.t+'</span>'}).join("")+'</div><span class="st'+(all&&!held?" go":held?" hold":"")+'">'+(held?"HELD · "+held:all?"READY":r.met+" of "+r.rules.length)+'</span></div>'});
  return {html:h+'</div>',rows:rows,title:title}}
 function batch(list,fn){var out={},i=0;function next(){var ch=list.slice(i,i+6);i+=6;if(!ch.length)return Promise.resolve(out);return Promise.all(ch.map(function(c){return fn(c).then(function(v){out[c]=v})})).then(next)}return next()}
+var HELD={};var STRAT_TAG={d1:"1D","44":"4H","11":"1H",d9:"Dip"};
+function loadHeld(){var a=null;try{a=localStorage.getItem("hl-deck-subaddr")}catch(e){}if(!a)return Promise.resolve();
+ var body=function(t){return fetch("https://api.hyperliquid.xyz/info",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(t)}).then(function(r){return r.json()}).catch(function(){return null})};
+ return Promise.all([body({type:"clearinghouseState",user:a}),body({type:"frontendOpenOrders",user:a})]).then(function(r){HELD={};var st=r[0],od=r[1]||[];if(!st||!st.assetPositions)return;
+  st.assetPositions.forEach(function(ap){var q=ap.position||{};if(!q.coin||!parseFloat(q.szi))return;var tag="";od.forEach(function(o){if(o.coin===q.coin&&o.isTrigger&&o.reduceOnly&&o.cloid&&!tag)tag=STRAT_TAG[o.cloid.slice(2,4).toLowerCase()]||""});HELD[q.coin]=tag||"bot"})})}
 function run(){var dCoins=Array.from(new Set(C1D.concat(C4H,C1H)));
- batch(dCoins,function(c){return hl(c,"1d",420)}).then(function(D){return batch(C4H,function(c){return hl(c,"4h",90)}).then(function(H4){return batch(C1H,function(c){return hl(c,"1h",26)}).then(function(H1){
+ loadHeld().then(function(){return batch(dCoins,function(c){return hl(c,"1d",420)})}).then(function(D){return batch(C4H,function(c){return hl(c,"4h",90)}).then(function(H4){return batch(C1H,function(c){return hl(c,"1h",26)}).then(function(H1){
   var bo=[],dp=[],f4=[],o1=[];
   if(D.BTC){var bc=D.BTC.map(function(x){return x.c}),bm=sma(bc,200);BTC_BEAR=!!bm&&bc[bc.length-1]<bm}
   var sp=document.getElementById("st-shorts");if(sp){sp.textContent=BTC_BEAR?"LIVE · BTC below 200-day, shorts ON":"IDLE · BTC above 200-day";sp.className="pill "+(BTC_BEAR?"live":"idle")}
@@ -1210,8 +1216,8 @@ function run(){var dCoins=Array.from(new Set(C1D.concat(C4H,C1H)));
   var fourAt="checks at "+[0,4,8,12,16,20].map(localHour).join(", ");
   var cards=[card("1 Day \u00b7 breakout",dailyAt,bo),card("Dip Buy \u00b7 buys the panic",dailyAt,dp),card("1 Hour \u00b7 breakout","checks every hour",o1)];
   document.getElementById("fr-body").innerHTML=cards.map(function(k){return k.html}).join("");
-  var ready=[],best=null;cards.forEach(function(k){k.rows.forEach(function(r){var f=r.met/r.rules.length;if(r.met===r.rules.length)ready.push(r.coin+" ("+k.title.split(" \u00b7")[0]+")");else if(!best||f>best.f)best={f:f,r:r,k:k}})});
-  var s=ready.length?'<b>Ready to fire:</b> '+ready.join(", "):'<b>Nothing ready to fire.</b>'+(best?' Closest: <b>'+best.r.coin+'</b> on the '+best.k.title.split(" \u00b7")[0]+' \u2014 '+best.r.met+' of '+best.r.rules.length+' rules met.':'');
+  var ready=[],heldList=[],best=null;cards.forEach(function(k){k.rows.forEach(function(r){var f=r.met/r.rules.length;if(HELD[r.coin]){if(r.met===r.rules.length)heldList.push(r.coin);return}if(r.met===r.rules.length)ready.push(r.coin+" ("+k.title.split(" \u00b7")[0]+")");else if(!best||f>best.f)best={f:f,r:r,k:k}})});
+  var s=(ready.length?'<b>Ready to fire:</b> '+ready.join(", "):'<b>Nothing ready to fire.</b>')+(heldList.length?' <span style="opacity:.75">· already held by the bot: '+Array.from(new Set(heldList)).join(", ")+'</span>':'')+(Object.keys(HELD).length?'':'<br><small>Save the bot sub-account address above to see which of these the bot already holds.</small>')+(best?' Closest: <b>'+best.r.coin+'</b> on the '+best.k.title.split(" \u00b7")[0]+' \u2014 '+best.r.met+' of '+best.r.rules.length+' rules met.':'');
   document.getElementById("fr-sum").innerHTML=s;
   document.getElementById("fr-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". Refreshes every 10 minutes. Coin lists match signals.py as of 25 Sep 2026. BTC is "+(BTC_BEAR?"below":"above")+" its 200-day average, so 1D shorts are "+(BTC_BEAR?"ON":"OFF")+".";
  })})}).catch(function(e){document.getElementById("fr-sum").textContent="Could not reach Hyperliquid. "+e})}
