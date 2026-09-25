@@ -314,8 +314,8 @@
   <div id="radar-wrap"><div class="msg" id="radar-msg">Loading live candles…</div></div>
   <div class="note">
     <strong>1D Breakout</strong> fires above the 40-day high close while price holds above the 200-day average.
-    <strong>1H Breakout</strong> fires above the 96-hour (4-day) high close, same daily gate.
-    Dimmed rows are below their 200-day average, so the gate blocks them whatever the breakout does.
+    <strong>1H Breakout</strong> fires above the 96-hour (4-day) high close when EITHER the daily is above its 200-day average OR (since 25 Sep) the hourly 50-EMA is above the 200-EMA with price above it — the second gate is what lets it trade bear-market rallies.
+    Dimmed rows are below their 200-day average with no hourly uptrend either, so both gates block them whatever the breakout does.
     Above the 200-day average a coin is hunting a <strong>LONG</strong> breakout; below it, a <strong>SHORT</strong> breakdown, and the bar measures the distance to whichever one is live. 1H is long-only for now, so 1H coins under their average are dimmed rather than flipped. <strong>4H Pullback</strong> isn't shown — it triggers on an RSI cross, not a price level, so "distance" doesn't apply.
   </div>
 
@@ -976,13 +976,16 @@
                    dist: (lo / price - 1) * 100, gate: SHORTS["1D"] };
         }).catch(function () { return null; });
       }
-      return Promise.all([daily, candles(j.coin, "1h", 120)]).then(function (r) {
+      return Promise.all([daily, candles(j.coin, "1h", 600)]).then(function (r) {
         var dcl = r[0], hcl = r[1];
         if (dcl.length < 200 || hcl.length < H1_LOOKBACK + 1) return null;
         var price = parseFloat(mids[j.coin]);
         if (!price) return null;
         var sma200 = mean(dcl.slice(-200));
-        var up = price > sma200;
+        // long gate = daily above 200-SMA OR hourly EMA50 > EMA200 with price above EMA200 (25 Sep 2026)
+        var emaUp = false;
+        if (hcl.length >= 201) { var ef = emaS(hcl, 50), es = emaS(hcl, 200); emaUp = ef[ef.length - 1] > es[es.length - 1] && price > es[es.length - 1]; }
+        var up = price > sma200 || emaUp;
         var trigger = up ? Math.max.apply(null, hcl.slice(-H1_LOOKBACK))
                          : Math.min.apply(null, hcl.slice(-H1_LOOKBACK));
         if (!up && SHORTS["1H"]) {
@@ -1150,15 +1153,18 @@ function fourH(coin,d,h){var dc=d.map(function(x){return x.c}),de=emaS(dc,200),L
  // Same rules as the bot (paper.py detect): daily close vs 200 EMA, 20 vs 50 EMA, RSI dip in the last 10 bars, RSI crossing 50 on this bar, ADX 18+
  if(bull)return row(coin,"L",[{t:"daily above 200 EMA",ok:true},{t:"20 EMA over 50 EMA",ok:e20[n-1]>e50[n-1]},{t:"RSI dipped under 45",ok:recent.some(function(v){return v!=null&&v<45})},{t:"RSI crosses up through 50",ok:r>50&&rp<=50},{t:"ADX "+A.toFixed(0)+" (18+)",ok:A>=18}]);
  return row(coin,"S",[{t:"daily below 200 EMA",ok:true},{t:"20 EMA under 50 EMA",ok:e20[n-1]<e50[n-1]},{t:"RSI popped over 55",ok:recent.some(function(v){return v!=null&&v>55})},{t:"RSI crosses down through 50",ok:r<50&&rp>=50},{t:"ADX "+A.toFixed(0)+" (18+)",ok:A>=18}])}
-function oneH(coin,d,h){var dc=d.map(function(x){return x.c}),m=sma(dc,200);if(!m)return null;var up=dc[dc.length-1]>m;var c=h.map(function(x){return x.c}),last=c[c.length-1];if(c.length<98)return null;var hi=Math.max.apply(null,c.slice(-97,-1));
- return row(coin,"L",[{t:up?"daily uptrend":"daily downtrend",ok:up},{t:last>hi?"new 96-hour high":"96-hour high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}],pct(last,hi))}
+function oneH(coin,d,h){var dc=d.map(function(x){return x.c}),m=sma(dc,200);if(!m)return null;var dUp=dc[dc.length-1]>m;var c=h.map(function(x){return x.c}),last=c[c.length-1];if(c.length<98)return null;var hi=Math.max.apply(null,c.slice(-97,-1));
+ // long gate (25 Sep 2026): daily above 200-SMA OR hourly EMA50 > EMA200 with the close above EMA200
+ var eUp=false;if(c.length>=201){var ef=emaS(c,50),es=emaS(c,200);eUp=ef[ef.length-1]>es[es.length-1]&&last>es[es.length-1]}
+ var gateTxt=dUp?"daily uptrend":eUp?"hourly EMA uptrend (daily below 200)":"daily down \u00b7 hourly EMAs down";
+ return row(coin,"L",[{t:gateTxt,ok:dUp||eUp},{t:last>hi?"new 96-hour high":"96-hour high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}],pct(last,hi))}
 function card(title,when,rows){rows=rows.filter(Boolean).sort(function(a,b){var fa=a.met/a.rules.length,fb=b.met/b.rules.length;return fb-fa||b.extra-a.extra});
  var h='<div class="grp"><div class="gh"><b>'+title+'</b><span>'+when+'</span></div>';
  rows.forEach(function(r){var all=r.met===r.rules.length;h+='<div class="row"><span class="coin">'+r.coin+'</span><span class="dir '+r.dir+'">'+(r.dir==="L"?"LONG":r.dir==="S"?"SHORT":"\u2014")+'</span><div class="pills">'+r.rules.map(function(x){return '<span class="p'+(x.ok?" ok":"")+'">'+x.t+'</span>'}).join("")+'</div><span class="st'+(all?" go":"")+'">'+(all?"READY":r.met+" of "+r.rules.length)+'</span></div>'});
  return {html:h+'</div>',rows:rows,title:title}}
 function batch(list,fn){var out={},i=0;function next(){var ch=list.slice(i,i+6);i+=6;if(!ch.length)return Promise.resolve(out);return Promise.all(ch.map(function(c){return fn(c).then(function(v){out[c]=v})})).then(next)}return next()}
 function run(){var dCoins=Array.from(new Set(C1D.concat(C4H,C1H)));
- batch(dCoins,function(c){return hl(c,"1d",420)}).then(function(D){return batch(C4H,function(c){return hl(c,"4h",90)}).then(function(H4){return batch(C1H,function(c){return hl(c,"1h",8)}).then(function(H1){
+ batch(dCoins,function(c){return hl(c,"1d",420)}).then(function(D){return batch(C4H,function(c){return hl(c,"4h",90)}).then(function(H4){return batch(C1H,function(c){return hl(c,"1h",26)}).then(function(H1){
   var bo=[],dp=[],f4=[],o1=[];
   if(D.BTC){var bc=D.BTC.map(function(x){return x.c}),bm=sma(bc,200);BTC_BEAR=!!bm&&bc[bc.length-1]<bm}
   C1D.forEach(function(c){if(!D[c])return;var x=daily(c,D[c]);if(x){bo.push(x.bo);if(CDIP.indexOf(c)>-1)dp.push(x.dip)}});
