@@ -5,475 +5,356 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="robots" content="noindex, nofollow">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>HL Scanner Deck</title>
+<title>HL Deck</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <style>
   :root {
-    --bg:        #F4F6F7;
+    --bg:        #F5F7F8;
     --surface:   #FFFFFF;
-    --surface-2: #EDF1F2;
-    --line:      #D8E0E2;
-    --line-soft: #E7EDEE;
+    --surface-2: #EEF2F3;
+    --line:      #DDE4E6;
+    --line-soft: #EAF0F1;
     --ink:       #12191C;
-    --ink-2:     #47565B;
-    --ink-3:     #74858B;
+    --ink-2:     #4A585D;
+    --ink-3:     #78878C;
     --accent:    #0E7C86;
-    --accent-sf: #E2F2F3;
+    --accent-sf: #E1F1F2;
     --up:        #15803D;
-    --up-sf:     #E4F3E9;
+    --up-sf:     #E3F3E8;
     --down:      #B4241C;
     --down-sf:   #FBE8E6;
     --warn:      #A45B06;
     --warn-sf:   #FBEEDC;
-    --radius: 10px;
+    --radius: 12px;
     --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     --sans: "IBM Plex Sans", system-ui, -apple-system, Segoe UI, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg:        #0D1214;
-      --surface:   #141C1F;
-      --surface-2: #1B2528;
-      --line:      #27343800;
-      --line:      #273438;
-      --line-soft: #1F2B2E;
-      --ink:       #EAF1F2;
-      --ink-2:     #A3B3B7;
-      --ink-3:     #7A8A8F;
-      --accent:    #5CCFD6;
-      --accent-sf: #123134;
-      --up:        #4ADE80;
-      --up-sf:     #12301F;
-      --down:      #F87171;
-      --down-sf:   #341716;
-      --warn:      #FBBF24;
-      --warn-sf:   #332614;
+      --bg: #0C1113; --surface: #131A1D; --surface-2: #1A2326; --line: #263337; --line-soft: #1E292C;
+      --ink: #EAF1F2; --ink-2: #A3B3B7; --ink-3: #7A8A8F; --accent: #5CCFD6; --accent-sf: #12313480;
+      --up: #4ADE80; --up-sf: #12301F; --down: #F87171; --down-sf: #341716; --warn: #FBBF24; --warn-sf: #332614;
     }
   }
   :root[data-theme="dark"] {
-    --bg:        #0D1214;
-    --surface:   #141C1F;
-    --surface-2: #1B2528;
-    --line:      #273438;
-    --line-soft: #1F2B2E;
-    --ink:       #EAF1F2;
-    --ink-2:     #A3B3B7;
-    --ink-3:     #7A8A8F;
-    --accent:    #5CCFD6;
-    --accent-sf: #123134;
-    --up:        #4ADE80;
-    --up-sf:     #12301F;
-    --down:      #F87171;
-    --down-sf:   #341716;
-    --warn:      #FBBF24;
-    --warn-sf:   #332614;
+    --bg: #0C1113; --surface: #131A1D; --surface-2: #1A2326; --line: #263337; --line-soft: #1E292C;
+    --ink: #EAF1F2; --ink-2: #A3B3B7; --ink-3: #7A8A8F; --accent: #5CCFD6; --accent-sf: #12313480;
+    --up: #4ADE80; --up-sf: #12301F; --down: #F87171; --down-sf: #341716; --warn: #FBBF24; --warn-sf: #332614;
   }
 
   * { box-sizing: border-box; }
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--sans);
-    font-size: 15px;
-    line-height: 1.45;
-    -webkit-font-smoothing: antialiased;
-  }
-  .wrap { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 0 48px; }
+  html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 16px 56px; }
 
+  /* header */
   header.top {
-    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
-    background: color-mix(in srgb, var(--bg) 92%, transparent);
-    backdrop-filter: blur(8px);
+    position: sticky; top: 0; z-index: 20; margin: 0 -16px; padding: 12px 16px;
+    background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line-soft);
-    margin-inline: -16px; padding: 12px 16px;
-    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
   }
-  .brand { font-weight: 700; letter-spacing: -0.02em; font-size: 17px; }
+  .brand { font-weight: 700; font-size: 16px; letter-spacing: -0.02em; margin-right: 4px; }
   .brand span { color: var(--accent); }
-  .stamp { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin-left: auto; }
-
-  h2 {
-    font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.09em;
-    color: var(--ink-3); font-weight: 600; margin: 32px 0 10px;
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+  .chip {
+    font-family: var(--mono); font-size: 11.5px; padding: 4px 9px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap;
   }
-  h2 .qual { text-transform: none; letter-spacing: 0; color: var(--ink-3); font-weight: 400; }
+  .chip b { color: var(--ink); font-weight: 600; }
+  .chip.on b { color: var(--down); }
+  .chip.warn b { color: var(--warn); }
+  .chip.good b { color: var(--up); }
+  .stamp { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+  button {
+    font-family: var(--sans); font-size: 12.5px; font-weight: 600; cursor: pointer;
+    padding: 7px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
+  }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button:disabled { opacity: .5; cursor: default; }
+  button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* sections */
+  section { margin-top: 30px; }
+  .sh { display: flex; align-items: baseline; gap: 10px; margin: 0 0 10px; }
+  .sh h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3); font-weight: 600; margin: 0; }
+  .sh .n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+  .sh .r { margin-left: auto; font-size: 12.5px; color: var(--ink-3); }
+  .sh .r button { font-size: 12px; padding: 4px 9px; }
 
   .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-  @media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
-  .tile.bot { border-color: var(--accent); }
-  @media (max-width: 620px) { .tiles { grid-template-columns: 1fr; } }
-  .tile {
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 14px 16px;
-  }
-  .tile .k { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-3); font-weight: 600; }
-  .tile .v {
-    font-family: var(--mono); font-size: 26px; font-weight: 500;
-    letter-spacing: -0.02em; margin-top: 4px; font-variant-numeric: tabular-nums;
-  }
-  .tile .sub { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; font-variant-numeric: tabular-nums; }
-
-  .meter { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 10px; }
+  .tiles.three { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 860px) { .tiles, .tiles.three { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .tiles, .tiles.three { grid-template-columns: 1fr; } }
+  .tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; min-width: 0; }
+  .tile.hero { border-color: var(--accent); }
+  .tile .k { font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-3); font-weight: 600; }
+  .tile .v { font-family: var(--mono); font-size: 26px; font-weight: 500; letter-spacing: -0.02em; margin-top: 4px; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .tile .sub { font-size: 12.5px; color: var(--ink-2); margin-top: 3px; font-variant-numeric: tabular-nums; }
+  .meter { height: 5px; border-radius: 3px; background: var(--surface-2); overflow: visible; margin-top: 10px; position: relative; }
   .meter > i { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
   .meter.over > i { background: var(--warn); }
+  .meter.hot > i { background: var(--down); }
+  .meter .mark { position: absolute; top: -3px; width: 2px; height: 11px; background: var(--ink-3); border-radius: 1px; }
 
-  .rp-list > summary { cursor: pointer; font-size: 13px; color: var(--ink-2); padding: 8px 2px; list-style: revert; }
-  .rp-list[open] > summary { margin-bottom: 6px; }
+  .up { color: var(--up); } .down { color: var(--down); } .warn { color: var(--warn); } .muted { color: var(--ink-3); }
+
+  /* tables */
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .scroller { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-  .tag { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; background: var(--accent); color: var(--bg, #fff); vertical-align: 1px; }
-  .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
   th, td { text-align: right; padding: 9px 12px; white-space: nowrap; font-size: 13.5px; }
-  th {
-    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em;
-    color: var(--ink-3); font-weight: 600; border-bottom: 1px solid var(--line);
-  }
+  th { font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-3); font-weight: 600; border-bottom: 1px solid var(--line); }
   th:first-child, td:first-child { text-align: left; }
   tbody tr + tr td { border-top: 1px solid var(--line-soft); }
   td.num { font-family: var(--mono); }
   .coin { font-weight: 600; letter-spacing: -0.01em; }
-  .up { color: var(--up); }
-  .down { color: var(--down); }
-
-  .pill {
-    display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em;
-    padding: 2px 7px; border-radius: 999px; text-transform: uppercase;
-  }
-  .pill.long  { background: var(--up-sf);   color: var(--up); }
+  .tag { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; background: var(--accent-sf); color: var(--accent); vertical-align: 1px; }
+  .pill { display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: .04em; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; }
+  .pill.long { background: var(--up-sf); color: var(--up); }
   .pill.short { background: var(--down-sf); color: var(--down); }
-  .pill.tag   { background: var(--surface-2); color: var(--ink-2); }
-  .pill.live  { background: var(--accent-sf); color: var(--accent); }
+  .pill.paper { background: var(--surface-2); color: var(--ink-2); border: 1px dashed var(--line); }
 
-  /* signal radar rows */
-  .radar { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
-  .row {
-    display: grid; grid-template-columns: 84px 1fr 96px; align-items: center;
-    gap: 12px; padding: 10px 14px;
-  }
-  .row + .row { border-top: 1px solid var(--line-soft); }
-  .row .who { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
-  .row .who .coin { font-size: 14px; }
-  .row .who .tf { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
-  .row .who .side { font-family: var(--mono); font-size: 9.5px; font-weight: 600;
-    letter-spacing: 0.04em; padding: 1px 5px; border-radius: 4px; }
-  .row .who .side.l { color: var(--up); background: var(--up-sf); }
-  .row .who .side.s { color: var(--down); background: var(--down-sf); }
-  .track { position: relative; height: 22px; }
-  .track .base { position: absolute; inset: 9px 0 auto; height: 4px; border-radius: 2px; background: var(--surface-2); }
-  .track .fill { position: absolute; top: 9px; height: 4px; border-radius: 2px; background: var(--accent); }
-  .track .trig { position: absolute; top: 4px; right: 0; width: 2px; height: 14px; background: var(--ink-3); border-radius: 1px; }
-  .dist { font-family: var(--mono); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
-  .row.blocked { opacity: 0.5; }
-  .row.hot .fill { background: var(--up); }
+  /* signals list */
+  .sig { display: grid; grid-template-columns: 72px 64px 1fr auto; align-items: center; gap: 10px; padding: 10px 14px; }
+  .sig + .sig { border-top: 1px solid var(--line-soft); }
+  .sig .st { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+  .sig .need { font-size: 13px; color: var(--ink-2); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sig .need b { color: var(--ink); font-weight: 600; }
+  .sig .dist { font-family: var(--mono); font-size: 12.5px; color: var(--ink-3); text-align: right; }
+  .sig.ready .need { color: var(--accent); font-weight: 600; }
+  .sig.held { opacity: .6; }
+  .sig.held .need b { color: var(--ink-2); }
+  @media (max-width: 520px) { .sig { grid-template-columns: 64px 1fr auto; } .sig .st { display: none; } }
+  .verdict { padding: 12px 14px; font-size: 14.5px; border-left: 3px solid var(--accent); }
+  .verdict.warn { border-left-color: var(--warn); }
+  .verdict b { font-weight: 600; }
+  .verdict small { color: var(--ink-3); font-size: 12.5px; }
+  .more { display: block; width: 100%; text-align: center; padding: 9px; border: 0; border-top: 1px solid var(--line-soft); border-radius: 0; background: var(--surface); color: var(--accent); font-weight: 600; }
 
-  .note { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; }
-  .note code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+  details.fold > summary { cursor: pointer; list-style: none; font-size: 13px; color: var(--ink-2); padding: 9px 14px; display: flex; align-items: center; gap: 8px; }
+  details.fold > summary::-webkit-details-marker { display: none; }
+  details.fold > summary::before { content: "▸"; color: var(--ink-3); font-size: 11px; transition: transform .15s; }
+  details.fold[open] > summary::before { transform: rotate(90deg); }
+  details.fold[open] > summary { border-bottom: 1px solid var(--line-soft); }
+  details.fold .in { padding: 12px 14px; font-size: 13.5px; color: var(--ink-2); }
+  details.fold .in p { margin: 0 0 8px; }
+  details.fold .in b { color: var(--ink); }
+  .rules { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 16px; margin: 0; padding: 0; list-style: none; }
+  @media (max-width: 640px) { .rules { grid-template-columns: 1fr; } }
+  .rules li { font-size: 13px; color: var(--ink-2); padding: 8px 0; border-top: 1px solid var(--line-soft); }
+  .rules li b { color: var(--ink); display: block; margin-bottom: 2px; }
 
-  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
-  label.fld { display: block; font-size: 12.5px; color: var(--ink-2); margin-bottom: 6px; }
-  .addr-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  input[type="text"] {
-    flex: 1 1 260px; min-width: 0; font-family: var(--mono); font-size: 13px;
-    padding: 9px 11px; border-radius: 8px; border: 1px solid var(--line);
-    background: var(--bg); color: var(--ink);
-  }
-  input[type="text"]:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  button {
-    font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer;
-    padding: 9px 14px; border-radius: 8px; border: 1px solid var(--accent);
-    background: var(--accent); color: var(--surface);
-  }
-  button.ghost { background: transparent; color: var(--accent); }
-  button:disabled { opacity: 0.5; cursor: default; }
-
-  .msg { font-size: 13px; color: var(--ink-2); padding: 14px 2px; }
+  .msg { font-size: 13px; color: var(--ink-2); padding: 12px 14px; }
   .msg.err { color: var(--down); }
-  .banner {
-    margin-top: 16px; padding: 12px 14px; border-radius: var(--radius);
-    background: var(--warn-sf); border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent);
-    color: var(--ink); font-size: 13px; line-height: 1.5;
-  }
-  .banner strong { color: var(--warn); }
-  footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 12px; color: var(--ink-3); }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
-</style>
+  .note { font-size: 12.5px; color: var(--ink-3); margin-top: 8px; }
+  .banner { margin-top: 14px; padding: 11px 14px; border-radius: var(--radius); background: var(--warn-sf); border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent); font-size: 13px; }
 
+  /* setup */
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+  label.fld { display: block; font-size: 12.5px; color: var(--ink-2); margin: 0 0 6px; }
+  .addr-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  input[type="text"] { flex: 1 1 260px; min-width: 0; font-family: var(--mono); font-size: 13px; padding: 8px 11px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  footer { margin-top: 40px; padding-top: 12px; border-top: 1px solid var(--line-soft); font-size: 12px; color: var(--ink-3); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
 </head>
 <body>
 <div class="wrap">
+
   <header class="top">
-    <div class="brand">HL Scanner <span>Deck</span></div>
-    <button class="ghost" id="refresh" type="button">Refresh</button>
-    <div class="stamp" id="stamp">—</div>
+    <div class="brand">HL <span>Deck</span></div>
+    <div class="chips">
+      <span class="chip" id="c-btc"><b>BTC</b> …</span>
+      <span class="chip" id="c-shorts"><b>Shorts</b> …</span>
+      <span class="chip" id="c-breadth"><b>Breadth</b> …</span>
+      <span class="chip" id="c-others"><b>Others</b> …</span>
+    </div>
+    <button id="refresh" type="button">Refresh</button>
+    <span class="stamp" id="stamp">—</span>
   </header>
 
-  <div class="banner" id="blocked" hidden>
-    <strong>Live data is blocked here.</strong>
-    This browser couldn't reach Hyperliquid's API — usually a dropped connection,
-    a VPN, or a blocker. Everything below is layout only until it connects.
-  </div>
+  <div class="banner" id="blocked" hidden><b>Live data is blocked here.</b> This browser couldn't reach Hyperliquid (connection, VPN or blocker).</div>
 
-  <h2>Strategies <span class="qual">— what the bot is running (as of 25 Sep 2026)</span></h2>
-  <div class="tiles" id="strat-tiles">
-    <div class="tile">
-      <div class="k">1 · 1D breakout longs <span class="pill live">LIVE</span></div>
-      <div class="sub">23 coins. Close above the 40-day high close and above the 200-day average. 3 ATR stop, 4 ATR trail. <strong>3% risk</strong>.</div>
+  <!-- 1. POSITIONS -->
+  <section id="s-acct">
+    <div class="sh"><h2>Positions</h2><span class="n" id="acct-n"></span><span class="r"><button type="button" id="edit-addr">Accounts</button></span></div>
+    <div id="acct-setup" class="panel">
+      <label class="fld" for="addr">Main wallet — public address, read-only.</label>
+      <div class="addr-row"><input type="text" id="addr" placeholder="0x… main account" spellcheck="false" autocomplete="off"><button class="primary" id="save" type="button">Load</button></div>
+      <label class="fld" for="subaddr" style="margin-top:10px">Bot sub-account — optional.</label>
+      <div class="addr-row"><input type="text" id="subaddr" placeholder="0x… bot sub-account" spellcheck="false" autocomplete="off"><button id="savesub" type="button">Save</button></div>
+      <div class="note" id="addr-msg">Stored in this browser only. Sent nowhere except Hyperliquid's public API.</div>
     </div>
-    <div class="tile">
-      <div class="k">2 · 1H breakout longs <span class="pill live">LIVE</span></div>
-      <div class="sub">9 coins. Close above the 96-hour high close. Gate: daily above 200-day <em>or</em> hourly 50-EMA over 200-EMA (bear-market rallies). 3 ATR stop, 10 ATR trail. <strong>1% risk</strong>.</div>
-    </div>
-    <div class="tile">
-      <div class="k">3 · Dip Buy <span class="pill live">LIVE</span></div>
-      <div class="sub">22 coins (1D list minus DOGE). RSI(2) under 5 while above the 200-day. Fixed 5 ATR stop; out on a close above the 10-day average or after 30 days. <strong>3% risk</strong>.</div>
-    </div>
-    <div class="tile">
-      <div class="k">4 · 1D shorts <span class="pill live" id="st-shorts">LIVE · checking BTC…</span></div>
-      <div class="sub">9 big coins only (BTC ETH ZEC SOL NEAR XRP DOGE LINK SUI). Mirror of #1, but only while BTC closes below its 200-day. Own 3 slots / 6% cap. <strong>2% risk</strong>.</div>
-    </div>
-    <div class="tile">
-      <div class="k">Paper only <span class="pill paper">FAKE MONEY</span></div>
-      <div class="sub">BTC 4H breakout · young-coin 1D breakout · crowd fade (OKX long/short extremes, BTC ETH SOL) · OI breakout (open interest +2% in 24h, BTC ETH SOL). Info only, never trade.</div>
-    </div>
-    <div class="tile">
-      <div class="k">Shared limits</div>
-      <div class="sub">12 long slots / 36% open risk shared by #1–#3. Shorts separate: 3 slots / 6%. Max 3 new orders per run, no chasing past 1.5%, daily loss stop 15%.</div>
-    </div>
-  </div>
-  <style>
-    .pill{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.3px;vertical-align:middle}
-    .pill.live{background:var(--up-sf,#E4F3E9);color:var(--up,#15803D);border:1px solid var(--up,#15803D)}
-    .pill.idle{background:var(--surface-2,#EDF1F2);color:var(--ink-3,#74858B);border:1px solid var(--line,#D8E0E2)}
-    .pill.paper{background:var(--surface-2,#EDF1F2);color:var(--ink-2,#47565B);border:1px dashed var(--line,#D8E0E2)}
-    #strat-tiles .sub{white-space:normal;line-height:1.35}
-  </style>
-
-  <h2>Market <span class="qual">— alt-season gauge</span></h2>
-  <div class="tiles" id="mkt-tiles">
-    <div class="tile" id="t-others-tile">
-      <div class="k">Others dominance</div>
-      <div class="v" id="t-others">—</div>
-      <div class="sub" id="t-others-sub">loading…</div>
-      <div class="meter" id="t-others-meter"><i style="width:0%"></i></div>
-    </div>
-    <div class="tile">
-      <div class="k">BTC dominance</div>
-      <div class="v" id="t-btcd">—</div>
-      <div class="sub" id="t-btcd-sub">&nbsp;</div>
-    </div>
-    <div class="tile">
-      <div class="k">Total crypto market</div>
-      <div class="v" id="t-total">—</div>
-      <div class="sub" id="t-total-sub">&nbsp;</div>
-    </div>
-    <div class="tile">
-      <div class="k">Sell-alts line</div>
-      <div class="v" id="t-others-gap">—</div>
-      <div class="sub" id="t-others-gap-sub">&nbsp;</div>
-    </div>
-  </div>
-  <div class="note">
-    <strong>Others dominance</strong> = every coin outside the top 10, as a share of the whole crypto market
-    (TradingView's OTHERS.D, worked out from CoinGecko and adjusted −0.5 pt so it matches TradingView; calibrated 25 Sep 2026). Mike's rule: <strong>at 13% it's time to sell out of alts</strong> (past cycle tops: ~13% in 2018 and 2024, ~14% May 2021, ~17% Jan 2022).
-  </div>
-
-  <h2>Your Hyperliquid account</h2>
-  <div id="acct-setup" class="panel">
-    <label class="fld" for="addr">Public wallet address — read-only. It cannot sign or move anything.</label>
-    <div class="addr-row">
-      <input type="text" id="addr" placeholder="0x… your main account" spellcheck="false" autocomplete="off">
-      <button id="save" type="button">Load account</button>
-    </div>
-    <label class="fld" for="subaddr" style="margin-top:10px">Bot sub-account — optional, shown separately.</label>
-    <div class="addr-row">
-      <input type="text" id="subaddr" placeholder="0x… bot sub-account" spellcheck="false" autocomplete="off">
-      <button id="savesub" type="button">Save</button>
-    </div>
-    <div class="note" id="addr-msg">Both stored in this browser only. Never sent anywhere except Hyperliquid's public API.</div>
-  </div>
-
-  <div id="acct" hidden>
-    <div class="tiles">
-      <div class="tile bot">
-        <div class="k">Bot account</div>
-        <div class="v" id="t-bot">—</div>
-        <div class="sub" id="t-bot-sub">&nbsp;</div>
+    <div id="acct" hidden>
+      <div class="tiles">
+        <div class="tile hero"><div class="k">Bot account</div><div class="v" id="t-bot">—</div><div class="sub" id="t-bot-sub">&nbsp;</div></div>
+        <div class="tile"><div class="k">Your account</div><div class="v" id="t-value">—</div><div class="sub" id="t-value-sub">&nbsp;</div></div>
+        <div class="tile"><div class="k">Unrealised</div><div class="v" id="t-pnl">—</div><div class="sub" id="t-pnl-sub">&nbsp;</div></div>
+        <div class="tile"><div class="k">Leverage</div><div class="v" id="t-lev">—</div><div class="sub" id="t-lev-sub">&nbsp;</div><div class="meter" id="t-lev-meter"><i style="width:0%"></i></div></div>
       </div>
-      <div class="tile">
-        <div class="k">Your account</div>
-        <div class="v" id="t-value">—</div>
-        <div class="sub" id="t-value-sub">&nbsp;</div>
-      </div>
-      <div class="tile">
-        <div class="k">Unrealised P/L</div>
-        <div class="v" id="t-pnl">—</div>
-        <div class="sub" id="t-pnl-sub">&nbsp;</div>
-      </div>
-      <div class="tile">
-        <div class="k">Leverage</div>
-        <div class="v" id="t-lev">—</div>
-        <div class="sub" id="t-lev-sub">&nbsp;</div>
-        <div class="meter" id="t-lev-meter"><i style="width:0%"></i></div>
-      </div>
+      <div class="card" id="pos-wrap" style="margin-top:10px"></div>
     </div>
-    <div id="pos-wrap" style="margin-top:12px"></div>
-    <div class="note">
-      Live from Hyperliquid. <strong>This is your real account</strong> — separate from the paper bot,
-      whose ledger and closed trades still report into Discord.
+  </section>
+
+  <!-- 2. SIGNALS -->
+  <section id="s-sig">
+    <div class="sh"><h2>Signals</h2><span class="n" id="sig-n"></span><span class="r" id="sig-when"></span></div>
+    <div class="card">
+      <div class="verdict" id="sig-sum">Checking live candles…</div>
+      <div id="sig-body"></div>
+      <button class="more" id="sig-more" type="button" hidden></button>
     </div>
-  </div>
+  </section>
 
-  <h2 id="rp-h" hidden>Realised profit / loss <span class="qual">— closed trades only, after fees (no open-trade P/L)</span></h2>
-  <div id="rp" hidden>
-    <div class="tiles" id="rp-tiles"></div>
-    <div id="rp-wrap" style="margin-top:12px"></div>
-    <div class="note" id="rp-note">
-      Money actually banked from closed (or part-closed) trades, after trading fees.
-      Open trades aren't counted here — they're in the table above. Funding payments are shown separately.
+  <!-- 3. BOT HEALTH -->
+  <section id="s-health">
+    <div class="sh"><h2>Bot health</h2><span class="n" id="lt-n"></span><span class="r" id="lt-when"></span></div>
+    <div class="card">
+      <div class="verdict" id="lt-sum">Loading the bot's trades…</div>
+      <div id="lt-score"></div>
+      <details class="fold" id="lt-fold"><summary>Every bot trade, checked against its rule</summary><div class="scroller" id="lt-body"></div></details>
     </div>
-  </div>
+  </section>
 
-  <h2 id="gmx-h" hidden>Your GMX positions <span class="qual">— Arbitrum, same wallet</span></h2>
-  <div id="gmx" hidden>
-    <div class="note" id="gmx-sum"></div>
-    <div id="gmx-wrap" style="margin-top:8px"></div>
-    <div class="note">
-      Live from GMX's public data. Profit/loss is <strong>before GMX's borrowing and
-      funding fees</strong>, so the real figure is a little lower.
+  <!-- 4. REALISED -->
+  <section id="s-rp" hidden>
+    <div class="sh"><h2>Realised</h2><span class="n">closed trades, after fees</span><span class="r" id="rp-fund"></span></div>
+    <div class="tiles three" id="rp-tiles"></div>
+    <div class="card" id="rp-wrap" style="margin-top:10px"></div>
+  </section>
+
+  <!-- 5. MARKET -->
+  <section id="s-mkt">
+    <div class="sh"><h2>Market</h2><span class="n">alt-season gauge</span></div>
+    <div class="tiles three">
+      <div class="tile" id="t-others-tile"><div class="k">Others dominance</div><div class="v" id="t-others">—</div><div class="sub" id="t-others-sub">loading…</div><div class="meter" id="t-others-meter"><i style="width:0%"></i><span class="mark" id="t-others-mark"></span></div></div>
+      <div class="tile"><div class="k">BTC dominance</div><div class="v" id="t-btcd">—</div><div class="sub" id="t-btcd-sub">&nbsp;</div></div>
+      <div class="tile"><div class="k">Total crypto market</div><div class="v" id="t-total">—</div><div class="sub" id="t-total-sub">&nbsp;</div></div>
     </div>
-  </div>
+  </section>
 
-  <h2>Signal radar <span class="qual">— how far each watchlist coin is from its trigger</span></h2>
-  <div id="radar-wrap"><div class="msg" id="radar-msg">Loading live candles…</div></div>
-  <div class="note">
-    <strong>1D Breakout</strong> fires above the 40-day high close while price holds above the 200-day average.
-    <strong>1H Breakout</strong> fires above the 96-hour (4-day) high close when EITHER the daily is above its 200-day average OR (since 25 Sep) the hourly 50-EMA is above the 200-EMA with price above it — the second gate is what lets it trade bear-market rallies.
-    Dimmed rows are below their 200-day average with no hourly uptrend either, so both gates block them whatever the breakout does.
-    Above the 200-day average a coin is hunting a <strong>LONG</strong> breakout; below it, a <strong>SHORT</strong> breakdown, and the bar measures the distance to whichever one is live. 1H is long-only for now, so 1H coins under their average are dimmed rather than flipped. <strong>4H Pullback</strong> isn't shown — it triggers on an RSI cross, not a price level, so "distance" doesn't apply.
-  </div>
+  <!-- 6. GMX (only when there are positions) -->
+  <section id="s-gmx" hidden>
+    <div class="sh"><h2>GMX</h2><span class="n">Arbitrum, same wallet</span><span class="r" id="gmx-sum"></span></div>
+    <div class="card scroller" id="gmx-wrap"></div>
+    <div class="note">Before GMX borrowing and funding fees.</div>
+  </section>
 
-  <footer>
-    Read-only. Prices and account data pulled straight from Hyperliquid's public API each time you load or refresh.
-  </footer>
+  <!-- 7. REFERENCE -->
+  <section id="s-ref">
+    <div class="card">
+      <details class="fold"><summary>How the bot trades</summary><div class="in">
+        <ul class="rules">
+          <li><b>1D breakout · longs · 3% risk</b>23 coins. Close above the 40-day high close and above the 200-day average. 3 ATR stop, 4 ATR trail.</li>
+          <li><b>1D shorts · 2% risk <span class="pill paper" id="ref-shorts">…</span></b>9 big coins (BTC ETH ZEC SOL NEAR XRP DOGE LINK SUI). Mirror of the breakout, only while BTC is below its 200-day. Own 3 slots / 6%.</li>
+          <li><b>Dip Buy · longs · 3% risk</b>1D list minus DOGE. RSI(2) under 5 while above the 200-day. Fixed 5 ATR stop; out on a close above the 10-day average or after 30 days.</li>
+          <li><b>1H breakout · longs · 1% risk</b>WLD LINK AVAX SOL VVV BTC ETH ARB BNB. Close above the 96-hour high close. Gate: daily above 200-day, or hourly 50-EMA over 200-EMA. 3 ATR stop, 10 ATR trail.</li>
+          <li><b>Shared limits</b>12 long slots / 36% open risk across the three long strategies. Shorts separate. Max 3 new orders per hourly run, no chasing past 1.5%, daily loss stop 15%.</li>
+          <li><b>Paper only <span class="pill paper">fake money</span></b>BTC 4H breakout · young-coin 1D breakout · crowd fade · open-interest breakout. Never trade.</li>
+        </ul>
+      </div></details>
+      <details class="fold"><summary>How to read this page</summary><div class="in">
+        <p><b>Signals</b> shows what is ready to fire on the last closed candle and what is closest, judged exactly as the bot judges it. Coins the bot already holds are marked HELD. "Show all" lists every check.</p>
+        <p><b>Bot health</b> checks every bot trade against its rule: entry within 1.5% of the signal, risk within the setting, a stop on the exchange. R = result in multiples of the risk taken.</p>
+        <p><b>Realised</b> is money banked from closed trades minus fees. Open trades are in Positions, not here.</p>
+        <p><b>Others dominance</b> is every coin outside the top 10 as a share of the whole market (TradingView's OTHERS.D, from CoinGecko, offset −0.5 to match). Mike's rule: sell out of alts at 13%.</p>
+        <p><b>Breadth</b> is the share of the 1D list above its 200-day. Above 90% has been the weak zone for new breakouts.</p>
+      </div></details>
+    </div>
+  </section>
+
+  <footer>Read-only. Hyperliquid, CoinGecko and GMX public data, refreshed every 10 minutes.</footer>
 </div>
 
 <script>
 (function () {
   "use strict";
 
+  // ---------- config: mirrors signals.py / config.json (26 Sep 2026). Change there, change here. ----------
+  var CFG = {
+    C1D: ["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","AVAX","ZEC","XLM","TRX","HBAR","kSHIB","ALGO","ICP","ATOM","LINK","NEAR","SUI","INJ","OP","AR","ENA"],
+    C1H: ["WLD","LINK","AVAX","SOL","VVV","BTC","ETH","ARB","BNB"],
+    CSHORT: ["BTC","ETH","ZEC","SOL","NEAR","XRP","DOGE","LINK","SUI"],
+    H1_LOOKBACK: 96, H1_EMA_FAST: 50, H1_EMA_SLOW: 200,
+    RISK: { "1D": 3, "DIP": 3, "1H": 1, "SHORT": 2 },
+    SELL_AT: 13.0, WARN_AT: 11.0, METER_MAX: 17.0, TV_OFFSET: -0.50,
+    CHASE_PCT: 1.5
+  };
+  CFG.CDIP = CFG.C1D.filter(function (c) { return c !== "DOGE"; });
+
   var API = "https://api.hyperliquid.xyz/info";
-  var COINS_1D = ["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","AVAX","ZEC","XLM","TRX","HBAR","kSHIB","ALGO","ICP","ATOM","LINK","NEAR","SUI","INJ","OP","AR","ENA"];
-  var COINS_1H = ["WLD","LINK","AVAX","SOL","VVV","BTC","ETH","ARB","BNB"]; // re-based 25 Sep 2026 on 4y data
-  var H1_LOOKBACK = 96; // hours
-  // mirrors shorts_1d / shorts_1h in the bot's config.json
-  var SHORTS = { "1D": true, "1H": false };
-  var KEY = "hl-deck-addr";
-  var SUBKEY = "hl-deck-subaddr";
-  // What the bot may size against. Mirrors live_pot_usd in the bot config.
+  var KEY = "hl-deck-addr", SUBKEY = "hl-deck-subaddr", DAY = 86400000;
+  var TAGS = { d1: "1D", "44": "4H", "11": "1H", d9: "Dip" };
+  var $ = function (id) { return document.getElementById(id); };
 
+  // ---------- helpers ----------
   function hl(body) {
-    return fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    }).then(function (r) {
-      if (!r.ok) throw new Error("Hyperliquid returned " + r.status);
-      return r.json();
-    });
+    return fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+      .then(function (r) { if (!r.ok) throw new Error("Hyperliquid returned " + r.status); return r.json(); });
   }
+  function candles(coin, iv, days) {
+    var e = Date.now(), ms = { "1h": 3600000, "1d": DAY }[iv];
+    return hl({ type: "candleSnapshot", req: { coin: coin, interval: iv, startTime: e - days * DAY, endTime: e } })
+      .then(function (j) { if (!Array.isArray(j)) return null; var o = j.filter(function (x) { return +x.t + ms <= e; }).map(function (x) { return { t: +x.t, h: +x.h, l: +x.l, c: +x.c }; }); return o.length > 3 ? o : null; })
+      .catch(function () { return null; });
+  }
+  function sma(a, n) { if (a.length < n) return null; var s = 0; for (var i = a.length - n; i < a.length; i++) s += a[i]; return s / n; }
+  function emaS(a, n) { var k = 2 / (n + 1), p = a[0], o = [p]; for (var i = 1; i < a.length; i++) { p = a[i] * k + p * (1 - k); o.push(p); } return o; }
+  function rsi2(c) { var n = 2, ag = 0, al = 0, v = null; for (var i = 1; i < c.length; i++) { var d = c[i] - c[i - 1], g = d > 0 ? d : 0, l = d < 0 ? -d : 0; if (i <= n) { ag += g / n; al += l / n; if (i === n) v = al === 0 ? 100 : 100 - 100 / (1 + ag / al); } else { ag = (ag * (n - 1) + g) / n; al = (al * (n - 1) + l) / n; v = al === 0 ? 100 : 100 - 100 / (1 + ag / al); } } return v; }
+  function batch(list, size, fn) { var out = {}, i = 0; function next() { var ch = list.slice(i, i + size); i += size; if (!ch.length) return Promise.resolve(out); return Promise.all(ch.map(function (c) { return fn(c).then(function (v) { out[c] = v; }); })).then(next); } return next(); }
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function recall(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function money(n, dp) { if (n == null || isNaN(n)) return "—"; var d = dp === undefined ? 2 : dp; return "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+  function signed(n) { if (n == null || isNaN(n)) return "—"; return (n >= 0 ? "+" : "−") + money(Math.abs(n)); }
+  function px(n) { var a = Math.abs(n), dp = a >= 1000 ? 1 : a >= 1 ? 3 : a >= 0.01 ? 5 : 7; return Number(n).toFixed(dp).replace(/0+$/, "").replace(/\.$/, ""); }
+  function pct(n) { return (n >= 0 ? "+" : "−") + Math.abs(n).toFixed(1) + "%"; }
+  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; }
+  function tnow() { return new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); }
+  function stamp() { $("stamp").textContent = "updated " + tnow(); }
+  function when(t) { return new Date(t).toLocaleString([], { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }); }
+  function chip(id, label, val, cls) { var c = $(id); c.className = "chip" + (cls ? " " + cls : ""); c.innerHTML = "<b>" + label + "</b> " + val; }
+  function stratTag(cloid) { return cloid && cloid.length === 34 ? TAGS[cloid.slice(2, 4).toLowerCase()] || "" : ""; }
 
-  // Do NOT add the perp and spot balances together. On a unified account they
-  // are two views of ONE pot: spot USDC is the collateral, and the perp side
-  // reports the same money a second time as position value minus borrow.
-  // Adding them showed $1,001 for an account Hyperliquid itself values at $633.
-  //
-  // Hyperliquid publishes that number: the portfolio endpoint's "day" series,
-  // whose last point is now. Use it. Only fall back to reading the two
-  // clearinghouses if it is unavailable, and then take the LARGER side rather
-  // than the sum - a balance that reads too high is the dangerous mistake.
+  // ======================================================================
+  // ACCOUNT
+  // ======================================================================
+  // Unified account: the perp accountValue is only the margin slice. Use the
+  // portfolio endpoint's latest value; never add perp + spot.
   function tradeable(addr) {
     return Promise.all([
       hl({ type: "portfolio", user: addr }).catch(function () { return null; }),
       hl({ type: "clearinghouseState", user: addr }).catch(function () { return null; }),
       hl({ type: "spotClearinghouseState", user: addr }).catch(function () { return null; })
     ]).then(function (r) {
-      var perp = r[1] ? parseFloat(r[1].marginSummary.accountValue || 0) : 0;
-      var usdc = 0;
-      if (r[2] && r[2].balances) {
-        r[2].balances.forEach(function (b) {
-          if (b.coin === "USDC") usdc += parseFloat(b.total || 0);
-        });
-      }
+      var perp = r[1] ? parseFloat(r[1].marginSummary.accountValue || 0) : 0, usdc = 0;
+      if (r[2] && r[2].balances) r[2].balances.forEach(function (b) { if (b.coin === "USDC") usdc += parseFloat(b.total || 0); });
       var total = null;
-      if (r[0]) {
-        for (var i = 0; i < r[0].length; i++) {
-          if (r[0][i][0] === "day") {
-            var h = (r[0][i][1] || {}).accountValueHistory || [];
-            if (h.length) {
-              var v = parseFloat(h[h.length - 1][1]);
-              if (v > 0) total = v;
-            }
-          }
-        }
+      if (r[0]) for (var i = 0; i < r[0].length; i++) if (r[0][i][0] === "day") {
+        var h = (r[0][i][1] || {}).accountValueHistory || [];
+        if (h.length) { var v = parseFloat(h[h.length - 1][1]); if (v > 0) total = v; }
       }
       if (total === null) total = Math.max(perp, usdc);
-      return { perp: perp, spot: usdc, total: total, state: r[1],
-               reachable: !!(r[0] || r[1] || r[2]) };
+      return { perp: perp, spot: usdc, total: total, state: r[1], reachable: !!(r[0] || r[1] || r[2]) };
     });
   }
 
-  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
-  function recall(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  var botTotal = 0, botNtl = 0, hlValue = null, hlPnl = 0, hlCost = 0, hlNotional = 0;
+  function botLine() { return botNtl ? " · bot " + money(botNtl, 0) + " (" + (botTotal > 0 ? (botNtl / botTotal).toFixed(2) : "0") + "×)" : ""; }
 
-  function money(n, dp) {
-    if (n === null || n === undefined || isNaN(n)) return "—";
-    var d = dp === undefined ? 2 : dp;
-    return "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
-  }
-  function signed(n) {
-    if (n === null || n === undefined || isNaN(n)) return "—";
-    return (n >= 0 ? "+" : "−") + money(Math.abs(n));
-  }
-  function px(n) {
-    var a = Math.abs(n);
-    var dp = a >= 1000 ? 1 : a >= 1 ? 3 : a >= 0.01 ? 5 : 7;
-    return Number(n).toFixed(dp).replace(/0+$/, "").replace(/\.$/, "");
-  }
-  function pct(n) { return (n >= 0 ? "+" : "−") + Math.abs(n).toFixed(1) + "%"; }
-  function el(tag, cls, txt) {
-    var e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (txt !== undefined) e.textContent = txt;
-    return e;
-  }
-  function stamp() {
-    var d = new Date();
-    document.getElementById("stamp").textContent =
-      "updated " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  }
-
-  // ---------- account ----------
-  var botTotal = 0, botNtl = 0;   // bot account value + exposure, for the leverage tile
-  function botLine() {
-    if (!botNtl) return "";
-    return " · bot " + money(botNtl, 0) + " (" + (botTotal > 0 ? (botNtl / botTotal).toFixed(2) : "0") + "×)";
-  }
   function drawBot(b) {
     botTotal = b ? (b.total || 0) : 0;
     botNtl = b && b.state && b.state.marginSummary ? parseFloat(b.state.marginSummary.totalNtlPos || 0) : 0;
-    var e = document.getElementById("t-bot");
-    var s = document.getElementById("t-bot-sub");
-    if (!b) { e.textContent = "—"; s.textContent = "not set"; return; }
-    e.textContent = money(b.total);
-    var open = ((b.state && b.state.assetPositions) || []).filter(function (ap) {
-      return ap.position && parseFloat(ap.position.szi || 0) !== 0; });
-    var n = open.length;
+    if (!b) { $("t-bot").textContent = "—"; $("t-bot-sub").textContent = "sub-account not set"; return; }
+    $("t-bot").textContent = money(b.total);
+    var open = ((b.state && b.state.assetPositions) || []).filter(function (ap) { return ap.position && parseFloat(ap.position.szi || 0) !== 0; });
     var bp = open.reduce(function (a, ap) { return a + parseFloat(ap.position.unrealizedPnl || 0); }, 0);
-    s.textContent = b.total > 0
-      ? (n ? n + (n === 1 ? " open trade · " : " open trades · ") + signed(bp) + " unrealised"
-           : "no open trades")
+    var longs = open.filter(function (ap) { return parseFloat(ap.position.szi) > 0; }).length, shorts = open.length - longs;
+    $("t-bot-sub").innerHTML = b.total > 0
+      ? (open.length ? longs + "/12 longs · " + shorts + "/3 shorts · <span class='" + (bp >= 0 ? "up" : "down") + "'>" + signed(bp) + "</span> open" : "no open trades")
       : "nothing to trade with yet";
   }
 
@@ -481,98 +362,45 @@
     var ms = (state && state.marginSummary) || {};
     var value = combined == null ? parseFloat(ms.accountValue || 0) : combined;
     var notional = parseFloat(ms.totalNtlPos || 0);
-    var raw = (state && state.assetPositions) || [];
-
-    var rows = raw.map(function (ap) { return ap.position; }).filter(Boolean);
+    var rows = ((state && state.assetPositions) || []).map(function (ap) { return ap.position; }).filter(Boolean);
     var pnl = rows.reduce(function (a, p) { return a + parseFloat(p.unrealizedPnl || 0); }, 0);
-    // leverage and P/L belong to the perp book, so they use the perp value
-    // even when the tile above shows perps plus spot
-    var perpValue = parseFloat(ms.accountValue || 0);
-    // Leverage = exposure / everything the account is worth. On a unified
-    // account the perp "accountValue" is only the margin slice (e.g. $377 of
-    // $559), so dividing by it overstated leverage (showed 3.00x, really 2.0x).
-    var lev = value > 0 ? notional / value : 0;
-
+    var perpValue = parseFloat(ms.accountValue || 0), lev = value > 0 ? notional / value : 0;
     hlValue = value; hlPnl = pnl; hlCost = perpValue - pnl; hlNotional = notional;
-    document.getElementById("t-value").textContent = money(value);
-    document.getElementById("t-value-sub").textContent =
-      rows.length + (rows.length === 1 ? " open position" : " open positions")
-      + " · as Hyperliquid values it";
 
-    var pe = document.getElementById("t-pnl");
-    pe.textContent = signed(pnl);
-    pe.className = "v " + (pnl >= 0 ? "up" : "down");
-    var cost = perpValue - pnl;
-    document.getElementById("t-pnl-sub").textContent =
-      cost > 0 ? pct((pnl / cost) * 100) + " on the money tied up" : " ";
+    $("t-value").textContent = money(value);
+    $("t-value-sub").textContent = rows.length + (rows.length === 1 ? " position" : " positions") + " · as Hyperliquid values it";
+    var pe = $("t-pnl"); pe.textContent = signed(pnl); pe.className = "v " + (pnl >= 0 ? "up" : "down");
+    var cost = perpValue - pnl; $("t-pnl-sub").textContent = cost > 0 ? pct((pnl / cost) * 100) + " on money tied up" : " ";
+    $("t-lev").textContent = lev.toFixed(2) + "×";
+    $("t-lev-sub").textContent = money(notional, 0) + " exposure" + botLine();
+    var meter = $("t-lev-meter"); meter.firstElementChild.style.width = Math.max(2, Math.min(100, (lev / 5) * 100)) + "%"; meter.classList.toggle("over", lev > 3);
 
-    document.getElementById("t-lev").textContent = lev.toFixed(2) + "×";
-    document.getElementById("t-lev-sub").textContent = money(notional, 0) + " your exposure" + botLine();
-    var meter = document.getElementById("t-lev-meter");
-    meter.firstElementChild.style.width = Math.max(2, Math.min(100, (lev / 5) * 100)) + "%";
-    meter.classList.toggle("over", lev > 3);
-
-    // the tiles above describe YOUR account only; the table below lists your
-    // positions and the bot's together, bot rows tagged so they can't be confused
     rows.forEach(function (p) { p._bot = false; });
     ((botState && botState.assetPositions) || []).forEach(function (ap) {
-      if (ap.position && parseFloat(ap.position.szi || 0) !== 0) {
-        ap.position._bot = true;
-        ap.position._strat = (botStrat || {})[ap.position.coin] || "";
-        rows.push(ap.position);
-      }
+      if (ap.position && parseFloat(ap.position.szi || 0) !== 0) { ap.position._bot = true; ap.position._strat = (botStrat || {})[ap.position.coin] || ""; rows.push(ap.position); }
     });
-
-    var wrap = document.getElementById("pos-wrap");
-    wrap.textContent = "";
-    if (!rows.length) {
-      wrap.appendChild(el("div", "msg", "No open perp positions on this account."));
-      return;
-    }
-
-    rows.sort(function (a, b) {
-      return Math.abs(parseFloat(b.positionValue || 0)) - Math.abs(parseFloat(a.positionValue || 0));
-    });
-
-    var sc = el("div", "scroller");
-    var tb = el("table");
-    var head = el("thead");
-    var hr = el("tr");
-    ["Coin", "Side", "Size", "Entry", "Value", "Unrealised", "Liq price"].forEach(function (h) {
-      hr.appendChild(el("th", null, h));
-    });
-    head.appendChild(hr);
-    tb.appendChild(head);
-
+    $("acct-n").textContent = rows.length ? rows.length + " open" : "";
+    var wrap = $("pos-wrap"); wrap.textContent = "";
+    if (!rows.length) { wrap.appendChild(el("div", "msg", "No open positions.")); return; }
+    rows.sort(function (a, b) { return Math.abs(parseFloat(b.positionValue || 0)) - Math.abs(parseFloat(a.positionValue || 0)); });
+    var sc = el("div", "scroller"), tb = el("table"), hd = el("thead"), hr = el("tr");
+    ["Coin", "Side", "Size", "Entry", "Value", "Unrealised", "Liq"].forEach(function (h) { hr.appendChild(el("th", null, h)); });
+    hd.appendChild(hr); tb.appendChild(hd);
     var body = el("tbody");
     rows.forEach(function (p) {
-      var szi = parseFloat(p.szi || 0);
-      var long = szi >= 0;
-      var up = parseFloat(p.unrealizedPnl || 0);
-      var tr = el("tr");
-
-      var c = el("td");
+      var szi = parseFloat(p.szi || 0), long = szi >= 0, up = parseFloat(p.unrealizedPnl || 0), tr = el("tr"), c = el("td");
       c.appendChild(el("span", "coin", p.coin));
       if (p._bot) c.appendChild(el("span", "tag", p._strat ? "bot · " + p._strat : "bot"));
       tr.appendChild(c);
-
-      var s = el("td");
-      s.appendChild(el("span", "pill " + (long ? "long" : "short"), long ? "Long" : "Short"));
-      tr.appendChild(s);
-
+      var s = el("td"); s.appendChild(el("span", "pill " + (long ? "long" : "short"), long ? "Long" : "Short")); tr.appendChild(s);
       tr.appendChild(el("td", "num", px(Math.abs(szi))));
       tr.appendChild(el("td", "num", p.entryPx ? px(parseFloat(p.entryPx)) : "—"));
       tr.appendChild(el("td", "num", money(Math.abs(parseFloat(p.positionValue || 0)), 0)));
-
-      var u = el("td", "num " + (up >= 0 ? "up" : "down"), signed(up));
-      tr.appendChild(u);
-
-      tr.appendChild(el("td", "num", p.liquidationPx ? px(parseFloat(p.liquidationPx)) : "—"));
+      tr.appendChild(el("td", "num " + (up >= 0 ? "up" : "down"), signed(up)));
+      tr.appendChild(el("td", "num muted", p.liquidationPx ? px(parseFloat(p.liquidationPx)) : "—"));
       body.appendChild(tr);
     });
-    tb.appendChild(body);
-    sc.appendChild(tb);
-    wrap.appendChild(sc);
+    tb.appendChild(body); sc.appendChild(tb); wrap.appendChild(sc);
   }
 
   function loadAccount(addr) {
@@ -580,754 +408,348 @@
     return Promise.all([
       tradeable(addr),
       sub ? tradeable(sub) : Promise.resolve(null),
-      sub ? hl({ type: "frontendOpenOrders", user: sub }).catch(function () { return []; })
-          : Promise.resolve([])
+      sub ? hl({ type: "frontendOpenOrders", user: sub }).catch(function () { return []; }) : Promise.resolve([])
     ]).then(function (r) {
-      // which strategy owns each bot position: the bot writes it into the
-      // first byte of every order id, and the stop order carries it
-      var TAGS = { d1: "1D", "44": "4H", "11": "1H", d9: "DIP" }, botStrat = {};
-      (r[2] || []).forEach(function (o) {
-        var t = o.cloid && o.cloid.length === 34 && TAGS[o.cloid.slice(2, 4).toLowerCase()];
-        if (t && o.reduceOnly) botStrat[o.coin] = t;
-      });
-      var mine = r[0];
-      if (!mine.reachable) throw new Error("Hyperliquid did not answer for that address");
-      document.getElementById("acct-setup").hidden = true;
-      document.getElementById("acct").hidden = false;
+      var botStrat = {};
+      (r[2] || []).forEach(function (o) { var t = stratTag(o.cloid); if (t && o.reduceOnly) botStrat[o.coin] = t; });
+      if (!r[0].reachable) throw new Error("Hyperliquid did not answer for that address");
+      $("acct-setup").hidden = true; $("acct").hidden = false;
       drawBot(r[1]);
-      drawAccount(mine.state, mine.total, r[1] && r[1].state, botStrat);
-      loadRealised(addr, sub);   // never throws - trouble shows in its own section
-      return loadGmx(addr);   // never throws - GMX trouble shows in its own section
+      drawAccount(r[0].state, r[0].total, r[1] && r[1].state, botStrat);
+      loadRealised(addr, sub);
+      return loadGmx(addr);
     });
   }
 
-  // ---------- realised P/L ----------
-  // Read-only. Every fill Hyperliquid reports carries closedPnl (profit or
-  // loss banked by that fill) and fee. Realised = sum(closedPnl) - sum(fee).
-  // Fills are fetched in pages of up to 2000, newest window last.
-  var RP_DAYS = 90, DAY = 86400000;
-  var RP_TAGS = { d1: "1D", "44": "4H", "11": "1H", d9: "Dip" };
-
+  // ======================================================================
+  // REALISED P/L
+  // ======================================================================
+  var RP_DAYS = 30;
   function fillsSince(user, start) {
     var out = [];
     function page(from) {
-      return hl({ type: "userFillsByTime", user: user, startTime: from, aggregateByTime: true })
-        .then(function (f) {
-          f = Array.isArray(f) ? f : [];
-          out = out.concat(f);
-          if (f.length >= 2000) {
-            var last = Math.max.apply(null, f.map(function (x) { return +x.time; }));
-            if (last > from) return page(last + 1);
-          }
-          return out;
-        });
+      return hl({ type: "userFillsByTime", user: user, startTime: from, aggregateByTime: true }).then(function (f) {
+        f = Array.isArray(f) ? f : []; out = out.concat(f);
+        if (f.length >= 2000) { var last = Math.max.apply(null, f.map(function (x) { return +x.time; })); if (last > from) return page(last + 1); }
+        return out;
+      });
     }
     return page(start);
   }
-
-  function fundingSince(user, start) {
-    return hl({ type: "userFunding", user: user, startTime: start })
-      .then(function (f) { return Array.isArray(f) ? f : []; })
-      .catch(function () { return []; });
-  }
-
+  function fundingSince(user, start) { return hl({ type: "userFunding", user: user, startTime: start }).then(function (f) { return Array.isArray(f) ? f : []; }).catch(function () { return []; }); }
   function sydMidnight() {
-    // start of today in Sydney, as a UTC timestamp
-    var now = new Date();
-    var parts = new Intl.DateTimeFormat("en-AU", { timeZone: "Australia/Sydney",
-      year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit",
-      hourCycle: "h23" }).formatToParts(now);
-    var g = {}; parts.forEach(function (p) { g[p.type] = p.value; });
-    var mins = (+g.hour) * 60 + (+g.minute);
-    return now.getTime() - mins * 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
+    var now = new Date(), g = {};
+    new Intl.DateTimeFormat("en-AU", { timeZone: "Australia/Sydney", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(now).forEach(function (p) { g[p.type] = p.value; });
+    return now.getTime() - ((+g.hour) * 60 + (+g.minute)) * 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
   }
-
-  // group a user's fills into closed trades: one row per order that banked P/L
   function closes(fills, who) {
     var by = {};
     fills.forEach(function (f) {
-      var cp = parseFloat(f.closedPnl || 0);
-      var d = f.dir || "";
+      var cp = parseFloat(f.closedPnl || 0), d = f.dir || "";
       if (!cp && d.indexOf("Close") !== 0 && d.indexOf(">") < 0) return;
       var k = who + ":" + (f.oid || f.hash || f.time);
-      var r = by[k] || (by[k] = { who: who, coin: f.coin, dir: d, time: 0, sz: 0,
-                                  pxsz: 0, pnl: 0, fee: 0, cloid: f.cloid });
-      var sz = Math.abs(parseFloat(f.sz || 0));
-      r.sz += sz; r.pxsz += sz * parseFloat(f.px || 0);
-      r.pnl += cp; r.fee += parseFloat(f.fee || 0);
-      r.time = Math.max(r.time, +f.time);
+      var r = by[k] || (by[k] = { who: who, coin: f.coin, dir: d, time: 0, sz: 0, pxsz: 0, pnl: 0, fee: 0, cloid: f.cloid });
+      var sz = Math.abs(parseFloat(f.sz || 0)); r.sz += sz; r.pxsz += sz * parseFloat(f.px || 0);
+      r.pnl += cp; r.fee += parseFloat(f.fee || 0); r.time = Math.max(r.time, +f.time);
     });
     return Object.keys(by).map(function (k) { return by[k]; });
   }
-
-  function sumPnl(fills, from) {
-    var t = 0;
-    fills.forEach(function (f) {
-      if (+f.time >= from) t += parseFloat(f.closedPnl || 0) - parseFloat(f.fee || 0);
-    });
-    return t;
-  }
-  function sumFunding(fund, from) {
-    var t = 0;
-    fund.forEach(function (f) {
-      if (+f.time >= from) t += parseFloat((f.delta && f.delta.usdc) || 0);
-    });
-    return t;
-  }
+  function sumPnl(fills, from) { var t = 0; fills.forEach(function (f) { if (+f.time >= from) t += parseFloat(f.closedPnl || 0) - parseFloat(f.fee || 0); }); return t; }
+  function sumFunding(fund, from) { var t = 0; fund.forEach(function (f) { if (+f.time >= from) t += parseFloat((f.delta && f.delta.usdc) || 0); }); return t; }
 
   function loadRealised(main, sub) {
-    var start = Date.now() - RP_DAYS * DAY;
-    var who = [{ k: "you", a: main }];
+    var start = Date.now() - RP_DAYS * DAY, who = [{ k: "you", a: main }];
     if (sub) who.push({ k: "bot", a: sub });
-    return Promise.all(who.map(function (w) {
-      return Promise.all([fillsSince(w.a, start), fundingSince(w.a, start)])
-        .then(function (r) { return { k: w.k, fills: r[0], fund: r[1] }; });
-    })).then(drawRealised).catch(function (e) {
-      document.getElementById("rp-h").hidden = false;
-      document.getElementById("rp").hidden = false;
-      document.getElementById("rp-tiles").textContent = "";
-      var w = document.getElementById("rp-wrap");
-      w.textContent = "";
-      w.appendChild(el("div", "msg err", "Couldn't load closed trades: " + e.message));
-    });
+    return Promise.all(who.map(function (w) { return Promise.all([fillsSince(w.a, start), fundingSince(w.a, start)]).then(function (r) { return { k: w.k, fills: r[0], fund: r[1] }; }); }))
+      .then(drawRealised).catch(function (e) { $("s-rp").hidden = false; $("rp-tiles").textContent = ""; var w = $("rp-wrap"); w.textContent = ""; w.appendChild(el("div", "msg err", "Couldn't load closed trades: " + e.message)); });
   }
-
   function drawRealised(acc) {
-    document.getElementById("rp-h").hidden = false;
-    document.getElementById("rp").hidden = false;
-    var now = Date.now();
-    var periods = [
-      { k: "Today", from: sydMidnight() },
-      { k: "7 days", from: now - 7 * DAY },
-      { k: "30 days", from: now - 30 * DAY },
-      { k: RP_DAYS + " days", from: now - RP_DAYS * DAY }
-    ];
-    var box = document.getElementById("rp-tiles");
-    box.textContent = "";
-    periods.forEach(function (p) {
-      var parts = acc.map(function (a) { return { k: a.k, v: sumPnl(a.fills, p.from) }; });
-      var tot = parts.reduce(function (s, x) { return s + x.v; }, 0);
-      var t = el("div", "tile");
-      t.appendChild(el("div", "k", p.k));
-      t.appendChild(el("div", "v " + (tot >= 0 ? "up" : "down"), signed(tot)));
-      t.appendChild(el("div", "sub", parts.map(function (x) {
-        return (x.k === "bot" ? "Bot " : "You ") + signed(x.v); }).join(" · ")));
-      // wins and losses shown separately, so it's clear losses are taken off
-      var won = 0, lost = 0;
-      acc.forEach(function (a) {
-        closes(a.fills, a.k).forEach(function (r) {
-          if (r.time < p.from) return;
-          var n = r.pnl - r.fee;
-          if (n >= 0) won += n; else lost += n;
-        });
-      });
-      t.appendChild(el("div", "sub", "won " + signed(won) + " · lost " + signed(lost)));
+    $("s-rp").hidden = false;
+    var now = Date.now(), box = $("rp-tiles"); box.textContent = "";
+    [{ k: "Today", from: sydMidnight() }, { k: "7 days", from: now - 7 * DAY }, { k: "30 days", from: now - 30 * DAY }].forEach(function (p) {
+      var parts = acc.map(function (a) { return { k: a.k, v: sumPnl(a.fills, p.from) }; }), tot = parts.reduce(function (s, x) { return s + x.v; }, 0);
+      var t = el("div", "tile"); t.appendChild(el("div", "k", p.k)); t.appendChild(el("div", "v " + (tot >= 0 ? "up" : "down"), signed(tot)));
+      t.appendChild(el("div", "sub", parts.map(function (x) { return (x.k === "bot" ? "Bot " : "You ") + signed(x.v); }).join(" · ")));
       box.appendChild(t);
     });
-
-    // table of the most recent closed trades
-    var rows = [];
-    acc.forEach(function (a) { rows = rows.concat(closes(a.fills, a.k)); });
-    rows.sort(function (a, b) { return b.time - a.time; });
-    var wrap = document.getElementById("rp-wrap");
-    wrap.textContent = "";
-    var fund = acc.map(function (a) { return { k: a.k, v: sumFunding(a.fund, now - 30 * DAY) }; });
-    if (!rows.length) {
-      wrap.appendChild(el("div", "msg", "No closed trades in the last " + RP_DAYS + " days yet."));
-    } else {
-      var sc = el("div", "scroller"), tb = el("table"), hd = el("thead"), hr = el("tr");
-      ["Coin", "Closed", "Size", "Exit", "Fees", "Realised"].forEach(function (h) {
-        hr.appendChild(el("th", null, h)); });
-      hd.appendChild(hr); tb.appendChild(hd);
-      var body = el("tbody");
-      rows.slice(0, 25).forEach(function (r) {
-        var tr = el("tr"), c = el("td"), net = r.pnl - r.fee;
-        c.appendChild(el("span", "coin", r.coin));
-        if (r.who === "bot") {
-          var tag = r.cloid && r.cloid.length === 34 && RP_TAGS[r.cloid.slice(2, 4).toLowerCase()];
-          c.appendChild(el("span", "tag", tag ? "bot · " + tag : "bot"));
-        }
-        tr.appendChild(c);
-        tr.appendChild(el("td", "num", new Date(r.time).toLocaleString([], {
-          day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })));
-        tr.appendChild(el("td", "num", px(r.sz)));
-        tr.appendChild(el("td", "num", r.sz ? px(r.pxsz / r.sz) : "—"));
-        tr.appendChild(el("td", "num", money(r.fee)));
-        tr.appendChild(el("td", "num " + (net >= 0 ? "up" : "down"), signed(net)));
-        body.appendChild(tr);
-      });
-      tb.appendChild(body); sc.appendChild(tb);
-      // collapsed by default - the tiles above are the summary
-      var det = el("details", "rp-list");
-      var sm = el("summary", null, "Closed trades (" + rows.length + ") — tap to show");
-      det.appendChild(sm);
-      det.appendChild(sc);
-      if (rows.length > 25) det.appendChild(el("div", "note", "Showing the latest 25 of " + rows.length + "."));
-      wrap.appendChild(det);
-    }
-    document.getElementById("rp-note").textContent =
-      "Each total = money won on closed trades minus money lost, minus trading fees (opening fees included, which is why a total can sit slightly below won − lost). "
-      + "Open trades aren't counted — they're in the table above. "
-      + "Funding, last 30 days (not included above): "
-      + fund.map(function (x) { return (x.k === "bot" ? "Bot " : "You ") + signed(x.v); }).join(" · ") + ".";
-  }
-
-  // ---------- GMX (Arbitrum) ----------
-  // Read-only. Positions come from GMX's public indexer; coin names, decimals
-  // and live prices from GMX's own price API. Nothing is signed or sent.
-  var GMX_SQUID = "https://gmx.squids.live/gmx-synthetics-arbitrum:prod/api/graphql";
-  var GMX_API = "https://arbitrum-api.gmxinfra.io";
-  var gmxRef = null;   // markets + tokens, fetched once per page load
-  var hlValue = null;  // Hyperliquid part of "Your account", so GMX can be added to it
-  var hlPnl = 0, hlCost = 0, hlNotional = 0;   // likewise for P/L and leverage
-
-  function getJSON(u) {
-    return fetch(u).then(function (r) {
-      if (!r.ok) throw new Error("GMX returned " + r.status);
-      return r.json();
-    });
-  }
-  function units(big, dec) {
-    // BigInt with `dec` decimals -> Number, keeping 6 decimals of precision
-    var b = BigInt(big), neg = b < 0n;
-    if (neg) b = -b;
-    var v = Number(b * 1000000n / (10n ** BigInt(dec))) / 1e6;
-    return neg ? -v : v;
-  }
-
-  function loadGmx(addr) {
-    var ref = gmxRef ? Promise.resolve(gmxRef) : Promise.all([
-      getJSON(GMX_API + "/markets"), getJSON(GMX_API + "/tokens")
-    ]).then(function (r) {
-      var mk = {}, tk = {};
-      r[0].markets.forEach(function (m) { mk[m.marketToken.toLowerCase()] = m; });
-      r[1].tokens.forEach(function (t) { tk[t.address.toLowerCase()] = t; });
-      gmxRef = { mk: mk, tk: tk };
-      return gmxRef;
-    });
-    // the indexer matches the address exactly as checksummed, so it is passed
-    // through untouched; it is validated as a plain 0x address first
-    if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) return Promise.resolve();
-    var q = '{ positions(where:{account_eq:"' + addr + '", sizeInUsd_gt:"0", isSnapshot_eq:false}, limit:50)' +
-            ' { market isLong collateralToken collateralAmount sizeInUsd sizeInTokens openedAt } }';
-    var pos = fetch(GMX_SQUID, { method: "POST", headers: { "Content-Type": "application/json" },
-                                 body: JSON.stringify({ query: q }) })
-      .then(function (r) { return r.json(); })
-      .then(function (j) {
-        if (j.errors) throw new Error("GMX indexer: " + j.errors[0].message);
-        return j.data.positions;
-      });
-    return Promise.all([ref, pos, getJSON(GMX_API + "/prices/tickers")])
-      .then(function (r) { drawGmx(addr, r[0], r[1], r[2]); })
-      .catch(function (e) {
-        document.getElementById("gmx-h").hidden = false;
-        document.getElementById("gmx").hidden = false;
-        document.getElementById("gmx-wrap").textContent = "";
-        var m = document.getElementById("gmx-sum");
-        m.textContent = "Couldn't reach GMX just now: " + e.message;
-        m.className = "note err";
-      });
-  }
-
-  function drawGmx(addr, ref, positions, tickers) {
-    document.getElementById("gmx-h").hidden = false;
-    document.getElementById("gmx").hidden = false;
-    var sum = document.getElementById("gmx-sum");
-    sum.className = "note";
-    var wrap = document.getElementById("gmx-wrap");
-    wrap.textContent = "";
-
-    var price = {};
-    tickers.forEach(function (t) { price[t.tokenAddress.toLowerCase()] = t; });
-
-    var rows = positions.map(function (p) {
-      var m = ref.mk[p.market.toLowerCase()];
-      var it = m && ref.tk[m.indexToken.toLowerCase()];
-      var ct = ref.tk[p.collateralToken.toLowerCase()];
-      var dec = it ? it.decimals : 18;
-      var sizeUsd = units(p.sizeInUsd, 30);
-      var sizeTok = units(p.sizeInTokens, dec);
-      var t = m && price[m.indexToken.toLowerCase()];
-      var now = t ? (Number(t.minPrice) + Number(t.maxPrice)) / 2 / Math.pow(10, 30 - dec) : null;
-      var coll = ct ? units(p.collateralAmount, ct.decimals) : null;
-      // stablecoin collateral is worth its face value; anything else at its price
-      var cp = ct && price[p.collateralToken.toLowerCase()];
-      var collUsd = coll == null ? null : (cp && !/USD/.test(ct.symbol)
-        ? coll * (Number(cp.minPrice) + Number(cp.maxPrice)) / 2 / Math.pow(10, 30 - ct.decimals)
-        : coll);
-      var pnl = now == null ? null : (p.isLong ? sizeTok * now - sizeUsd : sizeUsd - sizeTok * now);
-      return {
-        coin: it ? it.symbol : (m ? m.name.split("/")[0] : "?"),
-        long: p.isLong, sizeUsd: sizeUsd, entry: sizeTok > 0 ? sizeUsd / sizeTok : null,
-        now: now, pnl: pnl, collUsd: collUsd,
-        lev: (pnl != null && collUsd) ? sizeUsd / Math.max(collUsd + pnl, 0.01) : null
-      };
-    });
-
-    if (!rows.length) {
-      sum.textContent = /[A-F]/.test(addr)
-        ? "No open GMX positions on this wallet."
-        : "No open GMX positions found. GMX's data matches the address exactly as your wallet shows it (mixed upper and lower case) — try pasting it that way.";
-      return;
-    }
-
-    var tSize = 0, tPnl = 0, tColl = 0;
-    rows.forEach(function (r) { tSize += r.sizeUsd; tPnl += r.pnl || 0; tColl += r.collUsd || 0; });
-    sum.textContent = rows.length + (rows.length === 1 ? " position" : " positions") +
-      " · " + money(tSize, 0) + " total size · " + signed(tPnl) + " unrealised · " +
-      money(tColl, 0) + " of your money in";
-
-    // "Your account" = Hyperliquid + what your GMX positions are worth now
-    // (collateral plus unrealised P/L, before GMX fees)
-    if (hlValue != null) {
-      var gEq = 0;
-      rows.forEach(function (r) { gEq += (r.collUsd || 0) + (r.pnl || 0); });
-      document.getElementById("t-value").textContent = money(hlValue + gEq);
-      document.getElementById("t-value-sub").textContent =
-        "Hyperliquid " + money(hlValue, 0) + " + GMX " + money(gEq, 0);
-
-      var allPnl = hlPnl + tPnl, allCost = hlCost + tColl;
-      var pe = document.getElementById("t-pnl");
-      pe.textContent = signed(allPnl);
-      pe.className = "v " + (allPnl >= 0 ? "up" : "down");
-      document.getElementById("t-pnl-sub").textContent =
-        "Hyperliquid " + signed(hlPnl) + " · GMX " + signed(tPnl) +
-        (allCost > 0 ? " · " + pct((allPnl / allCost) * 100) : "");
-
-      var exp = hlNotional + tSize, eq = hlValue + gEq;
-      var lev = eq > 0 ? exp / eq : 0;
-      document.getElementById("t-lev").textContent = lev.toFixed(2) + "×";
-      document.getElementById("t-lev-sub").textContent = money(exp, 0) + " your exposure, both venues" + botLine();
-      var meter = document.getElementById("t-lev-meter");
-      meter.firstElementChild.style.width = Math.max(2, Math.min(100, (lev / 5) * 100)) + "%";
-      meter.classList.toggle("over", lev > 3);
-    }
-
-    rows.sort(function (a, b) { return b.sizeUsd - a.sizeUsd; });
-    var sc = el("div", "scroller");
-    var tb = el("table");
-    var head = el("thead"), hr = el("tr");
-    ["Coin", "Side", "Size", "Entry", "Now", "Unrealised", "Leverage"].forEach(function (h) {
-      hr.appendChild(el("th", null, h));
-    });
-    head.appendChild(hr); tb.appendChild(head);
+    $("rp-fund").textContent = "funding 30d: " + acc.map(function (a) { return (a.k === "bot" ? "bot " : "you ") + signed(sumFunding(a.fund, now - 30 * DAY)); }).join(" · ");
+    var rows = []; acc.forEach(function (a) { rows = rows.concat(closes(a.fills, a.k)); }); rows.sort(function (a, b) { return b.time - a.time; });
+    var wrap = $("rp-wrap"); wrap.textContent = "";
+    if (!rows.length) { wrap.appendChild(el("div", "msg", "No closed trades in the last 30 days.")); return; }
+    var det = el("details", "fold"), sm = el("summary", null, rows.length + " closed trade" + (rows.length === 1 ? "" : "s")); det.appendChild(sm);
+    var sc = el("div", "scroller"), tb = el("table"), hd = el("thead"), hr = el("tr");
+    ["Coin", "Closed", "Size", "Exit", "Fees", "Realised"].forEach(function (h) { hr.appendChild(el("th", null, h)); });
+    hd.appendChild(hr); tb.appendChild(hd);
     var body = el("tbody");
-    rows.forEach(function (r) {
-      var tr = el("tr");
-      var c = el("td"); c.appendChild(el("span", "coin", r.coin)); tr.appendChild(c);
-      var s = el("td"); s.appendChild(el("span", "pill " + (r.long ? "long" : "short"), r.long ? "Long" : "Short"));
-      tr.appendChild(s);
-      tr.appendChild(el("td", "num", money(r.sizeUsd, 0)));
-      tr.appendChild(el("td", "num", r.entry ? px(r.entry) : "—"));
-      tr.appendChild(el("td", "num", r.now ? px(r.now) : "—"));
-      tr.appendChild(el("td", "num " + ((r.pnl || 0) >= 0 ? "up" : "down"), signed(r.pnl)));
-      tr.appendChild(el("td", "num", r.lev ? r.lev.toFixed(1) + "×" : "—"));
+    rows.slice(0, 40).forEach(function (r) {
+      var tr = el("tr"), c = el("td"), net = r.pnl - r.fee;
+      c.appendChild(el("span", "coin", r.coin));
+      if (r.who === "bot") { var tag = stratTag(r.cloid); c.appendChild(el("span", "tag", tag ? "bot · " + tag : "bot")); }
+      tr.appendChild(c);
+      tr.appendChild(el("td", "num muted", when(r.time)));
+      tr.appendChild(el("td", "num", px(r.sz)));
+      tr.appendChild(el("td", "num", r.sz ? px(r.pxsz / r.sz) : "—"));
+      tr.appendChild(el("td", "num muted", money(r.fee)));
+      tr.appendChild(el("td", "num " + (net >= 0 ? "up" : "down"), signed(net)));
       body.appendChild(tr);
     });
-    tb.appendChild(body); sc.appendChild(tb); wrap.appendChild(sc);
+    tb.appendChild(body); sc.appendChild(tb); det.appendChild(sc); wrap.appendChild(det);
   }
 
-  // ---------- signal radar ----------
-  function closedCloses(rows, ms) {
-    var now = Date.now();
-    var out = [];
-    for (var i = 0; i < rows.length; i++) {
-      if (Number(rows[i].t) + ms <= now) out.push(parseFloat(rows[i].c));
+  // ======================================================================
+  // GMX (Arbitrum) - section only appears when there are positions
+  // ======================================================================
+  var GMX_SQUID = "https://gmx.squids.live/gmx-synthetics-arbitrum:prod/api/graphql", GMX_API = "https://arbitrum-api.gmxinfra.io", gmxRef = null;
+  function getJSON(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error("GMX returned " + r.status); return r.json(); }); }
+  function units(big, dec) { var b = BigInt(big), neg = b < 0n; if (neg) b = -b; var v = Number(b * 1000000n / (10n ** BigInt(dec))) / 1e6; return neg ? -v : v; }
+  function loadGmx(addr) {
+    if (!/^0x[a-fA-F0-9]{40}$/.test(addr)) return Promise.resolve();
+    var ref = gmxRef ? Promise.resolve(gmxRef) : Promise.all([getJSON(GMX_API + "/markets"), getJSON(GMX_API + "/tokens")]).then(function (r) {
+      var mk = {}, tk = {}; r[0].markets.forEach(function (m) { mk[m.marketToken.toLowerCase()] = m; }); r[1].tokens.forEach(function (t) { tk[t.address.toLowerCase()] = t; }); return (gmxRef = { mk: mk, tk: tk });
+    });
+    var q = '{ positions(where:{account_eq:"' + addr + '", sizeInUsd_gt:"0", isSnapshot_eq:false}, limit:50) { market isLong collateralToken collateralAmount sizeInUsd sizeInTokens openedAt } }';
+    var pos = fetch(GMX_SQUID, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query: q }) })
+      .then(function (r) { return r.json(); }).then(function (j) { if (j.errors) throw new Error("GMX indexer: " + j.errors[0].message); return j.data.positions; });
+    return Promise.all([ref, pos, getJSON(GMX_API + "/prices/tickers")]).then(function (r) { drawGmx(r[0], r[1], r[2]); }).catch(function () { $("s-gmx").hidden = true; });
+  }
+  function drawGmx(ref, positions, tickers) {
+    var price = {}; tickers.forEach(function (t) { price[t.tokenAddress.toLowerCase()] = t; });
+    var rows = positions.map(function (p) {
+      var m = ref.mk[p.market.toLowerCase()], it = m && ref.tk[m.indexToken.toLowerCase()], ct = ref.tk[p.collateralToken.toLowerCase()], dec = it ? it.decimals : 18;
+      var sizeUsd = units(p.sizeInUsd, 30), sizeTok = units(p.sizeInTokens, dec), t = m && price[m.indexToken.toLowerCase()];
+      var now = t ? (Number(t.minPrice) + Number(t.maxPrice)) / 2 / Math.pow(10, 30 - dec) : null, coll = ct ? units(p.collateralAmount, ct.decimals) : null;
+      var cp = ct && price[p.collateralToken.toLowerCase()];
+      var collUsd = coll == null ? null : (cp && !/USD/.test(ct.symbol) ? coll * (Number(cp.minPrice) + Number(cp.maxPrice)) / 2 / Math.pow(10, 30 - ct.decimals) : coll);
+      var pnl = now == null ? null : (p.isLong ? sizeTok * now - sizeUsd : sizeUsd - sizeTok * now);
+      return { coin: it ? it.symbol : (m ? m.name.split("/")[0] : "?"), long: p.isLong, sizeUsd: sizeUsd, entry: sizeTok > 0 ? sizeUsd / sizeTok : null, now: now, pnl: pnl, collUsd: collUsd, lev: (pnl != null && collUsd) ? sizeUsd / Math.max(collUsd + pnl, 0.01) : null };
+    });
+    if (!rows.length) { $("s-gmx").hidden = true; return; }
+    $("s-gmx").hidden = false;
+    var tSize = 0, tPnl = 0, tColl = 0; rows.forEach(function (r) { tSize += r.sizeUsd; tPnl += r.pnl || 0; tColl += r.collUsd || 0; });
+    $("gmx-sum").textContent = money(tSize, 0) + " size · " + signed(tPnl) + " unrealised";
+    if (hlValue != null) {
+      var gEq = 0; rows.forEach(function (r) { gEq += (r.collUsd || 0) + (r.pnl || 0); });
+      $("t-value").textContent = money(hlValue + gEq); $("t-value-sub").textContent = "Hyperliquid " + money(hlValue, 0) + " + GMX " + money(gEq, 0);
+      var allPnl = hlPnl + tPnl, allCost = hlCost + tColl, pe = $("t-pnl");
+      pe.textContent = signed(allPnl); pe.className = "v " + (allPnl >= 0 ? "up" : "down");
+      $("t-pnl-sub").textContent = "HL " + signed(hlPnl) + " · GMX " + signed(tPnl) + (allCost > 0 ? " · " + pct((allPnl / allCost) * 100) : "");
+      var exp = hlNotional + tSize, eq = hlValue + gEq, lev = eq > 0 ? exp / eq : 0;
+      $("t-lev").textContent = lev.toFixed(2) + "×"; $("t-lev-sub").textContent = money(exp, 0) + " exposure, both venues" + botLine();
+      var meter = $("t-lev-meter"); meter.firstElementChild.style.width = Math.max(2, Math.min(100, (lev / 5) * 100)) + "%"; meter.classList.toggle("over", lev > 3);
     }
+    rows.sort(function (a, b) { return b.sizeUsd - a.sizeUsd; });
+    var wrap = $("gmx-wrap"); wrap.textContent = "";
+    var tb = el("table"), hd = el("thead"), hr = el("tr");
+    ["Coin", "Side", "Size", "Entry", "Now", "Unrealised", "Lev"].forEach(function (h) { hr.appendChild(el("th", null, h)); }); hd.appendChild(hr); tb.appendChild(hd);
+    var body = el("tbody");
+    rows.forEach(function (r) {
+      var tr = el("tr"), c = el("td"); c.appendChild(el("span", "coin", r.coin)); tr.appendChild(c);
+      var s = el("td"); s.appendChild(el("span", "pill " + (r.long ? "long" : "short"), r.long ? "Long" : "Short")); tr.appendChild(s);
+      tr.appendChild(el("td", "num", money(r.sizeUsd, 0))); tr.appendChild(el("td", "num", r.entry ? px(r.entry) : "—")); tr.appendChild(el("td", "num", r.now ? px(r.now) : "—"));
+      tr.appendChild(el("td", "num " + ((r.pnl || 0) >= 0 ? "up" : "down"), signed(r.pnl))); tr.appendChild(el("td", "num muted", r.lev ? r.lev.toFixed(1) + "×" : "—"));
+      body.appendChild(tr);
+    });
+    tb.appendChild(body); wrap.appendChild(tb);
+  }
+
+  // ======================================================================
+  // SIGNALS - the bot's rules on the last CLOSED candle; ready first, then closest.
+  // Coins the bot already holds are marked HELD (needs the sub-account address).
+  // ======================================================================
+  var BTC_BEAR = false, BREADTH = null, HELD = {}, sigRows = [], sigShowAll = false;
+  function loadHeld() {
+    var a = recall(SUBKEY); HELD = {};
+    if (!a) return Promise.resolve();
+    return Promise.all([hl({ type: "clearinghouseState", user: a }).catch(function () { return null; }), hl({ type: "frontendOpenOrders", user: a }).catch(function () { return []; })]).then(function (r) {
+      var st = r[0], od = r[1] || []; if (!st || !st.assetPositions) return;
+      st.assetPositions.forEach(function (ap) {
+        var q = ap.position || {}; if (!q.coin || !parseFloat(q.szi)) return;
+        var tag = ""; od.forEach(function (o) { if (!tag && o.coin === q.coin && o.isTrigger && o.reduceOnly) tag = stratTag(o.cloid); });
+        HELD[q.coin] = tag || "bot";
+      });
+    });
+  }
+  function sigRow(coin, strat, dir, rules, dist) {
+    var missing = rules.filter(function (r) { return !r.ok; }).map(function (r) { return r.t; });
+    return { coin: coin, strat: strat, dir: dir, rules: rules, missing: missing, met: rules.length - missing.length, dist: dist, ready: !missing.length, held: HELD[coin] || "" };
+  }
+  function dailyRows(coin, d) {
+    var c = d.map(function (x) { return x.c; }), last = c[c.length - 1], m200 = sma(c, 200); if (!m200) return [];
+    var w = c.slice(-41, -1), hi = Math.max.apply(null, w), lo = Math.min.apply(null, w), up = last > m200, out = [];
+    var away = function (a, b) { return Math.abs(a / b - 1) * 100; };
+    if (up) out.push(sigRow(coin, "1D", "L", [{ t: "above 200-day", ok: true }, { t: last > hi ? "new 40-day high" : "40-day high " + away(hi, last).toFixed(1) + "% away", ok: last > hi }], away(hi, last)));
+    else if (CFG.CSHORT.indexOf(coin) > -1) out.push(sigRow(coin, "1D", "S", [{ t: "below 200-day", ok: true }, { t: BTC_BEAR ? "BTC below 200-day" : "BTC above 200-day, shorts off", ok: BTC_BEAR }, { t: last < lo ? "new 40-day low" : "40-day low " + away(last, lo).toFixed(1) + "% away", ok: last < lo }], away(last, lo) + (BTC_BEAR ? 0 : 100)));
+    else out.push(sigRow(coin, "1D", "-", [{ t: "below 200-day, no long; not a short coin", ok: false }], 999));
+    if (CFG.CDIP.indexOf(coin) > -1) { var r = rsi2(c.slice(-80)); if (r != null) out.push(sigRow(coin, "Dip", "L", [{ t: up ? "above 200-day" : "below 200-day", ok: up }, { t: "RSI(2) " + r.toFixed(0) + (r < 5 ? "" : ", needs under 5"), ok: r < 5 }], up ? Math.max(0, r - 5) : 999)); }
     return out;
   }
-  function mean(a) { var s = 0; for (var i = 0; i < a.length; i++) s += a[i]; return s / a.length; }
-
-  function candles(coin, interval, bars) {
-    var msPer = { "1h": 3600000, "1d": 86400000 }[interval];
-    var now = Date.now();
-    return hl({
-      type: "candleSnapshot",
-      req: { coin: coin, interval: interval, startTime: now - (bars + 2) * msPer, endTime: now }
-    }).then(function (rows) { return closedCloses(rows || [], msPer); });
+  function hourRow(coin, d, h) {
+    var dc = d.map(function (x) { return x.c; }), m = sma(dc, 200); if (!m) return null;
+    var dUp = dc[dc.length - 1] > m, c = h.map(function (x) { return x.c; }), last = c[c.length - 1];
+    if (c.length < CFG.H1_LOOKBACK + 2) return null;
+    var hi = Math.max.apply(null, c.slice(-(CFG.H1_LOOKBACK + 1), -1)), eUp = false;
+    if (c.length >= CFG.H1_EMA_SLOW + 1) { var ef = emaS(c, CFG.H1_EMA_FAST), es = emaS(c, CFG.H1_EMA_SLOW); eUp = ef[ef.length - 1] > es[es.length - 1] && last > es[es.length - 1]; }
+    var gate = dUp ? "daily uptrend" : eUp ? "hourly EMA uptrend" : "no uptrend (daily and hourly)";
+    var away = Math.abs(hi / last - 1) * 100;
+    return sigRow(coin, "1H", "L", [{ t: gate, ok: dUp || eUp }, { t: last > hi ? "new 96-hour high" : "96-hour high " + away.toFixed(1) + "% away", ok: last > hi }], (dUp || eUp) ? away : away + 100);
   }
-
-  function inBatches(items, size, worker) {
-    var out = [];
-    var i = 0;
-    function step() {
-      if (i >= items.length) return Promise.resolve(out);
-      var slice = items.slice(i, i + size);
-      i += size;
-      return Promise.all(slice.map(worker)).then(function (res) {
-        out = out.concat(res);
-        return step();
-      });
-    }
-    return step();
-  }
-
-  function radarRow(d) {
-    var row = el("div", "row" + (d.gate ? "" : " blocked") + (d.dist >= -1.5 && d.gate ? " hot" : ""));
-
-    var who = el("div", "who");
-    who.appendChild(el("span", "coin", d.coin === "kSHIB" ? "SHIB" : d.coin));
-    who.appendChild(el("span", "tf", d.tf));
-    if (d.side) who.appendChild(el("span", "side " + (d.side === "LONG" ? "l" : "s"), d.side));
-    row.appendChild(who);
-
-    var track = el("div", "track");
-    track.appendChild(el("span", "base"));
-    var fill = el("span", "fill");
-    // how far price has travelled toward the trigger, floored at 0
-    var reach = Math.max(0, Math.min(100, 100 + d.dist * 4));
-    fill.style.width = reach + "%";
-    track.appendChild(fill);
-    track.appendChild(el("span", "trig"));
-    row.appendChild(track);
-
-    var dv = el("div", "dist " + (d.dist >= 0 ? "up" : ""), pct(d.dist));
-    row.appendChild(dv);
-    return row;
-  }
-
-  function loadRadar(mids) {
-    var jobs = [];
-    COINS_1D.forEach(function (c) { jobs.push({ coin: c, tf: "1D" }); });
-    COINS_1H.forEach(function (c) { jobs.push({ coin: c, tf: "1H" }); });
-
-    return inBatches(jobs, 4, function (j) {
-      var daily = candles(j.coin, "1d", 260);
-      if (j.tf === "1D") {
-        return daily.then(function (cl) {
-          if (cl.length < 210) return null;
-          var price = parseFloat(mids[j.coin]);
-          if (!price) return null;
-          var sma200 = mean(cl.slice(-200));
-          var up = price > sma200;
-          if (up) {
-            var hi = Math.max.apply(null, cl.slice(-40));
-            return { coin: j.coin, tf: "1D", side: "LONG",
-                     dist: (price / hi - 1) * 100, gate: true };
-          }
-          // below the 200-day average the long is blocked; the short is armed
-          var lo = Math.min.apply(null, cl.slice(-40));
-          return { coin: j.coin, tf: "1D", side: SHORTS["1D"] ? "SHORT" : null,
-                   dist: (lo / price - 1) * 100, gate: SHORTS["1D"] };
-        }).catch(function () { return null; });
-      }
-      return Promise.all([daily, candles(j.coin, "1h", 600)]).then(function (r) {
-        var dcl = r[0], hcl = r[1];
-        if (dcl.length < 200 || hcl.length < H1_LOOKBACK + 1) return null;
-        var price = parseFloat(mids[j.coin]);
-        if (!price) return null;
-        var sma200 = mean(dcl.slice(-200));
-        // long gate = daily above 200-SMA OR hourly EMA50 > EMA200 with price above EMA200 (25 Sep 2026)
-        var emaUp = false;
-        if (hcl.length >= 201) { var ef = emaS(hcl, 50), es = emaS(hcl, 200); emaUp = ef[ef.length - 1] > es[es.length - 1] && price > es[es.length - 1]; }
-        var up = price > sma200 || emaUp;
-        var trigger = up ? Math.max.apply(null, hcl.slice(-H1_LOOKBACK))
-                         : Math.min.apply(null, hcl.slice(-H1_LOOKBACK));
-        if (!up && SHORTS["1H"]) {
-          return { coin: j.coin, tf: "1H", side: "SHORT",
-                   dist: (trigger / price - 1) * 100, gate: true };
-        }
-        var hi = Math.max.apply(null, hcl.slice(-H1_LOOKBACK));
-        return { coin: j.coin, tf: "1H", side: up ? "LONG" : null,
-                 dist: (price / hi - 1) * 100, gate: up };
-      }).catch(function () { return null; });
-    }).then(function (res) {
-      var rows = res.filter(Boolean).sort(function (a, b) { return b.dist - a.dist; });
-      var wrap = document.getElementById("radar-wrap");
-      wrap.textContent = "";
-      if (!rows.length) {
-        wrap.appendChild(el("div", "msg err", "Couldn't load candle data from Hyperliquid."));
-        return;
-      }
-      var box = el("div", "radar");
-      rows.forEach(function (d) { box.appendChild(radarRow(d)); });
-      wrap.appendChild(box);
+  function renderSignals() {
+    var body = $("sig-body"); body.textContent = "";
+    // ready (not held) first, then held-but-firing, then everything by distance
+    var rows = sigRows.slice().sort(function (a, b) { return ((b.ready && !b.held) - (a.ready && !a.held)) || (b.ready - a.ready) || (a.dist - b.dist); });
+    var ready = rows.filter(function (r) { return r.ready && !r.held; });
+    var heldFiring = rows.filter(function (r) { return r.ready && r.held; });
+    var close = rows.filter(function (r) { return !r.ready && r.dist <= 5; });
+    var show = sigShowAll ? rows : rows.slice(0, Math.max(ready.length + heldFiring.length + Math.min(6, close.length), 6));
+    show.forEach(function (r) {
+      var e = el("div", "sig" + (r.ready && !r.held ? " ready" : "") + (r.held ? " held" : "")), c = el("div"); c.appendChild(el("span", "coin", r.coin === "kSHIB" ? "SHIB" : r.coin)); e.appendChild(c);
+      e.appendChild(el("div", "st", r.strat + (r.dir === "L" ? " long" : r.dir === "S" ? " short" : "")));
+      var need = el("div", "need");
+      need.innerHTML = r.held && r.ready ? "<b>HELD · " + r.held + "</b> · rules met, already in" : r.ready ? "<b>READY</b> · " + r.rules.map(function (x) { return x.t; }).join(", ")
+        : (r.held ? "<b>held · " + r.held + "</b> · " : "") + (r.dir === "-" ? r.missing[0] : "needs " + r.missing.join(" + "));
+      e.appendChild(need);
+      e.appendChild(el("div", "dist", r.ready ? "" : r.dist >= 999 ? "—" : r.dist >= 100 ? (r.dist - 100).toFixed(1) + "%" : r.dist.toFixed(1) + "%"));
+      body.appendChild(e);
     });
+    var more = $("sig-more"); more.hidden = rows.length <= show.length && !sigShowAll;
+    more.textContent = sigShowAll ? "Show less" : "Show all " + rows.length + " checks";
+    var heldNames = Array.from(new Set(heldFiring.map(function (r) { return r.coin; })));
+    $("sig-sum").innerHTML = (ready.length ? "<b>Ready to fire:</b> " + ready.map(function (r) { return r.coin + " (" + r.strat + ")"; }).join(", ") : "<b>Nothing new is ready.</b>")
+      + (heldNames.length ? " <small>· already held: " + heldNames.join(", ") + "</small>" : "")
+      + (!ready.length && close.length ? " <small>Closest: " + close.slice(0, 3).map(function (r) { return r.coin + " " + r.strat + " " + r.dist.toFixed(1) + "% away"; }).join(", ") + ".</small>" : "");
+    $("sig-n").textContent = ready.length + " ready · " + heldNames.length + " held · " + close.length + " within 5%";
+  }
+  $("sig-more").addEventListener("click", function () { sigShowAll = !sigShowAll; renderSignals(); });
+
+  function loadSignals() {
+    var dCoins = Array.from(new Set(CFG.C1D.concat(CFG.C1H)));
+    return loadHeld().then(function () { return batch(dCoins, 6, function (c) { return candles(c, "1d", 420); }); }).then(function (D) {
+      return batch(CFG.C1H, 6, function (c) { return candles(c, "1h", 27); }).then(function (H) {
+        if (D.BTC) { var bc = D.BTC.map(function (x) { return x.c; }), bm = sma(bc, 200); BTC_BEAR = !!bm && bc[bc.length - 1] < bm; }
+        var above = 0, n = 0;
+        CFG.C1D.forEach(function (c) { if (!D[c]) return; var cl = D[c].map(function (x) { return x.c; }), m = sma(cl, 200); if (m) { n++; if (cl[cl.length - 1] > m) above++; } });
+        BREADTH = n ? Math.round(100 * above / n) : null;
+        sigRows = [];
+        CFG.C1D.forEach(function (c) { if (D[c]) sigRows = sigRows.concat(dailyRows(c, D[c])); });
+        CFG.C1H.forEach(function (c) { if (D[c] && H[c]) { var r = hourRow(c, D[c], H[c]); if (r) sigRows.push(r); } });
+        renderSignals();
+        $("sig-when").textContent = "last closed candle · " + tnow();
+        chip("c-btc", "BTC", BTC_BEAR ? "below 200-day" : "above 200-day", BTC_BEAR ? "on" : "good");
+        chip("c-shorts", "Shorts", BTC_BEAR ? "ON" : "off", BTC_BEAR ? "on" : "");
+        chip("c-breadth", "Breadth", BREADTH == null ? "—" : BREADTH + "% above 200d", BREADTH != null && BREADTH > 90 ? "warn" : "");
+        var rs = $("ref-shorts"); rs.textContent = BTC_BEAR ? "on" : "idle"; rs.className = "pill " + (BTC_BEAR ? "short" : "paper");
+      });
+    }).catch(function (e) { $("sig-sum").textContent = "Couldn't read candles from Hyperliquid. " + e; });
   }
 
-  // ---------- boot ----------
+  // ======================================================================
+  // BOT HEALTH - every bot trade vs its rule (needs the sub-account address)
+  // ======================================================================
+  var TF = { "1D": { iv: "1d", ms: 864e5, k: 3 }, "4H": { iv: "4h", ms: 144e5, k: 2 }, "1H": { iv: "1h", ms: 36e5, k: 3 }, "Dip": { iv: "1d", ms: 864e5, k: 5 } };
+  var NAME = { "1D": "1 Day", "4H": "4 Hour", "1H": "1 Hour", "Dip": "Dip Buy" };
+  // risk settings over time (config.json history); shorts are 2% from 25 Sep 2026
+  var RISK_HIST = [{ from: 0, r: { "1D": 6, "4H": 6, "1H": 3, "Dip": 3 } }, { from: Date.UTC(2026, 8, 24, 2, 0), r: { "1D": 1, "4H": 6, "1H": 1, "Dip": 3 } }, { from: Date.UTC(2026, 8, 24, 7, 10), r: { "1D": 3, "4H": 6, "1H": 1, "Dip": 3 } }];
+  var BT = { "1D": { w: 40, r: 0.98 }, "1H": { w: 33, r: 0.20 }, "Dip": { w: 70, r: 0.05 }, "4H": { w: 41, r: 0.26 } };
+  function riskAt(t, s, dir) { if (s === "1D" && dir < 0 && t >= Date.UTC(2026, 8, 25, 2, 36)) return CFG.RISK.SHORT; var v = null; RISK_HIST.forEach(function (h) { if (t >= h.from) v = h.r[s]; }); return v; }
+  function atrLast(b, n) { var p = 0; for (var i = 0; i < b.length; i++) { var tr = i === 0 ? b[i].h - b[i].l : Math.max(b[i].h - b[i].l, Math.abs(b[i].h - b[i - 1].c), Math.abs(b[i].l - b[i - 1].c)); if (i < n) p += tr / n; else p = (p * (n - 1) + tr) / n; } return p; }
+  function eqAt(pf, t) { var m = {}; (pf || []).forEach(function (x) { m[x[0]] = x[1]; }); var ks = ["day", "week", "month", "allTime"]; for (var k = 0; k < ks.length; k++) { var o = m[ks[k]], h = o && o.accountValueHistory; if (!h || !h.length || h[0][0] > t) continue; var v = null; for (var i = 0; i < h.length; i++) { if (h[i][0] <= t) v = +h[i][1]; else break; } if (v) return v; } var a = m.allTime && m.allTime.accountValueHistory; return a && a.length ? +a[0][1] : null; }
+  function before(coin, tf, t) { return hl({ type: "candleSnapshot", req: { coin: coin, interval: tf.iv, startTime: t - 90 * tf.ms, endTime: t } }).then(function (j) { return Array.isArray(j) ? j.map(function (x) { return { t: x.t, h: +x.h, l: +x.l, c: +x.c }; }).filter(function (x) { return x.t + tf.ms <= t; }) : []; }).catch(function () { return []; }); }
+  function rf(x) { return (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(2) + "R"; }
+
+  function loadHealth() {
+    var sum = $("lt-sum"), a = recall(SUBKEY);
+    if (!a) { sum.className = "verdict"; sum.innerHTML = "Add the bot sub-account under <b>Accounts</b> and this fills in."; $("lt-fold").hidden = true; $("lt-score").textContent = ""; return Promise.resolve(); }
+    $("lt-fold").hidden = false;
+    return Promise.all([hl({ type: "userFills", user: a }), hl({ type: "frontendOpenOrders", user: a }), hl({ type: "portfolio", user: a }), hl({ type: "allMids" })]).then(function (res) {
+      var fills = (res[0] || []).slice().sort(function (x, y) { return x.time - y.time; }), trades = [], by = {};
+      fills.forEach(function (f) { var d = f.dir || ""; if (d.indexOf("Open") !== 0) return; if (!by[f.oid]) { by[f.oid] = { coin: f.coin, dir: d.indexOf("Long") > -1 ? 1 : -1, t: f.time, sz: 0, cost: 0, fee: 0, left: 0, pnl: 0, s: stratTag(f.cloid) || null }; trades.push(by[f.oid]); } var x = by[f.oid]; x.sz += +f.sz; x.cost += (+f.sz) * (+f.px); x.fee += +f.fee; x.left += +f.sz; });
+      trades.forEach(function (x) { x.px = x.cost / x.sz; });
+      (res[1] || []).forEach(function (o) { if (!o.reduceOnly) return; var s = stratTag(o.cloid); if (!s) return; trades.forEach(function (x) { if (!x.s && x.coin === o.coin) x.s = s; }); });
+      fills.forEach(function (f) { if ((f.dir || "").indexOf("Close") !== 0) return; var q = +f.sz, tot = +f.sz; trades.forEach(function (x) { if (q <= 1e-12 || x.coin !== f.coin || x.left <= 1e-12 || x.t > f.time) return; var k = Math.min(q, x.left), sh = k / tot; x.left -= k; x.pnl += (+f.closedPnl) * sh - (+f.fee) * sh; q -= k; }); });
+      return Promise.all(trades.map(function (x) { return before(x.coin, TF[x.s || "1D"], x.t).then(function (b) { x.bars = b; }); })).then(function () { return { trades: trades, oo: res[1] || [], pf: res[2], mids: res[3] || {} }; });
+    }).then(function (D) {
+      var issues = [], rows = "", score = {}, openCoins = {};
+      D.trades.slice().reverse().forEach(function (x) {
+        var s = x.s, tf = TF[s || "1D"], b = x.bars || [], last = b[b.length - 1], A = b.length > 20 ? atrLast(b, 14) : null, sig = last ? last.c : null, slip = sig ? x.dir * (x.px - sig) / sig * 100 : null;
+        var eq = eqAt(D.pf, x.t), ru = A ? x.sz * tf.k * A : null, taken = ru && eq ? ru / eq * 100 : null, set = s ? riskAt(x.t, s, x.dir) : null, isOpen = x.left > 1e-9, mid = +D.mids[x.coin] || null;
+        var stop = D.oo.filter(function (o) { return o.coin === x.coin && o.reduceOnly && o.isTrigger; })[0], R = null;
+        if (ru) R = isOpen && mid ? (x.dir * (mid - x.px) * x.left + x.pnl - x.fee) / ru : (x.pnl - x.fee) / ru;
+        var riskOff = taken != null && set != null && (taken > set * 1.4 || taken < set * 0.6), chased = slip != null && slip > CFG.CHASE_PCT;
+        if (isOpen) openCoins[x.coin] = 1;
+        if (!s) issues.push(x.coin + ": no strategy code on the order");
+        if (chased) issues.push(x.coin + ": entered " + slip.toFixed(1) + "% past the signal (limit 1.5%)");
+        if (riskOff) issues.push(x.coin + ": risked " + taken.toFixed(1) + "% against a " + set + "% setting");
+        if (isOpen && !stop) issues.push(x.coin + ": open with NO stop on the exchange");
+        var stopTxt = isOpen ? (stop && mid ? Math.abs((+stop.triggerPx - mid) / mid * 100).toFixed(1) + "% away" : '<span class="down">missing</span>') : "—";
+        rows += "<tr><td><span class='coin'>" + x.coin + "</span> <span class='pill " + (x.dir > 0 ? "long" : "short") + "'>" + (x.dir > 0 ? "Long" : "Short") + "</span></td><td>" + (s ? NAME[s] : "<span class='down'>unknown</span>") + "</td><td class='num muted'>" + when(x.t) + "</td><td class='num" + (chased ? " down" : "") + "'>" + (slip == null ? "—" : pct(slip)) + "</td><td class='num" + (riskOff ? " down" : "") + "'>" + (taken == null ? "—" : taken.toFixed(1) + "% <span class='muted'>of " + set + "%</span>") + "</td><td class='num'>" + stopTxt + "</td><td class='num " + (R == null ? "" : R >= 0 ? "up" : "down") + "'>" + (R == null ? "—" : rf(R)) + (isOpen ? " <span class='muted'>open</span>" : "") + "</td></tr>";
+        if (s && !isOpen && R != null) { var c = score[s] || (score[s] = { n: 0, w: 0, r: 0 }); c.n++; if (R > 0) c.w++; c.r += R; }
+      });
+      sum.className = "verdict" + (issues.length ? " warn" : "");
+      sum.innerHTML = issues.length ? "<b>" + issues.length + " thing" + (issues.length > 1 ? "s" : "") + " to look at.</b> " + issues.join(" · ") : "<b>All checks pass.</b> Every open trade has a stop, sizes match the settings, entries match the signals.";
+      $("lt-n").textContent = D.trades.length + " entries · " + Object.keys(openCoins).length + " coins open";
+      var closedN = Object.keys(score).reduce(function (a, k) { return a + score[k].n; }, 0);
+      var sh = "<table><thead><tr><th>Strategy</th><th>Closed</th><th>Wins</th><th>Avg</th><th>Backtest</th></tr></thead><tbody>";
+      ["1D", "Dip", "1H"].forEach(function (s) { var c = score[s] || { n: 0, w: 0, r: 0 }, bt = BT[s]; sh += "<tr><td>" + NAME[s] + "</td><td class='num'>" + c.n + "</td><td class='num'>" + (c.n ? Math.round(100 * c.w / c.n) + "%" : "—") + "</td><td class='num'>" + (c.n ? rf(c.r / c.n) : "—") + "</td><td class='num muted'>" + bt.w + "% · " + rf(bt.r) + "</td></tr>"; });
+      $("lt-score").innerHTML = "<div class='scroller'>" + sh + "</tbody></table></div>" + (closedN < 20 ? "<div class='note' style='padding:0 14px 10px'>Compare with the backtest after ~20 closed trades (" + closedN + " so far).</div>" : "");
+      $("lt-body").innerHTML = "<table><thead><tr><th>Trade</th><th>Strategy</th><th>Opened</th><th>Entry vs signal</th><th>Risk</th><th>Stop</th><th>Result</th></tr></thead><tbody>" + (rows || "<tr><td colspan='7'>No bot trades yet.</td></tr>") + "</tbody></table>";
+      $("lt-when").textContent = tnow();
+    }).catch(function (e) { $("lt-sum").textContent = "Couldn't load the bot's trades: " + e; });
+  }
+
+  // ======================================================================
+  // MARKET - CoinGecko /global
+  // ======================================================================
+  function fmtT(n) { return n >= 1e12 ? "$" + (n / 1e12).toFixed(2) + "T" : "$" + (n / 1e9).toFixed(0) + "B"; }
+  function loadMarket() {
+    return fetch("https://api.coingecko.com/api/v3/global").then(function (r) { return r.json(); }).then(function (j) {
+      var d = j.data, p = d.market_cap_percentage || {}, top10 = 0, keys = Object.keys(p);
+      keys.forEach(function (k) { top10 += p[k]; });
+      if (keys.length < 10 || !top10) throw new Error("top-10 data missing");
+      var raw = 100 - top10, others = raw + CFG.TV_OFFSET, gap = CFG.SELL_AT - others, hot = others >= CFG.SELL_AT, warm = others >= CFG.WARN_AT;
+      var total = d.total_market_cap && d.total_market_cap.usd, chg = d.market_cap_change_percentage_24h_usd;
+      $("t-others").textContent = others.toFixed(2) + "%"; $("t-others").className = "v " + (hot ? "down" : warm ? "warn" : "up");
+      $("t-others-sub").textContent = hot ? "past the 13% sell-alts line" : (gap.toFixed(1) + " pts below the 13% sell-alts line");
+      var m = $("t-others-meter"); m.className = "meter" + (hot ? " hot" : warm ? " over" : ""); m.firstElementChild.style.width = Math.min(100, others / CFG.METER_MAX * 100).toFixed(1) + "%";
+      $("t-others-mark").style.left = (CFG.SELL_AT / CFG.METER_MAX * 100).toFixed(1) + "%";
+      $("t-others-tile").style.borderColor = hot ? "var(--down)" : warm ? "var(--warn)" : "var(--line)";
+      $("t-btcd").textContent = (p.btc || 0).toFixed(1) + "%"; $("t-btcd-sub").textContent = "ETH " + (p.eth || 0).toFixed(1) + "% · stables " + ((p.usdt || 0) + (p.usdc || 0)).toFixed(1) + "%";
+      $("t-total").textContent = total ? fmtT(total) : "—"; var ts = $("t-total-sub"); ts.textContent = chg == null ? "" : (chg >= 0 ? "+" : "") + chg.toFixed(1) + "% in 24h"; ts.className = "sub " + (chg >= 0 ? "up" : "down");
+      chip("c-others", "Others", others.toFixed(1) + "% / 13%", hot ? "on" : warm ? "warn" : "");
+    }).catch(function () { $("t-others-sub").textContent = "CoinGecko unreachable"; });
+  }
+
+  // ======================================================================
+  // BOOT
+  // ======================================================================
   function refreshAll() {
-    var btn = document.getElementById("refresh");
-    btn.disabled = true;
-    var addr = recall(KEY);
-    var tasks = [hl({ type: "allMids" }).then(loadRadar)];
-    if (addr) {
-      tasks.push(loadAccount(addr).catch(function (e) {
-        document.getElementById("acct-setup").hidden = false;
-        document.getElementById("addr-msg").textContent = "Couldn't load that account: " + e.message;
-        document.getElementById("addr-msg").className = "note err";
-      }));
-    }
+    var btn = $("refresh"); btn.disabled = true;
+    var addr = recall(KEY), tasks = [loadSignals(), loadHealth(), loadMarket()];
+    if (addr) tasks.push(loadAccount(addr).catch(function (e) { $("acct-setup").hidden = false; $("addr-msg").textContent = "Couldn't load that account: " + e.message; $("addr-msg").className = "note down"; }));
     return Promise.all(tasks).then(stamp).catch(function (e) {
-      // A blocked fetch in a sandboxed host throws TypeError "Failed to fetch"
-      // with no status - say what that actually means rather than leaking it raw.
       var blocked = (e instanceof TypeError) || /failed to fetch|networkerror/i.test(e.message || "");
-      document.getElementById("blocked").hidden = !blocked;
-      var m = document.getElementById("radar-msg");
-      if (m) {
-        m.textContent = blocked
-          ? "Radar needs live candles, which this host won't allow."
-          : "Couldn't reach Hyperliquid: " + e.message;
-        m.className = "msg err";
-      }
+      $("blocked").hidden = !blocked;
     }).then(function () { btn.disabled = false; });
   }
-
-  document.getElementById("save").addEventListener("click", function () {
-    var v = document.getElementById("addr").value.trim();
-    if (!/^0x[a-fA-F0-9]{40}$/.test(v)) {
-      var m = document.getElementById("addr-msg");
-      m.textContent = "That doesn't look like a wallet address — it should be 0x followed by 40 characters.";
-      m.className = "note err";
-      return;
-    }
-    store(KEY, v);
-    loadAccount(v).then(stamp).catch(function (e) {
-      var m = document.getElementById("addr-msg");
-      m.textContent = "Couldn't load that account: " + e.message;
-      m.className = "note err";
-    });
+  $("save").addEventListener("click", function () {
+    var v = $("addr").value.trim(), m = $("addr-msg");
+    if (!/^0x[a-fA-F0-9]{40}$/.test(v)) { m.textContent = "That doesn't look like a wallet address (0x + 40 characters)."; m.className = "note down"; return; }
+    store(KEY, v); loadAccount(v).then(stamp).catch(function (e) { m.textContent = "Couldn't load that account: " + e.message; m.className = "note down"; });
   });
-  document.getElementById("savesub").addEventListener("click", function () {
-    var v = document.getElementById("subaddr").value.trim();
-    var m = document.getElementById("addr-msg");
-    if (v && !/^0x[a-fA-F0-9]{40}$/.test(v)) {
-      m.textContent = "That sub-account doesn't look like a wallet address.";
-      m.className = "note err";
-      return;
-    }
-    store(SUBKEY, v);
-    m.textContent = v ? "Bot sub-account saved." : "Bot sub-account cleared.";
-    m.className = "note";
-    var main = recall(KEY);
-    if (main) loadAccount(main).then(stamp).catch(function () {});
+  $("savesub").addEventListener("click", function () {
+    var v = $("subaddr").value.trim(), m = $("addr-msg");
+    if (v && !/^0x[a-fA-F0-9]{40}$/.test(v)) { m.textContent = "That sub-account doesn't look like a wallet address."; m.className = "note down"; return; }
+    store(SUBKEY, v); m.textContent = v ? "Bot sub-account saved." : "Bot sub-account cleared."; m.className = "note";
+    var main = recall(KEY); if (main) loadAccount(main).then(stamp).catch(function () {}); loadHealth(); loadSignals();
   });
+  $("edit-addr").addEventListener("click", function () { var s = $("acct-setup"); s.hidden = !s.hidden; });
+  $("addr").addEventListener("keydown", function (e) { if (e.key === "Enter") $("save").click(); });
+  $("refresh").addEventListener("click", refreshAll);
 
-  document.getElementById("addr").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") document.getElementById("save").click();
-  });
-  document.getElementById("refresh").addEventListener("click", refreshAll);
-
-  var saved = recall(KEY);
-  if (saved) document.getElementById("addr").value = saved;
-  var savedSub = recall(SUBKEY);
-  if (savedSub) document.getElementById("subaddr").value = savedSub;
+  var saved = recall(KEY); if (saved) $("addr").value = saved;
+  var savedSub = recall(SUBKEY); if (savedSub) $("subaddr").value = savedSub;
+  if (saved) $("acct-setup").hidden = true;
   refreshAll();
-})();
-</script>
-
-
-<!-- Will anything fire? - added 24 Sep 2026, covers all four strategies incl. Dip Buy -->
-<section id="fr" class="fr">
-<style>
-#radar-wrap,h2:has(+#radar-wrap),#radar-wrap+.note{display:none!important}
-.wrap>.fr{padding:0;margin:28px 0 0;max-width:none}
-.fr{max-width:820px;margin:28px auto 40px;padding:0 16px;font-family:inherit;font-size:14px;line-height:1.5;color:var(--ink,#e6edf3)}
-.fr h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3,#8b949e);margin:0 0 4px;font-weight:600}
-.fr .sub{color:var(--ink-2,#8b949e);font-size:12.5px;margin:0 0 10px;max-width:62ch}
-.fr .key{display:flex;gap:10px;font-size:12px;color:var(--ink-3,#8b949e);margin:0 0 12px;flex-wrap:wrap;align-items:center}
-.fr .sum{border:1px solid var(--line,#30363d);border-left:4px solid #2962FF;background:var(--surface,#0f1520);border-radius:8px;padding:12px 14px;font-size:15px;margin:0 0 16px}
-.fr .sum b{color:var(--ink,#fff)}
-.fr .grp{border:1px solid var(--line,#30363d);border-radius:8px;margin:0 0 14px;overflow:hidden}
-.fr .gh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;padding:9px 12px;background:var(--surface-2,#161b22);border-bottom:1px solid var(--line,#30363d)}
-.fr .gh b{font-size:14px}
-.fr .gh span{font-size:12px;color:var(--ink-3,#8b949e)}
-.fr .row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line-soft,#21262d);flex-wrap:wrap;background:var(--surface,transparent)}
-.fr .row:last-child{border-bottom:0}
-.fr .coin{width:64px;font-weight:600}
-.fr .dir{font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:4px;min-width:44px;text-align:center}
-.fr .L{background:rgba(41,98,255,.18);color:#7da2ff}
-.fr .S{background:rgba(255,109,0,.18);color:#ff9a4d}
-.fr .N{background:var(--surface-2,#21262d);color:var(--ink-3,#6e7681)}
-.fr .pills{display:flex;gap:5px;flex-wrap:wrap;flex:1;min-width:210px}
-.fr .p{font-size:11.5px;padding:2px 9px;border-radius:999px;border:1px solid var(--line,#30363d);color:var(--ink-3,#7d8590);white-space:nowrap}
-.fr .p.ok{background:#2962FF;border-color:#2962FF;color:#fff}
-.fr .st{font-size:12px;color:var(--ink-3,#8b949e);min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
-.fr .row.held{opacity:.55}.fr .st.hold{color:var(--ink-2,#47856B);background:var(--surface-2,#EDF1F2);border-radius:5px;padding:2px 8px;font-weight:700;text-align:center}
-.fr .st.go{color:#fff;background:#2962FF;border-radius:5px;padding:2px 8px;font-weight:700;text-align:center}
-.fr .note{font-size:11.5px;color:var(--ink-3,#6e7681);margin:6px 0 0}
-</style>
-<h2>Will anything fire?</h2>
-<p class="sub">Each box is one rule. A strategy only trades when <b>every box on a row is blue</b>. Checked on the last closed candle, the same way the bot does.</p>
-<div class="key"><span class="p ok">rule met</span><span class="p">not yet</span><span class="dir L">LONG</span><span class="dir S">SHORT</span></div>
-<div id="fr-sum" class="sum">Checking live prices&hellip;</div>
-<div id="fr-body"></div>
-<p class="note" id="fr-when"></p>
-</section>
-<script>
-(function(){
-// Old % radar is hidden; this section takes its place on the page.
-var rw=document.getElementById("radar-wrap");if(rw){var ph=rw.previousElementSibling,nt=rw.nextElementSibling;[ph,rw,nt].forEach(function(e){if(e&&(e===rw||e.tagName==="H2"||String(e.className).indexOf("note")>-1))e.style.display="none"});var me=document.getElementById("fr");if(me)rw.parentNode.insertBefore(me,rw)}
-// Coin lists mirror signals.py as of 25 Sep 2026. Change them there, change them here.
-var C1D=["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","AVAX","ZEC","XLM","TRX","HBAR","kSHIB","ALGO","ICP","ATOM","LINK","NEAR","SUI","INJ","OP","AR","ENA"];
-var C4H=[]; // 4H Pullback retired 24 Sep 2026 (COINS_4H is empty in signals.py)
-var C1H=["WLD","LINK","AVAX","SOL","VVV","BTC","ETH","ARB","BNB"]; // re-based 25 Sep 2026 on 4y of hourly data (96h rule)
-var CDIP=C1D.filter(function(c){return c!=="DOGE"}); // Dip = 1D list minus DOGE
-// 1D shorts: these big coins only, and only while BTC is below its 200-day average
-var CSHORT=["BTC","ETH","ZEC","SOL","NEAR","XRP","DOGE","LINK","SUI"];
-var BTC_BEAR=false;
-function hl(coin,iv,days){var e=Date.now();return fetch("https://api.hyperliquid.xyz/info",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({type:"candleSnapshot",req:{coin:coin,interval:iv,startTime:e-days*86400000,endTime:e}})}).then(function(r){return r.json()}).then(function(j){if(!Array.isArray(j)||j.length<3)return null;var o=j.map(function(x){return{h:+x.h,l:+x.l,c:+x.c}});o.pop();return o}).catch(function(){return null})}
-function sma(a,n){if(a.length<n)return null;var s=0;for(var i=a.length-n;i<a.length;i++)s+=a[i];return s/n}
-function emaS(a,n){var k=2/(n+1),p=a[0],o=[p];for(var i=1;i<a.length;i++){p=a[i]*k+p*(1-k);o.push(p)}return o}
-function rsiS(c,n){var o=[null],ag=0,al=0;for(var i=1;i<c.length;i++){var d=c[i]-c[i-1],g=d>0?d:0,l=d<0?-d:0;if(i<=n){ag+=g/n;al+=l/n;o.push(i===n?(al===0?100:100-100/(1+ag/al)):null)}else{ag=(ag*(n-1)+g)/n;al=(al*(n-1)+l)/n;o.push(al===0?100:100-100/(1+ag/al))}}return o}
-function adx(r,n){var len=r.length,pd=[],nd=[],tr=[];for(var i=0;i<len;i++){if(i===0){pd.push(0);nd.push(0);tr.push(r[i].h-r[i].l);continue}var up=r[i].h-r[i-1].h,dn=r[i-1].l-r[i].l;pd.push(up>dn&&up>0?up:0);nd.push(dn>up&&dn>0?dn:0);tr.push(Math.max(r[i].h-r[i].l,Math.abs(r[i].h-r[i-1].c),Math.abs(r[i].l-r[i-1].c)))}
- function w(a){var p=null,o=[];for(var i=0;i<len;i++){if(i===n){var s=0;for(var k=1;k<=n;k++)s+=a[k];p=s}else if(i>n){p=p-p/n+a[i]}o.push(p)}return o}
- var st=w(tr),sp=w(pd),sn=w(nd),p=null,cnt=0,sum=0;for(var j=0;j<len;j++){if(!st[j])continue;var a=100*sp[j]/st[j],b=100*sn[j]/st[j],s2=a+b,dx=s2>0?100*Math.abs(a-b)/s2:0;if(p===null){sum+=dx;cnt++;if(cnt===n)p=sum/n}else{p=(p*(n-1)+dx)/n}}return p}
-function pct(a,b){return (a/b-1)*100}
-function f1(x){return Math.abs(x).toFixed(1)+"%"}
-function localHour(utcH){var d=new Date();d.setUTCHours(utcH,0,0,0);return d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}).replace(" ","").toLowerCase()}
-function row(coin,dir,rules,extra){return {coin:coin,dir:dir,rules:rules,met:rules.filter(function(r){return r.ok}).length,extra:extra||0}}
-function daily(coin,d){var c=d.map(function(x){return x.c}),last=c[c.length-1],m200=sma(c,200);if(!m200)return null;var w=c.slice(-41,-1),hi=Math.max.apply(null,w),lo=Math.min.apply(null,w),up=last>m200,out={};
- var lowPill={t:last<lo?"new 40-day low":"40-day low \u00b7 "+f1(pct(last,lo))+" away",ok:last<lo};
- out.bo=up?row(coin,"L",[{t:"above 200-day",ok:true},{t:last>hi?"new 40-day high":"40-day high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}],pct(last,hi))
-  :CSHORT.indexOf(coin)>-1?row(coin,"S",[{t:"below 200-day",ok:true},{t:BTC_BEAR?"BTC below 200-day":"BTC above 200-day \u00b7 shorts off",ok:BTC_BEAR},lowPill],-pct(last,lo))
-  :row(coin,"-",[{t:"below 200-day \u00b7 no long; shorts are big coins only",ok:false}],-99);
- var r2=rsiS(c.slice(-80),2);r2=r2[r2.length-1];
- out.dip=row(coin,"L",[{t:up?"above 200-day":"below 200-day",ok:up},{t:"RSI(2) "+r2.toFixed(0)+" \u00b7 needs under 5",ok:r2<5}],-r2);return out}
-function fourH(coin,d,h){var dc=d.map(function(x){return x.c}),de=emaS(dc,200),L=dc.length,bull=dc[L-1]>=de[L-1];
- var c=h.map(function(x){return x.c}),e20=emaS(c,20),e50=emaS(c,50),R=rsiS(c,14),n=c.length,r=R[n-1],rp=R[n-2],A=adx(h,14),recent=R.slice(-11,-1);
- // Same rules as the bot (paper.py detect): daily close vs 200 EMA, 20 vs 50 EMA, RSI dip in the last 10 bars, RSI crossing 50 on this bar, ADX 18+
- if(bull)return row(coin,"L",[{t:"daily above 200 EMA",ok:true},{t:"20 EMA over 50 EMA",ok:e20[n-1]>e50[n-1]},{t:"RSI dipped under 45",ok:recent.some(function(v){return v!=null&&v<45})},{t:"RSI crosses up through 50",ok:r>50&&rp<=50},{t:"ADX "+A.toFixed(0)+" (18+)",ok:A>=18}]);
- return row(coin,"S",[{t:"daily below 200 EMA",ok:true},{t:"20 EMA under 50 EMA",ok:e20[n-1]<e50[n-1]},{t:"RSI popped over 55",ok:recent.some(function(v){return v!=null&&v>55})},{t:"RSI crosses down through 50",ok:r<50&&rp>=50},{t:"ADX "+A.toFixed(0)+" (18+)",ok:A>=18}])}
-function oneH(coin,d,h){var dc=d.map(function(x){return x.c}),m=sma(dc,200);if(!m)return null;var dUp=dc[dc.length-1]>m;var c=h.map(function(x){return x.c}),last=c[c.length-1];if(c.length<98)return null;var hi=Math.max.apply(null,c.slice(-97,-1));
- // long gate (25 Sep 2026): daily above 200-SMA OR hourly EMA50 > EMA200 with the close above EMA200
- var eUp=false;if(c.length>=201){var ef=emaS(c,50),es=emaS(c,200);eUp=ef[ef.length-1]>es[es.length-1]&&last>es[es.length-1]}
- var gateTxt=dUp?"daily uptrend":eUp?"hourly EMA uptrend (daily below 200)":"daily down \u00b7 hourly EMAs down";
- return row(coin,"L",[{t:gateTxt,ok:dUp||eUp},{t:last>hi?"new 96-hour high":"96-hour high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}],pct(last,hi))}
-function card(title,when,rows){rows=rows.filter(Boolean).sort(function(a,b){var fa=a.met/a.rules.length,fb=b.met/b.rules.length;return fb-fa||b.extra-a.extra});
- var h='<div class="grp"><div class="gh"><b>'+title+'</b><span>'+when+'</span></div>';
- rows.forEach(function(r){var all=r.met===r.rules.length,held=HELD[r.coin];h+='<div class="row'+(held?" held":"")+'"><span class="coin">'+r.coin+'</span><span class="dir '+r.dir+'">'+(r.dir==="L"?"LONG":r.dir==="S"?"SHORT":"\u2014")+'</span><div class="pills">'+r.rules.map(function(x){return '<span class="p'+(x.ok?" ok":"")+'">'+x.t+'</span>'}).join("")+'</div><span class="st'+(all&&!held?" go":held?" hold":"")+'">'+(held?"HELD · "+held:all?"READY":r.met+" of "+r.rules.length)+'</span></div>'});
- return {html:h+'</div>',rows:rows,title:title}}
-function batch(list,fn){var out={},i=0;function next(){var ch=list.slice(i,i+6);i+=6;if(!ch.length)return Promise.resolve(out);return Promise.all(ch.map(function(c){return fn(c).then(function(v){out[c]=v})})).then(next)}return next()}
-var HELD={};var STRAT_TAG={d1:"1D","44":"4H","11":"1H",d9:"Dip"};
-function loadHeld(){var a=null;try{a=localStorage.getItem("hl-deck-subaddr")}catch(e){}if(!a)return Promise.resolve();
- var body=function(t){return fetch("https://api.hyperliquid.xyz/info",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(t)}).then(function(r){return r.json()}).catch(function(){return null})};
- return Promise.all([body({type:"clearinghouseState",user:a}),body({type:"frontendOpenOrders",user:a})]).then(function(r){HELD={};var st=r[0],od=r[1]||[];if(!st||!st.assetPositions)return;
-  st.assetPositions.forEach(function(ap){var q=ap.position||{};if(!q.coin||!parseFloat(q.szi))return;var tag="";od.forEach(function(o){if(o.coin===q.coin&&o.isTrigger&&o.reduceOnly&&o.cloid&&!tag)tag=STRAT_TAG[o.cloid.slice(2,4).toLowerCase()]||""});HELD[q.coin]=tag||"bot"})})}
-function run(){var dCoins=Array.from(new Set(C1D.concat(C4H,C1H)));
- loadHeld().then(function(){return batch(dCoins,function(c){return hl(c,"1d",420)})}).then(function(D){return batch(C4H,function(c){return hl(c,"4h",90)}).then(function(H4){return batch(C1H,function(c){return hl(c,"1h",26)}).then(function(H1){
-  var bo=[],dp=[],f4=[],o1=[];
-  if(D.BTC){var bc=D.BTC.map(function(x){return x.c}),bm=sma(bc,200);BTC_BEAR=!!bm&&bc[bc.length-1]<bm}
-  var sp=document.getElementById("st-shorts");if(sp){sp.textContent=BTC_BEAR?"LIVE · BTC below 200-day, shorts ON":"IDLE · BTC above 200-day";sp.className="pill "+(BTC_BEAR?"live":"idle")}
-  C1D.forEach(function(c){if(!D[c])return;var x=daily(c,D[c]);if(x){bo.push(x.bo);if(CDIP.indexOf(c)>-1)dp.push(x.dip)}});
-  C4H.forEach(function(c){if(D[c]&&H4[c])f4.push(fourH(c,D[c],H4[c]))});
-  C1H.forEach(function(c){if(D[c]&&H1[c])o1.push(oneH(c,D[c],H1[c]))});
-  var dailyAt="checks daily at "+localHour(0);
-  var fourAt="checks at "+[0,4,8,12,16,20].map(localHour).join(", ");
-  var cards=[card("1 Day \u00b7 breakout",dailyAt,bo),card("Dip Buy \u00b7 buys the panic",dailyAt,dp),card("1 Hour \u00b7 breakout","checks every hour",o1)];
-  document.getElementById("fr-body").innerHTML=cards.map(function(k){return k.html}).join("");
-  var ready=[],heldList=[],best=null;cards.forEach(function(k){k.rows.forEach(function(r){var f=r.met/r.rules.length;if(HELD[r.coin]){if(r.met===r.rules.length)heldList.push(r.coin);return}if(r.met===r.rules.length)ready.push(r.coin+" ("+k.title.split(" \u00b7")[0]+")");else if(!best||f>best.f)best={f:f,r:r,k:k}})});
-  var s=(ready.length?'<b>Ready to fire:</b> '+ready.join(", "):'<b>Nothing ready to fire.</b>')+(heldList.length?' <span style="opacity:.75">· already held by the bot: '+Array.from(new Set(heldList)).join(", ")+'</span>':'')+(Object.keys(HELD).length?'':'<br><small>Save the bot sub-account address above to see which of these the bot already holds.</small>')+(best?' Closest: <b>'+best.r.coin+'</b> on the '+best.k.title.split(" \u00b7")[0]+' \u2014 '+best.r.met+' of '+best.r.rules.length+' rules met.':'');
-  document.getElementById("fr-sum").innerHTML=s;
-  document.getElementById("fr-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". Refreshes every 10 minutes. Coin lists match signals.py as of 25 Sep 2026. BTC is "+(BTC_BEAR?"below":"above")+" its 200-day average, so 1D shorts are "+(BTC_BEAR?"ON":"OFF")+".";
- })})}).catch(function(e){document.getElementById("fr-sum").textContent="Could not reach Hyperliquid. "+e})}
-run();setInterval(run,600000);
-})();
-</script>
-<!-- Live vs backtest - added 24 Sep 2026 -->
-<section id="lt" class="fr">
-<style>
-.fr .sum.warn{border-left-color:#FF6D00}
-.fr .tw{overflow-x:auto;border:1px solid var(--line,#30363d);border-radius:8px;margin:0 0 14px}
-.fr table{width:100%;border-collapse:collapse;font-size:13px}
-.fr th,.fr td{padding:7px 10px;border-bottom:1px solid var(--line-soft,#21262d);text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}
-.fr tbody tr:last-child td{border-bottom:0}
-.fr th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3,#8b949e);font-weight:600;background:var(--surface-2,#161b22)}
-.fr td small{color:var(--ink-3,#8b949e);font-size:11px}
-.fr td.good{color:#3b6cff;font-weight:600}
-.fr td.bad,.fr .bad{color:#FF6D00;font-weight:600}
-</style>
-<h2>Live vs backtest</h2>
-<p class="sub">Every bot trade checked against what its rules say should happen. Orange means something doesn't match.</p>
-<div id="lt-sum" class="sum">Loading the bot's trades&hellip;</div>
-<div id="lt-body"></div>
-<p class="note" id="lt-when"></p>
-</section>
-<script>
-(function(){
-// Live vs backtest. Uses the bot account address this dashboard already stores (hl-deck-subaddr).
-var TF={"1D":{iv:"1d",ms:864e5,k:3},"4H":{iv:"4h",ms:144e5,k:2},"1H":{iv:"1h",ms:36e5,k:5},"DIP":{iv:"1d",ms:864e5,k:5}};
-var TAG={"d1":"1D","44":"4H","11":"1H","d9":"DIP"};
-var NAME={"1D":"1 Day","4H":"4 Hour","1H":"1 Hour","DIP":"Dip Buy"};
-// Risk settings over time, from config.json history. Add a line when they change.
-var RISK_HIST=[{from:0,r:{"1D":6,"4H":6,"1H":3,"DIP":3}},{from:Date.UTC(2026,8,24,2,0),r:{"1D":1,"4H":6,"1H":1,"DIP":3}},{from:Date.UTC(2026,8,24,7,10),r:{"1D":3,"4H":6,"1H":1,"DIP":3}}];
-// Backtest per trade on the bot's exact rules, Jun 2023 - Sep 2026, costs included.
-var BT={"1D":{w:38,r:0.38},"4H":{w:41,r:0.26},"1H":{w:38,r:0.31},"DIP":{w:71,r:0.06}};
-function post(b){return fetch("https://api.hyperliquid.xyz/info",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json()})}
-function riskAt(t,s){var v=null;RISK_HIST.forEach(function(h){if(t>=h.from)v=h.r[s]});return v}
-function atrLast(b,n){var p=0;for(var i=0;i<b.length;i++){var tr=i===0?b[i].h-b[i].l:Math.max(b[i].h-b[i].l,Math.abs(b[i].h-b[i-1].c),Math.abs(b[i].l-b[i-1].c));if(i<n)p+=tr/n;else p=(p*(n-1)+tr)/n}return p}
-function eqAt(pf,t){var m={};(pf||[]).forEach(function(x){m[x[0]]=x[1]});var ks=["day","week","month","allTime"];for(var k=0;k<ks.length;k++){var o=m[ks[k]],h=o&&o.accountValueHistory;if(!h||!h.length||h[0][0]>t)continue;var v=null;for(var i=0;i<h.length;i++){if(h[i][0]<=t)v=+h[i][1];else break}if(v)return v}var a=m.allTime&&m.allTime.accountValueHistory;return a&&a.length?+a[0][1]:null}
-function before(coin,tf,t){return post({type:"candleSnapshot",req:{coin:coin,interval:tf.iv,startTime:t-90*tf.ms,endTime:t}}).then(function(j){return Array.isArray(j)?j.map(function(x){return{t:x.t,h:+x.h,l:+x.l,c:+x.c}}).filter(function(x){return x.t+tf.ms<=t}):[]})}
-function pct(x){return (x>=0?"+":"\u2212")+Math.abs(x).toFixed(1)+"%"}
-function rf(x){return (x>=0?"+":"\u2212")+Math.abs(x).toFixed(2)+"R"}
-function when(t){return new Date(t).toLocaleString([],{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
-function run(){var sum=document.getElementById("lt-sum"),box=document.getElementById("lt-body"),a=null;try{a=localStorage.getItem("hl-deck-subaddr")}catch(e){}
- if(!a){sum.innerHTML="Add the bot account address at the top of the dashboard and this fills in.";return}
- Promise.all([post({type:"userFills",user:a}),post({type:"frontendOpenOrders",user:a}),post({type:"portfolio",user:a}),post({type:"allMids"})]).then(function(res){
-  var fills=(res[0]||[]).slice().sort(function(x,y){return x.time-y.time}),trades=[],by={};
-  fills.forEach(function(f){var d=f.dir||"";if(d.indexOf("Open")!==0)return;if(!by[f.oid]){var tag=f.cloid&&f.cloid.length===34?f.cloid.slice(2,4).toLowerCase():"";by[f.oid]={coin:f.coin,dir:d.indexOf("Long")>-1?1:-1,t:f.time,sz:0,cost:0,fee:0,left:0,pnl:0,s:TAG[tag]||null};trades.push(by[f.oid])}var x=by[f.oid];x.sz+=+f.sz;x.cost+=(+f.sz)*(+f.px);x.fee+=+f.fee;x.left+=+f.sz});
-  trades.forEach(function(x){x.px=x.cost/x.sz});
-  // Older entries had no strategy code; fall back to the tag on the coin's stop order.
-  (res[1]||[]).forEach(function(o){if(!o.reduceOnly||!o.cloid)return;var s=TAG[o.cloid.slice(2,4).toLowerCase()];if(!s)return;trades.forEach(function(x){if(!x.s&&x.coin===o.coin)x.s=s})});
-  fills.forEach(function(f){if((f.dir||"").indexOf("Close")!==0)return;var q=+f.sz,tot=+f.sz;trades.forEach(function(x){if(q<=1e-12||x.coin!==f.coin||x.left<=1e-12||x.t>f.time)return;var k=Math.min(q,x.left),sh=k/tot;x.left-=k;x.pnl+=(+f.closedPnl)*sh-(+f.fee)*sh;q-=k})});
-  return Promise.all(trades.map(function(x){return before(x.coin,TF[x.s||"1D"],x.t).then(function(b){x.bars=b})})).then(function(){return{trades:trades,oo:res[1]||[],pf:res[2],mids:res[3]||{}}})
- }).then(function(D){var issues=[],rows="",score={};
-  D.trades.slice().reverse().forEach(function(x){var s=x.s,tf=TF[s||"1D"],b=x.bars||[],last=b[b.length-1],A=b.length>20?atrLast(b,14):null,sig=last?last.c:null,slip=sig?x.dir*(x.px-sig)/sig*100:null;
-   var eq=eqAt(D.pf,x.t),ru=A?x.sz*tf.k*A:null,taken=ru&&eq?ru/eq*100:null,set=s?riskAt(x.t,s):null,open=x.left>1e-9,mid=+D.mids[x.coin]||null;
-   var stop=D.oo.filter(function(o){return o.coin===x.coin&&o.reduceOnly&&o.isTrigger})[0],R=null;
-   if(ru)R=open&&mid?(x.dir*(mid-x.px)*x.left+x.pnl-x.fee)/ru:(x.pnl-x.fee)/ru;
-   var riskOff=taken!=null&&set!=null&&(taken>set*1.4||taken<set*0.6),chased=slip!=null&&slip>1.5;
-   if(!s)issues.push(x.coin+": the order has no strategy code the bot recognises, so it may manage the exit with the wrong rules");
-   if(chased)issues.push(x.coin+": entered "+slip.toFixed(1)+"% past the signal price (the limit is 1.5%)");
-   if(riskOff)issues.push(x.coin+": risked about "+taken.toFixed(1)+"% against a "+set+"% setting");
-   if(open&&!stop)issues.push(x.coin+": open with NO stop on the exchange");
-   var stopTxt=open?(stop&&mid?"on exchange \u00b7 "+Math.abs((+stop.triggerPx-mid)/mid*100).toFixed(1)+"% away":'<span class="bad">missing</span>'):"\u2014";
-   rows+="<tr><td><b>"+x.coin+'</b> <span class="dir '+(x.dir>0?"L":"S")+'">'+(x.dir>0?"LONG":"SHORT")+"</span></td><td>"+(s?NAME[s]:'<span class="bad">unknown</span>')+"</td><td>"+when(x.t)+"</td><td"+(chased?' class="bad"':"")+">"+(slip==null?"\u2014":pct(slip))+"</td><td"+(riskOff?' class="bad"':"")+">"+(taken==null?"\u2014":taken.toFixed(1)+"% <small>of "+set+"%</small>")+"</td><td>"+stopTxt+"</td><td"+(R!=null?' class="'+(R>=0?"good":"bad")+'"':"")+">"+(R==null?"\u2014":rf(R))+(open?" <small>open</small>":"")+"</td></tr>";
-   if(s&&!open&&R!=null){var c=score[s]||(score[s]={n:0,w:0,r:0});c.n++;if(R>0)c.w++;c.r+=R}});
-  sum.className="sum"+(issues.length?" warn":"");
-  sum.innerHTML=issues.length?"<b>"+issues.length+" thing"+(issues.length>1?"s":"")+" to look at:</b><br>"+issues.join("<br>"):"<b>All checks pass.</b> Every open trade has a stop, sizes match your risk settings, and entries match the signals.";
-  var sh='<div class="tw"><table><thead><tr><th>Strategy</th><th>Closed trades</th><th>Wins</th><th>Avg result</th><th>Backtest expects</th></tr></thead><tbody>';
-  ["1D","DIP","1H"].forEach(function(s){var c=score[s]||{n:0,w:0,r:0},bt=BT[s];sh+="<tr><td>"+NAME[s]+"</td><td>"+c.n+"</td><td>"+(c.n?Math.round(100*c.w/c.n)+"%":"\u2014")+"</td><td>"+(c.n?rf(c.r/c.n):"\u2014")+"</td><td>"+bt.w+"% wins \u00b7 "+rf(bt.r)+(c.n<20?" <small>compare after ~20 trades</small>":"")+"</td></tr>"});
-  box.innerHTML='<div class="tw"><table><thead><tr><th>Trade</th><th>Strategy</th><th>Opened</th><th>Entry vs signal</th><th>Risk taken</th><th>Stop</th><th>Result</th></tr></thead><tbody>'+(rows||'<tr><td colspan="7">No bot trades yet.</td></tr>')+"</tbody></table></div>"+sh+"</tbody></table></div>";
-  document.getElementById("lt-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". R = results in multiples of the risk taken: +1R means it made what it risked.";
- }).catch(function(e){document.getElementById("lt-sum").textContent="Could not load the bot's trades: "+e})}
-var me=document.getElementById("lt"),fr=document.getElementById("fr");if(me&&fr&&fr.parentNode)fr.parentNode.insertBefore(me,fr.nextSibling);
-run();setInterval(run,600000);
-})();
-</script>
-<script>
-(function(){
-// Market gauge: OTHERS dominance (= 100 - top-10 dominance, i.e. TradingView OTHERS.D),
-// BTC dominance and total cap, from CoinGecko's public /global endpoint.
-var SELL_AT=13.0, WARN_AT=11.0, METER_MAX=17.0;
-// CoinGecko's figure runs a little above TradingView's OTHERS.D (different total / top-10 basket).
-// Offset calibrated 25 Sep 2026: CoinGecko 8.93 vs TradingView 8.43. Re-check monthly.
-var TV_OFFSET=-0.50;
-function $(id){return document.getElementById(id)}
-function fmtT(n){return n>=1e12?"$"+(n/1e12).toFixed(2)+"T":"$"+(n/1e9).toFixed(0)+"B"}
-function run(){
- fetch("https://api.coingecko.com/api/v3/global").then(function(r){return r.json()}).then(function(j){
-  var d=j.data,p=d.market_cap_percentage||{},top10=0,keys=Object.keys(p);
-  keys.forEach(function(k){top10+=p[k]});
-  if(keys.length<10||!top10)throw new Error("top-10 data missing");
-  var raw=100-top10,others=raw+TV_OFFSET,btcd=p.btc||0,total=d.total_market_cap&&d.total_market_cap.usd,chg=d.market_cap_change_percentage_24h_usd;
-  var gap=SELL_AT-others;
-  $("t-others").textContent=others.toFixed(2)+"%";
-  $("t-others").style.color=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--up)";
-  $("t-others-sub").textContent=(others>=SELL_AT?"AT/ABOVE the 13% sell line":others>=WARN_AT?"close to the 13% sell line":"below the 13% sell line")+" · raw CoinGecko "+raw.toFixed(2)+"%";
-  var m=$("t-others-meter");m.className="meter"+(others>=WARN_AT?" over":"");m.firstElementChild.style.width=Math.min(100,others/METER_MAX*100).toFixed(1)+"%";
-  $("t-btcd").textContent=btcd.toFixed(1)+"%";
-  $("t-btcd-sub").textContent="ETH "+(p.eth||0).toFixed(1)+"% · stables "+(((p.usdt||0)+(p.usdc||0))).toFixed(1)+"%";
-  $("t-total").textContent=total?fmtT(total):"—";
-  $("t-total-sub").textContent=chg==null?"":(chg>=0?"+":"")+chg.toFixed(1)+"% in 24h";
-  $("t-total-sub").style.color=chg>=0?"var(--up)":"var(--down)";
-  $("t-others-gap").textContent=(gap>=0?"":"+")+(-gap).toFixed(2)+" pts";
-  $("t-others-gap").style.color=gap<=0?"var(--down)":gap<=1?"var(--warn)":"var(--ink)";
-  $("t-others-gap-sub").textContent=gap>0?"below 13% · alts still on":"past 13% · sell-alts zone";
-  $("t-others-tile").style.borderColor=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--line)";
- }).catch(function(e){$("t-others-sub").textContent="CoinGecko unreachable ("+e.message+")"});
-}
-run();setInterval(run,600000);
+  setInterval(refreshAll, 600000);
 })();
 </script>
 </body>
