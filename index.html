@@ -215,6 +215,72 @@
     a VPN, or a blocker. Everything below is layout only until it connects.
   </div>
 
+  <!-- Countdown bar - added 26 Sep 2026. Candle closes, options expiries and US
+       macro releases, all computed in the browser (no API calls). Macro dates:
+       federalreserve.gov FOMC calendar, bls.gov CPI + Employment Situation
+       schedules - extend the lists below each year. -->
+  <div id="newsbar" class="nb" aria-label="Upcoming market events"></div>
+  <style>
+    .nb{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;margin:0 0 6px;scrollbar-width:thin}
+    .nb .ev{flex:0 0 auto;border:1px solid var(--line,#D8E0E2);border-radius:999px;padding:4px 11px;font-size:12px;white-space:nowrap;background:var(--surface,#fff);color:var(--ink-2,#47565B)}
+    .nb .ev b{color:var(--ink,#0B1A1F);font-variant-numeric:tabular-nums;margin-left:4px}
+    .nb .ev.soon{border-color:#FF6D00}
+    .nb .ev.soon b{color:#FF6D00}
+    .nb .ev.now{background:#FF6D00;border-color:#FF6D00;color:#fff}
+    .nb .ev.now b{color:#fff}
+    .nb .ev.big{font-weight:600}
+  </style>
+  <script>
+  (function(){
+    // US macro (ET release times). Extend each year from the official schedules.
+    var FOMC=["2026-10-28","2026-12-09","2027-01-27","2027-03-17","2027-04-28","2027-06-09","2027-07-28","2027-09-15","2027-10-27","2027-12-08"];
+    var CPI=["2026-10-14","2026-11-10","2026-12-10"];
+    var NFP=["2026-10-02","2026-11-06","2026-12-04"];
+    var DAY=864e5,H=36e5;
+    function offset(tz,ms){  // minutes the zone is ahead of UTC at instant ms
+      var p=new Intl.DateTimeFormat("en-US",{timeZone:tz,hourCycle:"h23",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}).formatToParts(new Date(ms)),o={};
+      p.forEach(function(x){o[x.type]=+x.value});
+      return (Date.UTC(o.year,o.month-1,o.day,o.hour%24,o.minute)-ms)/6e4}
+    function zoned(y,m,d,hh,mm,tz){var g=Date.UTC(y,m,d,hh,mm);return g-offset(tz,g-offset(tz,g)*6e4)*6e4}
+    function ymd(s){var a=s.split("-");return [+a[0],+a[1]-1,+a[2]]}
+    function nthFriday(y,m,n){var d=new Date(Date.UTC(y,m,1)),first=(5-d.getUTCDay()+7)%7+1;return first+7*(n-1)}
+    function lastFriday(y,m){var last=new Date(Date.UTC(y,m+1,0)),dd=last.getUTCDate();return dd-((last.getUTCDay()-5+7)%7)}
+    function events(now){
+      var t=new Date(now),y=t.getUTCFullYear(),m=t.getUTCMonth(),out=[];
+      var nextDay=Date.UTC(y,m,t.getUTCDate()+1);
+      out.push({n:"Daily close",t:nextDay});
+      var dow=t.getUTCDay(),toMon=(8-dow)%7||7;out.push({n:"Weekly close",t:Date.UTC(y,m,t.getUTCDate()+toMon)});
+      out.push({n:"Monthly close",t:Date.UTC(y,m+1,1),big:1});
+      var q=Math.floor(m/3)*3+3;out.push({n:"Quarterly close",t:Date.UTC(y,q,1),big:1});
+      out.push({n:"Yearly close",t:Date.UTC(y+1,0,1)});
+      // crypto options (Deribit): every Friday 08:00 UTC; last Friday = monthly; Mar/Jun/Sep/Dec = quarterly
+      for(var k=0;k<3;k++){var mm=m+k,yy=y+Math.floor(mm/12);mm%=12;var lf=lastFriday(yy,mm);
+        out.push({n:(mm%3===2?"Quarterly":"Monthly")+" options expiry (Deribit)",t:Date.UTC(yy,mm,lf,8),big:mm%3===2});
+        // CME bitcoin futures + options: last Friday, 4pm London
+        out.push({n:"CME BTC expiry",t:zoned(yy,mm,lf,16,0,"Europe/London")});
+        // US stock options: 3rd Friday 4pm New York; quarterly months = quad witching
+        var tf=nthFriday(yy,mm,3);out.push({n:mm%3===2?"Quad witching (US)":"US options expiry",t:zoned(yy,mm,tf,16,0,"America/New_York"),big:mm%3===2})}
+      var dFri=(5-dow+7)%7,fri=Date.UTC(y,m,t.getUTCDate()+dFri,8);if(fri<=now)fri+=7*DAY;
+      if(new Date(fri).getUTCDate()!==lastFriday(new Date(fri).getUTCFullYear(),new Date(fri).getUTCMonth()))out.push({n:"Weekly options expiry (Deribit)",t:fri});
+      FOMC.forEach(function(s){var a=ymd(s);out.push({n:"Fed rate decision (FOMC)",t:zoned(a[0],a[1],a[2],14,0,"America/New_York"),big:1})});
+      CPI.forEach(function(s){var a=ymd(s);out.push({n:"US inflation (CPI)",t:zoned(a[0],a[1],a[2],8,30,"America/New_York"),big:1})});
+      NFP.forEach(function(s){var a=ymd(s);out.push({n:"US jobs report",t:zoned(a[0],a[1],a[2],8,30,"America/New_York")})});
+      var seen={};
+      return out.filter(function(e){return e.t>now-H}).sort(function(a,b){return a.t-b.t})
+        .filter(function(e){if(seen[e.n])return false;seen[e.n]=1;return true});   // next one of each kind
+    }
+    function left(ms){if(ms<=0)return "now";var d=Math.floor(ms/DAY),h=Math.floor(ms%DAY/H),mi=Math.floor(ms%H/6e4);
+      return d?d+"d "+h+"h":h?h+"h "+mi+"m":mi+"m"}
+    function draw(){
+      var now=Date.now(),box=document.getElementById("newsbar");if(!box)return;
+      box.innerHTML=events(now).slice(0,12).map(function(e){var dt=e.t-now,cls="ev"+(dt<=0?" now":dt<DAY?" soon":"")+(e.big?" big":"");
+        var when=new Date(e.t).toLocaleString([],{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
+        return '<span class="'+cls+'" title="'+when+' (your time)">'+e.n+"<b>"+left(dt)+"</b></span>"}).join("");
+    }
+    draw();setInterval(draw,30000);
+  })();
+  </script>
+
   <h2>Strategies <span class="qual">— what the bot is running (as of 25 Sep 2026)</span></h2>
   <div class="tiles" id="strat-tiles">
     <div class="tile">
