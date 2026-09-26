@@ -355,9 +355,146 @@
   </div>
 
   <footer>
-    Read-only. Prices and account data pulled straight from Hyperliquid's public API each time you load or refresh.
+    Read-only. Prices and account data pulled straight from Hyperliquid's public API; candles are reused in your browser until they close, so refreshing stays under Hyperliquid's rate limit.
   </footer>
 </div>
+
+<script>
+// Hyperliquid allows each internet connection 1200 "weight" a minute. One
+// refresh of this page used to ask for ~3000 (radar, checklist and the
+// live-vs-backtest table each pulling candles for 30+ coins), so refreshing
+// got the viewer rate limited - including in the Hyperliquid app itself.
+// Every call to the info API now goes through this one gate:
+//  1. candles are kept in this browser until the candle closes (a closed
+//     candle never changes), so a refresh re-downloads almost nothing;
+//     candles from the past (live-vs-backtest) are kept for good;
+//  2. the same request asked for twice at once is sent once;
+//  3. calls are paced to stay under ~900 weight a minute;
+//  4. a 429 (rate limited) is retried after 2, 5, 10 then 20 seconds.
+(function () {
+  var API = "https://api.hyperliquid.xyz/info";
+  var raw = window.fetch.bind(window);
+  var BUDGET = 900, SPAN = 60000, spent = [];            // [[time, weight], ...]
+  var WAITS = [2000, 5000, 10000, 20000];
+  var MS = { "1m": 6e4, "5m": 3e5, "15m": 9e5, "1h": 36e5, "4h": 144e5, "1d": 864e5 };
+  // fetch at least this much history, so the sections that want 260 and 420
+  // days of the same coin share one download
+  var WIDE = { "1h": 650 * 36e5, "4h": 100 * 864e5, "1d": 430 * 864e5 };
+  var PER_ITEM = { candleSnapshot: 60, userFills: 20, userFillsByTime: 20, userFunding: 20,
+                   fundingHistory: 20, recentTrades: 20, historicalOrders: 20 };
+  var LIGHT = { l2Book: 1, allMids: 1, clearinghouseState: 1, orderStatus: 1,
+                spotClearinghouseState: 1, exchangeStatus: 1 };
+  var PFX = "hlc1:", mem = {}, inflight = {};
+
+  function base(type) { return LIGHT[type] ? 2 : 20; }
+  function prune() { var t = Date.now() - SPAN; while (spent.length && spent[0][0] < t) spent.shift(); }
+  function used() { prune(); var s = 0; for (var i = 0; i < spent.length; i++) s += spent[i][1]; return s; }
+  function pace(w) {
+    return new Promise(function (ok) {
+      (function tick() {
+        if (used() + w <= BUDGET || !spent.length) { spent.push([Date.now(), w]); return ok(); }
+        setTimeout(tick, Math.max(250, spent[0][0] + SPAN - Date.now() + 50));
+      })();
+    });
+  }
+  function send(body, type) {
+    var n = 0;
+    function attempt() {
+      return pace(base(type)).then(function () {
+        return raw(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      }).then(function (r) {
+        if (r.status === 429 && n < WAITS.length) {
+          var w = WAITS[n++];
+          return new Promise(function (ok) { setTimeout(ok, w); }).then(attempt);
+        }
+        return r;
+      });
+    }
+    return attempt().then(function (r) {
+      if (!r.ok) return { status: r.status, data: null };
+      return r.json().then(function (d) {
+        if (PER_ITEM[type] && Array.isArray(d)) spent.push([Date.now(), Math.floor(d.length / PER_ITEM[type])]);
+        return { status: r.status, data: d };
+      });
+    });
+  }
+  function reply(status, data) {
+    return new Response(status === 200 ? JSON.stringify(data) : "", { status: status, headers: { "Content-Type": "application/json" } });
+  }
+
+  // ---- candle store: this tab (mem) + this browser (localStorage, best effort)
+  function load(k) {
+    if (mem[k]) return mem[k];
+    try { var v = JSON.parse(localStorage.getItem(PFX + k)); if (v) mem[k] = v; return v; } catch (e) { return null; }
+  }
+  function keep(k, v) {
+    mem[k] = v;
+    try { localStorage.setItem(PFX + k, JSON.stringify(v)); }
+    catch (e) {                                   // storage full: drop our old entries once, then carry on in memory
+      try { for (var i = localStorage.length - 1; i >= 0; i--) { var kk = localStorage.key(i); if (kk && kk.indexOf(PFX) === 0) localStorage.removeItem(kk); }
+            localStorage.setItem(PFX + k, JSON.stringify(v)); } catch (e2) {}
+    }
+  }
+  // compact rows so ~30 coins of history fit comfortably in the browser's storage
+  function pack(rows) { return rows.map(function (c) { return [c.t, c.T, c.o, c.h, c.l, c.c, c.v, c.n]; }); }
+  function unpack(rows, coin, iv) {
+    return rows.map(function (a) { return { t: a[0], T: a[1], s: coin, i: iv, o: a[2], h: a[3], l: a[4], c: a[5], v: a[6], n: a[7] }; });
+  }
+  function slice(entry, start, end, coin, iv) {
+    return unpack(entry.r.filter(function (a) { return a[0] >= start && a[0] <= end; }), coin, iv);
+  }
+
+  function candles(body) {
+    var q = body.req || {}, iv = q.interval, ms = MS[iv], now = Date.now();
+    if (!ms || !q.coin) return send(body, "candleSnapshot").then(function (x) { return reply(x.status, x.data); });
+    var start = +q.startTime || 0, end = +q.endTime || now;
+    var past = end + ms < now;                    // ends before the current candle: never changes
+    var k = past ? "p|" + q.coin + "|" + iv + "|" + start + "|" + end : "l|" + q.coin + "|" + iv;
+    var e = load(k);
+    if (e && (past || (e.x > now && e.s <= start))) return Promise.resolve(reply(200, slice(e, start, end, q.coin, iv)));
+    var f = inflight[k];
+    if (f && f.s <= start) return f.p.then(function () {
+      var e2 = load(k);
+      return e2 ? reply(200, slice(e2, start, end, q.coin, iv)) : send(body, "candleSnapshot").then(function (x) { return reply(x.status, x.data); });
+    });
+    var s = past ? start : Math.min(start, now - (WIDE[iv] || 0));
+    var wide = { type: "candleSnapshot", req: { coin: q.coin, interval: iv, startTime: s, endTime: past ? end : now } };
+    var p = send(wide, "candleSnapshot").then(function (x) {
+      if (x.status === 200 && Array.isArray(x.data)) {
+        // live data is good until this candle closes (+5s for the exchange to roll over)
+        keep(k, { s: s, x: past ? 0 : Math.floor(now / ms) * ms + ms + 5000, r: pack(x.data) });
+      }
+      return x;
+    });
+    inflight[k] = { s: s, p: p };
+    p.catch(function () { if (inflight[k] && inflight[k].p === p) delete inflight[k]; });   // network error: next call tries again
+    return p.then(function (x) {
+      if (inflight[k] && inflight[k].p === p) delete inflight[k];
+      if (x.status !== 200 || !Array.isArray(x.data)) return reply(x.status, x.data);
+      return reply(200, x.data.filter(function (c) { return c.t >= start && c.t <= end; }));
+    });
+  }
+
+  function other(body) {
+    var k = JSON.stringify(body);                  // identical calls at the same moment -> one request
+    if (!inflight[k]) {
+      inflight[k] = { p: send(body, body.type).then(function (x) { delete inflight[k]; return x; }, function (err) { delete inflight[k]; throw err; }) };
+    }
+    return inflight[k].p.then(function (x) { return reply(x.status, x.data); });
+  }
+
+  window.fetch = function (input, init) {
+    var url = typeof input === "string" ? input : (input && input.url);
+    if (url === API && init && init.method === "POST" && typeof init.body === "string") {
+      var body;
+      try { body = JSON.parse(init.body); } catch (e) { return raw(input, init); }
+      return body.type === "candleSnapshot" ? candles(body) : other(body);
+    }
+    return raw(input, init);
+  };
+  window.HL_GATE = { used: used, budget: BUDGET };   // for checking from the browser console
+})();
+</script>
 
 <script>
 (function () {
