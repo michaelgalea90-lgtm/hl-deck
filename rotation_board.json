@@ -1,0 +1,124 @@
+{
+ "as_of": "2026-09-26T06:54Z",
+ "money_in": [
+  "Infra",
+  "DeFi",
+  "AI"
+ ],
+ "money_out": [
+  "Hyperliquid",
+  "Privacy",
+  "RWA"
+ ],
+ "btc": {
+  "r24": -0.17,
+  "r7": 3.67
+ },
+ "majors": {
+  "share_now": 50.97,
+  "share_avg": 58.84,
+  "verdict": "alts gaining vs BTC/ETH"
+ },
+ "sectors": [
+  {
+   "name": "Infra",
+   "rel24": 5.28,
+   "rel7": 18.53,
+   "share_avg": 0.64,
+   "share_now": 0.97,
+   "flow": "in",
+   "top": "FIL",
+   "top_r24": 8.93
+  },
+  {
+   "name": "DeFi",
+   "rel24": 7.27,
+   "rel7": 8.28,
+   "share_avg": 4.03,
+   "share_now": 5.59,
+   "flow": "in",
+   "top": "AERO",
+   "top_r24": 26.07
+  },
+  {
+   "name": "AI",
+   "rel24": 5.3,
+   "rel7": 14.06,
+   "share_avg": 1.69,
+   "share_now": 1.78,
+   "flow": "in",
+   "top": "GRASS",
+   "top_r24": 13.15
+  },
+  {
+   "name": "Layer 2s",
+   "rel24": 5.0,
+   "rel7": 7.64,
+   "share_avg": 0.72,
+   "share_now": 0.48,
+   "flow": "flat",
+   "top": "POL",
+   "top_r24": 9.62
+  },
+  {
+   "name": "Layer 1s",
+   "rel24": 3.46,
+   "rel7": 12.56,
+   "share_avg": 11.13,
+   "share_now": 18.22,
+   "flow": "flat",
+   "top": "SUI",
+   "top_r24": 14.05
+  },
+  {
+   "name": "Memes",
+   "rel24": 3.67,
+   "rel7": 7.75,
+   "share_avg": 2.93,
+   "share_now": 2.31,
+   "flow": "flat",
+   "top": "PUMP",
+   "top_r24": 17.92
+  },
+  {
+   "name": "Payments",
+   "rel24": 1.39,
+   "rel7": 15.85,
+   "share_avg": 3.42,
+   "share_now": 4.28,
+   "flow": "flat",
+   "top": "LTC",
+   "top_r24": 1.97
+  },
+  {
+   "name": "RWA",
+   "rel24": 0.26,
+   "rel7": 13.61,
+   "share_avg": 0.69,
+   "share_now": 1.12,
+   "flow": "out",
+   "top": "PAXG",
+   "top_r24": 0.17
+  },
+  {
+   "name": "Privacy",
+   "rel24": -0.08,
+   "rel7": -5.67,
+   "share_avg": 8.2,
+   "share_now": 8.03,
+   "flow": "out",
+   "top": "ZEN",
+   "top_r24": 2.12
+  },
+  {
+   "name": "Hyperliquid",
+   "rel24": -3.08,
+   "rel7": -5.14,
+   "share_avg": 7.7,
+   "share_now": 6.25,
+   "flow": "out",
+   "top": "HYPE",
+   "top_r24": -0.81
+  }
+ ]
+}
