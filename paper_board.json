@@ -19,6 +19,7 @@
     }
    ],
    "recent": [],
+   "kind": "test",
    "n": 0,
    "avg": null,
    "win": null,
@@ -26,7 +27,7 @@
    "hi": null,
    "overlap": null,
    "avg_solo": null,
-   "okx_agree_pct": 0
+   "okx_agree_pct": null
   },
   {
    "id": "OB",
@@ -58,6 +59,7 @@
      "r": -1.05
     }
    ],
+   "kind": "test",
    "n": 1,
    "avg": -1.05,
    "win": 0,
@@ -79,6 +81,7 @@
    "progress": "0 of 500 trades",
    "open": [],
    "recent": [],
+   "kind": "test",
    "n": 0,
    "avg": null,
    "win": null,
@@ -86,6 +89,301 @@
    "hi": null,
    "overlap": null,
    "avg_solo": null
+  },
+  {
+   "id": "crowd5",
+   "name": "Whale copy (5 whales agree)",
+   "rule": "Copy when 5+ of the top-20 whales hold the same coin and side (rarely happens)",
+   "passes": "100+ trades and 95% range above zero",
+   "target": 100,
+   "backtest": null,
+   "status": "collecting",
+   "progress": "0 of 100 trades",
+   "open": [],
+   "recent": [],
+   "kind": "test",
+   "n": 0,
+   "avg": null,
+   "win": null,
+   "lo": null,
+   "hi": null,
+   "overlap": null,
+   "avg_solo": null
+  },
+  {
+   "id": "BTC4H",
+   "name": "BTC 4-hour breakout",
+   "rule": "BTC 4h breakout, fake money",
+   "passes": "30+ trades and 95% range above zero (backtest: it only earned while a 1D BTC long was open)",
+   "target": 30,
+   "backtest": null,
+   "status": "collecting",
+   "progress": "0 of 30 trades",
+   "open": [],
+   "recent": [],
+   "kind": "test",
+   "n": 0,
+   "avg": null,
+   "win": null,
+   "lo": null,
+   "hi": null,
+   "overlap": null,
+   "avg_solo": null
+  },
+  {
+   "id": "YNG",
+   "name": "Young coins 1D breakout",
+   "rule": "Daily breakout on coins listed under a year, fake money",
+   "passes": "30+ trades and 95% range above zero (backtest +1.14R but only coins that survived)",
+   "target": 30,
+   "backtest": 1.14,
+   "status": "collecting",
+   "progress": "0 of 30 trades",
+   "open": [
+    {
+     "coin": "CC",
+     "side": "LONG",
+     "opened": "2026-09-25"
+    },
+    {
+     "coin": "MET",
+     "side": "LONG",
+     "opened": "2026-09-25"
+    }
+   ],
+   "recent": [],
+   "kind": "test",
+   "n": 0,
+   "avg": null,
+   "win": null,
+   "lo": null,
+   "hi": null,
+   "overlap": null,
+   "avg_solo": null
+  },
+  {
+   "id": "MIRROR",
+   "name": "Live rules on paper (reference)",
+   "rule": "The live bot's own signals (1D, 1H, Dip, shorts) traded with fake money - a check the rules behave as expected",
+   "passes": "Reference, not a test: compare each strategy's average with its backtest after ~20 trades",
+   "target": null,
+   "backtest": null,
+   "status": "reference",
+   "progress": "19 closed",
+   "open": [
+    {
+     "coin": "1D kSHIB",
+     "side": "LONG",
+     "opened": "2026-09-25"
+    },
+    {
+     "coin": "1D BTC",
+     "side": "LONG",
+     "opened": "2026-09-25"
+    },
+    {
+     "coin": "1D ETH",
+     "side": "LONG",
+     "opened": "2026-09-25"
+    },
+    {
+     "coin": "1D BNB",
+     "side": "LONG",
+     "opened": "2026-09-25"
+    },
+    {
+     "coin": "1D XRP",
+     "side": "LONG",
+     "opened": "2026-09-25"
+    },
+    {
+     "coin": "1D ADA",
+     "side": "LONG",
+     "opened": "2026-09-25"
+    },
+    {
+     "coin": "1D DOGE",
+     "side": "LONG",
+     "opened": "2026-09-25"
+    },
+    {
+     "coin": "1D AVAX",
+     "side": "LONG",
+     "opened": "2026-09-25"
+    }
+   ],
+   "recent": [
+    {
+     "coin": "1D ETH",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": 0.81
+    },
+    {
+     "coin": "1D SOL",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": 0.55
+    },
+    {
+     "coin": "1D AVAX",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": 4.34
+    },
+    {
+     "coin": "1D ZEC",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": -0.15
+    },
+    {
+     "coin": "1D NEAR",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": 1.79
+    },
+    {
+     "coin": "1D BTC",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": 1.09
+    },
+    {
+     "coin": "1D ALGO",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": 0.31
+    },
+    {
+     "coin": "1D SUI",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": 1.55
+    },
+    {
+     "coin": "1D INJ",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": -0.13
+    },
+    {
+     "coin": "1D OP",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": 0.11
+    },
+    {
+     "coin": "1D AR",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": -0.03
+    },
+    {
+     "coin": "1D ENA",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": 0.11
+    },
+    {
+     "coin": "1D BNB",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": 0.25
+    },
+    {
+     "coin": "1D HBAR",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": 0.85
+    },
+    {
+     "coin": "1D DOGE",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-22",
+     "r": -0.19
+    },
+    {
+     "coin": "1H XRP",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-23",
+     "r": 0.75
+    },
+    {
+     "coin": "1H AVAX",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-23",
+     "r": 0.68
+    },
+    {
+     "coin": "1H ENA",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-23",
+     "r": -0.15
+    },
+    {
+     "coin": "1H ETH",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-23",
+     "r": -0.24
+    }
+   ],
+   "kind": "reference",
+   "breakdown": [
+    {
+     "strat": "1D",
+     "n": 15,
+     "avg": 0.75,
+     "expect": 0.98
+    },
+    {
+     "strat": "1H",
+     "n": 4,
+     "avg": 0.26,
+     "expect": 0.2
+    }
+   ],
+   "n": 19,
+   "avg": 0.647,
+   "win": 68,
+   "lo": 0.269,
+   "hi": 1.179,
+   "overlap": null,
+   "avg_solo": null
   }
- ]
+ ],
+ "rotation": [],
+ "shadow": {
+  "votes": 0,
+  "scored": 0,
+  "judge_at": 20,
+  "take": {
+   "n": 0,
+   "avg": null
+  },
+  "skip": {
+   "n": 0,
+   "avg": null
+  }
+ },
+ "rotation_note": "Rotation models: % since start, before funding (longs usually pay ~10%/yr)."
 }
