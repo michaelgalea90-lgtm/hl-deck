@@ -301,7 +301,7 @@
     </div>
     <div class="tile">
       <div class="k">Paper only <span class="pill paper">FAKE MONEY</span></div>
-      <div class="sub">BTC 4H breakout · young-coin 1D breakout · crowd fade (OKX long/short extremes, BTC ETH SOL) · OI breakout (open interest +2% in 24h, BTC ETH SOL) · whale copy (piling in) · money-rotation models. Info only, never trade. Scorecards below.</div>
+      <div class="sub">BTC 4H breakout · young-coin 1D breakout · crowd fade (OKX long/short extremes, BTC ETH SOL) · OI breakout (open interest +2% in 24h, BTC ETH SOL) · whale copy (piling in / 5 whales) · money-rotation models · live rules on paper · ChatGPT votes. Info only, never trade. Scorecards below.</div>
     </div>
     <div class="tile">
       <div class="k">Shared limits</div>
@@ -1524,19 +1524,20 @@ run();setInterval(run,600000);
  function r(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(2)+"R"}
  function cell(v,k){return "<div><b>"+v+"</b><small>"+k+"</small></div>"}
  function card(b){
-  var pct=Math.min(100,Math.round(100*b.n/b.target));
-  var st=b.status==="passed"?"Passed":b.status==="failed"?"Failed":"Collecting";
-  var g=cell(b.n+" / "+b.target,"closed trades")+cell(r(b.avg),"average per trade")
+  var ref=b.kind==="reference",pct=ref||!b.target?0:Math.min(100,Math.round(100*b.n/b.target));
+  var st=b.status==="passed"?"Passed":b.status==="failed"?"Failed":ref?"Reference":"Collecting";
+  var g=cell(ref?b.n:b.n+" / "+b.target,"closed trades")+cell(r(b.avg),"average per trade")
    +cell(b.lo==null?"after 10 trades":r(b.lo)+" to "+r(b.hi),"realistic range (95%)")
    +cell(b.win==null?"—":b.win+"%","winners")+cell(b.open.length,"open now")
    +cell(b.overlap==null?"—":b.overlap+"%","repeat a real-bot trade")
    +cell(b.backtest==null?"no backtest":r(b.backtest),"backtest expects");
   if(b.id==="CF")g+=cell(b.okx_agree_pct==null?"from ~2 Oct":b.okx_agree_pct+"%","OKX agrees with Binance");
+  (b.breakdown||[]).forEach(function(x){g+=cell(r(x.avg)+" <small>("+x.n+")</small>",esc(x.strat)+(x.expect==null?"":" · backtest "+r(x.expect)))});
   if(b.id==="OB")g+=cell(b.live_breakouts_avg==null?"no closed trades yet":r(b.live_breakouts_avg),"real bot's breakouts (to beat by +0.05R)");
   var rows=b.recent.slice().reverse().slice(0,10).map(function(t){return "<tr><td><b>"+esc(t.coin)+'</b> <span class="dir '+(t.side==="LONG"?"L":"S")+'">'+esc(t.side)+"</span></td><td>"+esc(t.opened||"—")+"</td><td>"+esc(t.closed||"—")+'</td><td class="'+(t.r>=0?"good":"bad")+'">'+r(t.r)+"</td></tr>"}).join("");
   var open=b.open.map(function(t){return esc(t.coin)+" "+esc(t.side)}).join(", ");
   return '<div class="grp pt-grp"><div class="gh"><b>'+esc(b.name)+'</b><span class="pt-st '+esc(b.status)+'">'+st+" · "+esc(b.progress)+"</span></div>"
-   +'<div class="pt-grid">'+g+'</div><div class="pt-bar"><i style="width:'+pct+'%"></i></div>'
+   +'<div class="pt-grid">'+g+'</div>'+(ref?"":'<div class="pt-bar"><i style="width:'+pct+'%"></i></div>')
    +'<div class="pt-rule"><b>Rule:</b> '+esc(b.rule)+"<br><b>Passes if:</b> "+esc(b.passes)+(open?"<br><b>Open:</b> "+open:"")+"</div>"
    +(rows?'<div class="tw"><table><thead><tr><th>Trade</th><th>Opened</th><th>Closed</th><th>Result</th></tr></thead><tbody>'+rows+"</tbody></table></div>":"")+"</div>"}
  function pc(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(1)+"%"}
@@ -1559,8 +1560,16 @@ run();setInterval(run,600000);
    document.getElementById("pt-sum").innerHTML="<b>"+(B.bots.length+(B.rotation||[]).length)+" paper models</b> · "+closed+" closed trade"+(closed===1?"":"s")+", "+open+" open · "
     +(judged.length?judged.map(function(b){return esc(b.name)+" "+b.status}).join(", "):"none has enough trades to judge yet")
     +(B.as_of?' <small style="color:var(--ink-3,#8b949e)">· latest '+esc(B.as_of)+"</small>":"");
-   document.getElementById("pt-body").innerHTML=B.bots.map(card).join("")+'<p class="sub">'+esc(B.note)+"</p>"
-    +(B.rotation&&B.rotation.length?B.rotation.map(rcard).join("")+'<p class="sub">'+esc(B.rotation_note||"")+"</p>":"");
+   var tests=B.bots.filter(function(b){return b.kind!=="reference"}),refs=B.bots.filter(function(b){return b.kind==="reference"});
+   var sh=B.shadow,shc=sh?'<div class="grp pt-grp"><div class="gh"><b>ChatGPT votes (shadow mode)</b><span class="pt-st">Reference · '+sh.scored+" of ~"+sh.judge_at+" scored</span></div>"
+     +'<div class="pt-grid">'+cell(sh.votes,"votes cast")+cell(sh.scored,"matched to real trades")
+     +cell(sh.take.avg==null?"—":r(sh.take.avg)+" <small>("+sh.take.n+")</small>","trades ChatGPT said TAKE")
+     +cell(sh.skip.avg==null?"—":r(sh.skip.avg)+" <small>("+sh.skip.n+")</small>","trades ChatGPT said SKIP")+"</div>"
+     +'<div class="pt-rule">ChatGPT votes TAKE or SKIP on every live signal; nothing acts on it. Useful only if SKIP trades end up clearly worse than TAKE trades.</div></div>':"";
+   document.getElementById("pt-body").innerHTML='<p class="sub"><b>Being tested</b> (fake money, each with a pass rule)</p>'
+    +tests.map(card).join("")+'<p class="sub">'+esc(B.note)+"</p>"
+    +(B.rotation&&B.rotation.length?B.rotation.map(rcard).join("")+'<p class="sub">'+esc(B.rotation_note||"")+"</p>":"")
+    +(refs.length||shc?'<p class="sub"><b>Reference</b> (not tests: checks on the live rules)</p>'+refs.map(card).join("")+shc:"");
   }).catch(function(e){document.getElementById("pt-sum").textContent="Paper results not published yet ("+e.message+")."})}
  run();setInterval(run,600000);
 })();
