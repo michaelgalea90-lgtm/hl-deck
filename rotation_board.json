@@ -1,124 +1,121 @@
 {
- "as_of": "2026-09-26T08:02Z",
+ "as_of": "2026-09-26T21:02Z",
  "money_in": [
   "Infra",
-  "AI",
-  "DeFi"
+  "AI"
  ],
  "money_out": [
-  "Hyperliquid",
-  "Privacy",
-  "RWA"
+  "Memes"
  ],
  "btc": {
-  "r24": 0.01,
-  "r7": 3.85
+  "r24": 0.18,
+  "r7": 3.82
  },
  "majors": {
-  "share_now": 50.5,
+  "share_now": 40.42,
   "share_avg": 58.84,
   "verdict": "alts gaining vs BTC/ETH"
  },
  "sectors": [
   {
    "name": "Infra",
-   "rel24": 7.24,
-   "rel7": 20.18,
+   "rel24": 1.02,
+   "rel7": 24.28,
    "share_avg": 0.64,
-   "share_now": 0.98,
+   "share_now": 1.3,
    "flow": "in",
    "top": "PYTH",
-   "top_r24": 8.17
-  },
-  {
-   "name": "Layer 2s",
-   "rel24": 6.45,
-   "rel7": 8.52,
-   "share_avg": 0.72,
-   "share_now": 0.49,
-   "flow": "flat",
-   "top": "POL",
-   "top_r24": 8.53
+   "top_r24": 7.45
   },
   {
    "name": "AI",
-   "rel24": 5.28,
-   "rel7": 14.28,
+   "rel24": 0.46,
+   "rel7": 19.33,
    "share_avg": 1.69,
-   "share_now": 1.82,
+   "share_now": 4.63,
    "flow": "in",
    "top": "GRASS",
-   "top_r24": 11.26
-  },
-  {
-   "name": "DeFi",
-   "rel24": 6.53,
-   "rel7": 7.94,
-   "share_avg": 4.03,
-   "share_now": 5.69,
-   "flow": "in",
-   "top": "ENA",
-   "top_r24": 23.26
-  },
-  {
-   "name": "Layer 1s",
-   "rel24": 2.57,
-   "rel7": 12.51,
-   "share_avg": 11.13,
-   "share_now": 18.45,
-   "flow": "flat",
-   "top": "SUI",
-   "top_r24": 14.33
-  },
-  {
-   "name": "Memes",
-   "rel24": 2.83,
-   "rel7": 8.26,
-   "share_avg": 2.93,
-   "share_now": 2.35,
-   "flow": "flat",
-   "top": "PUMP",
-   "top_r24": 16.61
+   "top_r24": 11.84
   },
   {
    "name": "Payments",
-   "rel24": 1.33,
-   "rel7": 15.66,
+   "rel24": -1.62,
+   "rel7": 14.84,
    "share_avg": 3.42,
-   "share_now": 4.29,
+   "share_now": 5.05,
    "flow": "flat",
    "top": "LTC",
-   "top_r24": 2.64
+   "top_r24": 0.45
   },
   {
    "name": "RWA",
-   "rel24": -1.78,
-   "rel7": 13.59,
+   "rel24": -1.14,
+   "rel7": 12.19,
    "share_avg": 0.69,
-   "share_now": 1.05,
-   "flow": "out",
+   "share_now": 1.3,
+   "flow": "flat",
    "top": "PAXG",
-   "top_r24": 0.11
+   "top_r24": -0.01
+  },
+  {
+   "name": "DeFi",
+   "rel24": -0.41,
+   "rel7": 6.39,
+   "share_avg": 4.03,
+   "share_now": 6.82,
+   "flow": "flat",
+   "top": "JTO",
+   "top_r24": 4.67
+  },
+  {
+   "name": "Layer 1s",
+   "rel24": -1.14,
+   "rel7": 9.96,
+   "share_avg": 11.13,
+   "share_now": 21.7,
+   "flow": "flat",
+   "top": "ATOM",
+   "top_r24": 3.21
   },
   {
    "name": "Privacy",
-   "rel24": -0.64,
-   "rel7": -5.76,
+   "rel24": 1.62,
+   "rel7": -4.51,
    "share_avg": 8.2,
-   "share_now": 8.13,
-   "flow": "out",
-   "top": "ZEN",
-   "top_r24": 2.24
+   "share_now": 7.14,
+   "flow": "flat",
+   "top": "DASH",
+   "top_r24": 15.08
+  },
+  {
+   "name": "Layer 2s",
+   "rel24": -0.49,
+   "rel7": 5.97,
+   "share_avg": 0.72,
+   "share_now": 0.9,
+   "flow": "flat",
+   "top": "POL",
+   "top_r24": 2.9
   },
   {
    "name": "Hyperliquid",
-   "rel24": -3.72,
-   "rel7": -5.23,
+   "rel24": 0.73,
+   "rel7": -4.95,
    "share_avg": 7.7,
-   "share_now": 6.24,
+   "share_now": 5.93,
+   "flow": "flat",
+   "top": "PURR",
+   "top_r24": 1.81
+  },
+  {
+   "name": "Memes",
+   "rel24": -1.94,
+   "rel7": 7.04,
+   "share_avg": 2.93,
+   "share_now": 4.81,
    "flow": "out",
-   "top": "HYPE",
-   "top_r24": -1.16
+   "top": "PUMP",
+   "top_r24": 5.7
   }
  ]
 }
