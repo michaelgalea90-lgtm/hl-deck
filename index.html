@@ -1529,8 +1529,8 @@ run();setInterval(run,600000);
   var g=cell(ref?b.n:b.n+" / "+b.target,"closed trades")+cell(r(b.avg),"average per trade")
    +cell(b.lo==null?"after 10 trades":r(b.lo)+" to "+r(b.hi),"realistic range (95%)")
    +cell(b.win==null?"—":b.win+"%","winners")+cell(b.open.length,"open now")
-   +cell(b.overlap==null?"—":b.overlap+"%","repeat a real-bot trade")
-   +cell(b.backtest==null?"no backtest":r(b.backtest),"backtest expects");
+   +(ref?"":cell(b.overlap==null?"—":b.overlap+"%","repeat a real-bot trade"))
+   +(ref?"":cell(b.backtest==null?"no backtest":r(b.backtest),"backtest expects"));
   if(b.id==="CF")g+=cell(b.okx_agree_pct==null?"from ~2 Oct":b.okx_agree_pct+"%","OKX agrees with Binance");
   (b.breakdown||[]).forEach(function(x){g+=cell(r(x.avg)+" <small>("+x.n+")</small>",esc(x.strat)+(x.expect==null?"":" · backtest "+r(x.expect)))});
   if(b.id==="OB")g+=cell(b.live_breakouts_avg==null?"no closed trades yet":r(b.live_breakouts_avg),"real bot's breakouts (to beat by +0.05R)");
@@ -1555,9 +1555,9 @@ run();setInterval(run,600000);
    +'<div class="pt-rule"><b>Rule:</b> '+esc(m.rule)+"<br><b>Passes if:</b> "+esc(m.passes)+"<br><b>Backtest:</b> "+esc(m.backtest)+(now?"<br><b>Latest batch:</b> "+esc(now):"")+"</div></div>"}
  function run(){
   fetch("paper_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error("HTTP "+x.status);return x.json()}).then(function(B){
-   var closed=0,open=0,judged=B.bots.filter(function(b){return b.status!=="collecting"});
-   B.bots.forEach(function(b){closed+=b.n;open+=b.open.length});
-   document.getElementById("pt-sum").innerHTML="<b>"+(B.bots.length+(B.rotation||[]).length)+" paper models</b> · "+closed+" closed trade"+(closed===1?"":"s")+", "+open+" open · "
+   var T=B.bots.filter(function(b){return b.kind!=="reference"}),closed=0,open=0,judged=T.filter(function(b){return b.status==="passed"||b.status==="failed"});
+   T.forEach(function(b){closed+=b.n;open+=b.open.length});
+   document.getElementById("pt-sum").innerHTML="<b>"+(T.length+(B.rotation||[]).length)+" paper tests</b> · "+closed+" closed trade"+(closed===1?"":"s")+", "+open+" open · "
     +(judged.length?judged.map(function(b){return esc(b.name)+" "+b.status}).join(", "):"none has enough trades to judge yet")
     +(B.as_of?' <small style="color:var(--ink-3,#8b949e)">· latest '+esc(B.as_of)+"</small>":"");
    var tests=B.bots.filter(function(b){return b.kind!=="reference"}),refs=B.bots.filter(function(b){return b.kind==="reference"});
@@ -1674,7 +1674,7 @@ function txt(id,max){var e=$(id);if(!e)return "";var c=e.cloneNode(true);c.query
 function tiles(id,n){var box=$(id);if(!box)return "";return Array.prototype.slice.call(box.querySelectorAll(".tile"),0,n).map(function(t){var k=t.querySelector(".k"),v=t.querySelector(".v");return (k?k.textContent.trim():"")+" "+(v?v.textContent.trim():"")}).join(" · ")}
 var S=[
  {key:"rot",section:"rot",icon:"🔄",title:"Money rotation",openIf:function(){return true},sum:function(){return txt("rot-sum",140)}},
- {key:"strat",anchor:"strat-tiles",icon:"🧠",title:"Strategies",with:["pt"],sum:function(){var p=txt("pt-sum",70);return "1D · 1H · Dip · 1D shorts ("+txt("st-shorts")+")"+(p?" · paper tests: "+p.replace(/^\d+ paper (bots|models) · /,""):"")}},
+ {key:"strat",anchor:"strat-tiles",icon:"🧠",title:"Strategies",with:["pt"],sum:function(){var p=txt("pt-sum",70);return "1D · 1H · Dip · 1D shorts ("+txt("st-shorts")+")"+(p?" · paper tests: "+p.replace(/^\d+ paper (bots|models|tests) · /,""):"")}},
  {key:"mkt",anchor:"mkt-tiles",icon:"🌍",title:"Market",sum:function(){var o=txt("t-others");return o&&o!=="—"?"Others "+o+" ("+txt("t-others-gap-sub")+") · BTC.D "+txt("t-btcd")+" · total "+txt("t-total"):"loading…"}},
  {key:"acct",anchor:"acct-setup",icon:"💰",title:"Your account",openIf:function(){var a=$("acct");return !a||a.hidden},
   sum:function(){var a=$("acct");if(!a||a.hidden)return "tap to load your wallet";return "Bot "+txt("t-bot")+" · You "+txt("t-value")+" · open P/L "+txt("t-pnl")}},
