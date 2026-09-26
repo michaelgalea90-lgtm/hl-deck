@@ -1,5 +1,5 @@
 {
- "as_of": "2026-09-26T08:22Z",
+ "as_of": "2026-09-26T08:41Z",
  "hot_sectors": [
   {
    "name": "Infra",
@@ -27,7 +27,22 @@
    "vol_x": 1.31,
    "entry": 0.34963,
    "stop": 0.3355,
-   "target": 0.36376
+   "target": 0.36376,
+   "facts": {
+    "days": 220,
+    "vs_50d_avg_pct": 0.3,
+    "vs_200d_avg_pct": 2.2,
+    "from_40d_high_pct": -4.2,
+    "from_40d_low_pct": 5.0,
+    "from_220d_high_pct": -10.6,
+    "vol_3d_vs_prior_7d": 1.32,
+    "h4_higher_lows_of_last_6": 2,
+    "h4_last_24h_range_pct": 0.9,
+    "funding_hourly_pct": 0.0013,
+    "funding_apr_pct": 11.0,
+    "open_interest_usd_m": 12.6,
+    "day_volume_usd_m": 4.0
+   }
   },
   {
    "coin": "GRAM",
@@ -38,7 +53,21 @@
    "vol_x": 1.28,
    "entry": 1.4952,
    "stop": 1.375,
-   "target": 1.6154000000000002
+   "target": 1.6154000000000002,
+   "facts": {
+    "days": 86,
+    "vs_50d_avg_pct": 5.7,
+    "from_40d_high_pct": -6.7,
+    "from_40d_low_pct": 13.3,
+    "from_220d_high_pct": -21.0,
+    "vol_3d_vs_prior_7d": 1.81,
+    "h4_higher_lows_of_last_6": 6,
+    "h4_last_24h_range_pct": 4.5,
+    "funding_hourly_pct": 0.0059,
+    "funding_apr_pct": 51.3,
+    "open_interest_usd_m": 43.5,
+    "day_volume_usd_m": 7.0
+   }
   },
   {
    "coin": "SOL",
@@ -49,7 +78,22 @@
    "vol_x": 1.53,
    "entry": 122.94,
    "stop": 110.73,
-   "target": 135.14999999999998
+   "target": 135.14999999999998,
+   "facts": {
+    "days": 220,
+    "vs_50d_avg_pct": 24.3,
+    "vs_200d_avg_pct": 42.2,
+    "from_40d_high_pct": -2.1,
+    "from_40d_low_pct": 61.7,
+    "from_220d_high_pct": -2.1,
+    "vol_3d_vs_prior_7d": 1.52,
+    "h4_higher_lows_of_last_6": 5,
+    "h4_last_24h_range_pct": 5.7,
+    "funding_hourly_pct": 0.0013,
+    "funding_apr_pct": 11.0,
+    "open_interest_usd_m": 681.7,
+    "day_volume_usd_m": 596.2
+   }
   },
   {
    "coin": "DOT",
@@ -60,7 +104,26 @@
    "vol_x": 1.07,
    "entry": 1.2361,
    "stop": 1.0777,
-   "target": 1.3944999999999999
+   "target": 1.3944999999999999,
+   "facts": {
+    "days": 220,
+    "vs_50d_avg_pct": 29.7,
+    "vs_200d_avg_pct": 13.6,
+    "from_40d_high_pct": -4.9,
+    "from_40d_low_pct": 68.5,
+    "from_220d_high_pct": -30.3,
+    "vol_3d_vs_prior_7d": 0.99,
+    "h4_higher_lows_of_last_6": 6,
+    "h4_last_24h_range_pct": 8.6,
+    "funding_hourly_pct": 0.0013,
+    "funding_apr_pct": 11.0,
+    "open_interest_usd_m": 5.9,
+    "day_volume_usd_m": 3.7
+   }
   }
- ]
+ ],
+ "btc": {
+  "vs_200d_avg_pct": 18.5,
+  "last_7d_pct": 3.9
+ }
 }
