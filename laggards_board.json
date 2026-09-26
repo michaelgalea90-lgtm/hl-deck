@@ -1,0 +1,66 @@
+{
+ "as_of": "2026-09-26T08:22Z",
+ "hot_sectors": [
+  {
+   "name": "Infra",
+   "leader": "FIL",
+   "leader_24h": 6.6
+  },
+  {
+   "name": "AI",
+   "leader": "GRASS",
+   "leader_24h": 10.3
+  },
+  {
+   "name": "DeFi",
+   "leader": "ENA",
+   "leader_24h": 23.4
+  }
+ ],
+ "picks": [
+  {
+   "coin": "TRX",
+   "sector": "Layer 1s",
+   "hot": false,
+   "px": 0.33703,
+   "range_pct": 4.2,
+   "vol_x": 1.31,
+   "entry": 0.34963,
+   "stop": 0.3355,
+   "target": 0.36376
+  },
+  {
+   "coin": "GRAM",
+   "sector": "Other",
+   "hot": false,
+   "px": 1.4585,
+   "range_pct": 8.7,
+   "vol_x": 1.28,
+   "entry": 1.4952,
+   "stop": 1.375,
+   "target": 1.6154000000000002
+  },
+  {
+   "coin": "SOL",
+   "sector": "Layer 1s",
+   "hot": false,
+   "px": 120.33,
+   "range_pct": 11.0,
+   "vol_x": 1.53,
+   "entry": 122.94,
+   "stop": 110.73,
+   "target": 135.14999999999998
+  },
+  {
+   "coin": "DOT",
+   "sector": "Layer 1s",
+   "hot": false,
+   "px": 1.2188,
+   "range_pct": 14.7,
+   "vol_x": 1.07,
+   "entry": 1.2361,
+   "stop": 1.0777,
+   "target": 1.3944999999999999
+  }
+ ]
+}
