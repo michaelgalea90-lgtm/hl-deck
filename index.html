@@ -1449,7 +1449,7 @@ run();setInterval(run,600000);
 <script>
 (function(){
 // Live vs backtest. Uses the bot account address this dashboard already stores (hl-deck-subaddr).
-var TF={"1D":{iv:"1d",ms:864e5,k:3},"4H":{iv:"4h",ms:144e5,k:2},"1H":{iv:"1h",ms:36e5,k:5},"DIP":{iv:"1d",ms:864e5,k:5}};
+var TF={"1D":{iv:"1d",ms:864e5,k:3},"4H":{iv:"4h",ms:144e5,k:2},"1H":{iv:"1h",ms:36e5,k:3},"DIP":{iv:"1d",ms:864e5,k:5}};   // k = initial stop in ATRs (1H is 3 ATR since 25 Sep 2026)
 var TAG={"d1":"1D","44":"4H","11":"1H","d9":"DIP"};
 var NAME={"1D":"1 Day","4H":"4 Hour","1H":"1 Hour","DIP":"Dip Buy"};
 // Risk settings over time, from config.json history. Add a line when they change.
@@ -1468,24 +1468,36 @@ function run(){var sum=document.getElementById("lt-sum"),box=document.getElement
  if(!a){sum.innerHTML="Add the bot account address at the top of the dashboard and this fills in.";return}
  Promise.all([post({type:"userFills",user:a}),post({type:"frontendOpenOrders",user:a}),post({type:"portfolio",user:a}),post({type:"allMids"})]).then(function(res){
   var fills=(res[0]||[]).slice().sort(function(x,y){return x.time-y.time}),trades=[],by={};
-  fills.forEach(function(f){var d=f.dir||"";if(d.indexOf("Open")!==0)return;if(!by[f.oid]){var tag=f.cloid&&f.cloid.length===34?f.cloid.slice(2,4).toLowerCase():"";by[f.oid]={coin:f.coin,dir:d.indexOf("Long")>-1?1:-1,t:f.time,sz:0,cost:0,fee:0,left:0,pnl:0,s:TAG[tag]||null};trades.push(by[f.oid])}var x=by[f.oid];x.sz+=+f.sz;x.cost+=(+f.sz)*(+f.px);x.fee+=+f.fee;x.left+=+f.sz});
-  trades.forEach(function(x){x.px=x.cost/x.sz});
+    // A buy WITHOUT the bot's order tag on a coin the bot already holds (same side) is a hand top-up:
+  // add it to that position (so risk is judged on the real size) instead of scoring it as a new bot trade.
+  function closedSz(coin,t0,t1){var q=0;fills.forEach(function(g){if(g.coin===coin&&(g.dir||"").indexOf("Close")===0&&g.time>=t0&&g.time<=t1)q+=+g.sz});return q}
+  fills.forEach(function(f){var d=f.dir||"";if(d.indexOf("Open")!==0)return;var dir=d.indexOf("Long")>-1?1:-1,tagged=f.cloid&&f.cloid.length===34;
+   var top=false;
+   if(!tagged&&!by[f.oid]){var host=null;trades.forEach(function(x){if(x.coin===f.coin&&x.dir===dir&&x.t<f.time&&closedSz(f.coin,x.t,f.time)<x.sz-1e-12)host=x});
+    if(host){by[f.oid]=host;top=true}}
+   else if(by[f.oid]&&by[f.oid].tops&&by[f.oid].tops[f.oid])top=true;
+   if(!by[f.oid]){var tag=tagged?f.cloid.slice(2,4).toLowerCase():"";by[f.oid]={coin:f.coin,dir:dir,t:f.time,sz:0,cost:0,fee:0,left:0,pnl:0,bsz:0,bcost:0,topup:0,tops:{},s:TAG[tag]||null};trades.push(by[f.oid])}
+   var x=by[f.oid];x.sz+=+f.sz;x.cost+=(+f.sz)*(+f.px);x.fee+=+f.fee;x.left+=+f.sz;
+   if(top){x.topup+=+f.sz;x.tops[f.oid]=1}else{x.bsz+=+f.sz;x.bcost+=(+f.sz)*(+f.px)}});
+  trades.forEach(function(x){x.px=x.cost/x.sz;x.bpx=x.bsz?x.bcost/x.bsz:x.px});
   // Older entries had no strategy code; fall back to the tag on the coin's stop order.
   (res[1]||[]).forEach(function(o){if(!o.reduceOnly||!o.cloid)return;var s=TAG[o.cloid.slice(2,4).toLowerCase()];if(!s)return;trades.forEach(function(x){if(!x.s&&x.coin===o.coin)x.s=s})});
   fills.forEach(function(f){if((f.dir||"").indexOf("Close")!==0)return;var q=+f.sz,tot=+f.sz;trades.forEach(function(x){if(q<=1e-12||x.coin!==f.coin||x.left<=1e-12||x.t>f.time)return;var k=Math.min(q,x.left),sh=k/tot;x.left-=k;x.pnl+=(+f.closedPnl)*sh-(+f.fee)*sh;q-=k})});
   return Promise.all(trades.map(function(x){return before(x.coin,TF[x.s||"1D"],x.t).then(function(b){x.bars=b})})).then(function(){return{trades:trades,oo:res[1]||[],pf:res[2],mids:res[3]||{}}})
  }).then(function(D){var issues=[],rows="",score={};
-  D.trades.slice().reverse().forEach(function(x){var s=x.s,tf=TF[s||"1D"],b=x.bars||[],last=b[b.length-1],A=b.length>20?atrLast(b,14):null,sig=last?last.c:null,slip=sig?x.dir*(x.px-sig)/sig*100:null;
-   var eq=eqAt(D.pf,x.t),ru=A?x.sz*tf.k*A:null,taken=ru&&eq?ru/eq*100:null,set=s?riskAt(x.t,s):null,open=x.left>1e-9,mid=+D.mids[x.coin]||null;
+  D.trades.slice().reverse().forEach(function(x){var s=x.s,tf=TF[s||"1D"],b=x.bars||[],last=b[b.length-1],A=b.length>20?atrLast(b,14):null,sig=last?last.c:null,slip=sig?x.dir*(x.bpx-sig)/sig*100:null;
+   // the bot is judged on its OWN fills (bpx, bsz); hand top-ups only count toward the result
+   var eq=eqAt(D.pf,x.t),ru=A?x.sz*tf.k*A:null,rb=A?(x.bsz||x.sz)*tf.k*A:null,taken=rb&&eq?rb/eq*100:null,set=s?riskAt(x.t,s):null,open=x.left>1e-9,mid=+D.mids[x.coin]||null;
    var stop=D.oo.filter(function(o){return o.coin===x.coin&&o.reduceOnly&&o.isTrigger})[0],R=null;
    if(ru)R=open&&mid?(x.dir*(mid-x.px)*x.left+x.pnl-x.fee)/ru:(x.pnl-x.fee)/ru;
    var riskOff=taken!=null&&set!=null&&(taken>set*1.4||taken<set*0.6),chased=slip!=null&&slip>1.5;
+   var hand=x.topup>0?' <small>+ hand top-up ×'+(x.topup/(x.bsz||1)).toFixed(1)+"</small>":"";
    if(!s)issues.push(x.coin+": the order has no strategy code the bot recognises, so it may manage the exit with the wrong rules");
    if(chased)issues.push(x.coin+": entered "+slip.toFixed(1)+"% past the signal price (the limit is 1.5%)");
    if(riskOff)issues.push(x.coin+": risked about "+taken.toFixed(1)+"% against a "+set+"% setting");
    if(open&&!stop)issues.push(x.coin+": open with NO stop on the exchange");
    var stopTxt=open?(stop&&mid?"on exchange \u00b7 "+Math.abs((+stop.triggerPx-mid)/mid*100).toFixed(1)+"% away":'<span class="bad">missing</span>'):"\u2014";
-   rows+="<tr><td><b>"+x.coin+'</b> <span class="dir '+(x.dir>0?"L":"S")+'">'+(x.dir>0?"LONG":"SHORT")+"</span></td><td>"+(s?NAME[s]:'<span class="bad">unknown</span>')+"</td><td>"+when(x.t)+"</td><td"+(chased?' class="bad"':"")+">"+(slip==null?"\u2014":pct(slip))+"</td><td"+(riskOff?' class="bad"':"")+">"+(taken==null?"\u2014":taken.toFixed(1)+"% <small>of "+set+"%</small>")+"</td><td>"+stopTxt+"</td><td"+(R!=null?' class="'+(R>=0?"good":"bad")+'"':"")+">"+(R==null?"\u2014":rf(R))+(open?" <small>open</small>":"")+"</td></tr>";
+   rows+="<tr><td><b>"+x.coin+'</b> <span class="dir '+(x.dir>0?"L":"S")+'">'+(x.dir>0?"LONG":"SHORT")+"</span>"+hand+"</td><td>"+(s?NAME[s]:'<span class="bad">unknown</span>')+"</td><td>"+when(x.t)+"</td><td"+(chased?' class="bad"':"")+">"+(slip==null?"\u2014":pct(slip))+"</td><td"+(riskOff?' class="bad"':"")+">"+(taken==null?"\u2014":taken.toFixed(1)+"% <small>of "+set+"%</small>")+"</td><td>"+stopTxt+"</td><td"+(R!=null?' class="'+(R>=0?"good":"bad")+'"':"")+">"+(R==null?"\u2014":rf(R))+(open?" <small>open</small>":"")+"</td></tr>";
    if(s&&!open&&R!=null){var c=score[s]||(score[s]={n:0,w:0,r:0});c.n++;if(R>0)c.w++;c.r+=R}});
   sum.className="sum"+(issues.length?" warn":"");
   sum.innerHTML=issues.length?"<b>"+issues.length+" thing"+(issues.length>1?"s":"")+" to look at:</b><br>"+issues.join("<br>"):"<b>All checks pass.</b> Every open trade has a stop, sizes match your risk settings, and entries match the signals.";
