@@ -467,6 +467,7 @@
       return x;
     });
     inflight[k] = { s: s, p: p };
+    p.catch(function () { if (inflight[k] && inflight[k].p === p) delete inflight[k]; });   // network error: next call tries again
     return p.then(function (x) {
       if (inflight[k] && inflight[k].p === p) delete inflight[k];
       if (x.status !== 200 || !Array.isArray(x.data)) return reply(x.status, x.data);
