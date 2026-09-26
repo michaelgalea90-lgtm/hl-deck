@@ -1486,6 +1486,43 @@ run();setInterval(run,600000);
  run();setInterval(run,600000);
 })();
 </script>
+<!-- Money rotation - added 26 Sep 2026. Data: rotation_board.json, pushed here by
+     hl-scanner's live job each time the Discord rotation alert runs (7am, 10am,
+     2pm, 6pm Sydney). Market data only. -->
+<section id="rot" class="fr">
+<style>
+.rot-flow{font-weight:700}
+.rot-flow.in{color:#3b6cff}
+.rot-flow.out{color:#FF6D00}
+</style>
+<h2>Money rotation</h2>
+<p class="sub">Which crypto sectors money is moving into or out of: price vs BTC today and this week, and each sector's share of trading volume now vs its 7-day average. Same numbers as the Discord alert. Info only, not a trade signal.</p>
+<div id="rot-sum" class="sum">Loading the latest rotation&hellip;</div>
+<div id="rot-body"></div>
+</section>
+<script>
+(function(){
+ function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+ function p(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(1)+"%"}
+ function cls(x){return x==null?"":x>=0?"good":"bad"}
+ function when(iso){var d=new Date(iso.replace("Z",":00Z"));return isNaN(d)?iso:d.toLocaleString([],{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
+ function run(){
+  fetch("rotation_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error("HTTP "+x.status);return x.json()}).then(function(B){
+   var ins=B.money_in.length?B.money_in.join(", "):"nothing clear",outs=B.money_out.length?B.money_out.join(", "):"nothing clear";
+   document.getElementById("rot-sum").innerHTML='<span class="rot-flow in">▲ In:</span> <b>'+esc(ins)+'</b> · <span class="rot-flow out">▼ Out:</span> <b>'+esc(outs)+"</b>"
+    +' <small style="color:var(--ink-3,#8b949e)">· '+esc(when(B.as_of))+"</small>";
+   var rows=B.sectors.map(function(s){var f=s.flow==="in"?'<span class="rot-flow in">▲ in</span>':s.flow==="out"?'<span class="rot-flow out">▼ out</span>':"";
+    return "<tr><td><b>"+esc(s.name)+"</b></td><td class=\""+cls(s.rel24)+"\">"+p(s.rel24)+"</td><td class=\""+cls(s.rel7)+"\">"+p(s.rel7)+"</td><td>"
+     +(s.share_avg==null?"—":s.share_avg.toFixed(1)+"% → "+s.share_now.toFixed(1)+"%")+"</td><td>"+f+"</td><td>"+esc(s.top)+" <small>"+p(s.top_r24)+"</small></td></tr>"}).join("");
+   var btc=B.btc?"BTC "+p(B.btc.r24)+" today, "+p(B.btc.r7)+" this week":"";
+   var maj=B.majors?" · BTC+ETH "+B.majors.share_now.toFixed(0)+"% of volume (avg "+B.majors.share_avg.toFixed(0)+"%) → "+esc(B.majors.verdict):"";
+   document.getElementById("rot-body").innerHTML='<p class="sub">'+btc+maj+"</p>"
+    +'<div class="tw"><table><thead><tr><th>Sector</th><th>Today vs BTC</th><th>7 days vs BTC</th><th>Volume share (avg → now)</th><th>Flow</th><th>Leader today</th></tr></thead><tbody>'+rows+"</tbody></table></div>";
+  }).catch(function(e){document.getElementById("rot-sum").textContent="No rotation published yet ("+e.message+"). It updates at 7am, 10am, 2pm and 6pm Sydney."})}
+ var me=document.getElementById("rot"),pt=document.getElementById("pt");if(me&&pt&&pt.parentNode)pt.parentNode.insertBefore(me,pt.nextSibling);
+ run();setInterval(run,600000);
+})();
+</script>
 <script>
 (function(){
 // Market gauge: OTHERS dominance (= 100 - top-10 dominance, i.e. TradingView OTHERS.D),
@@ -1555,7 +1592,8 @@ var S=[
  {key:"gmx",anchor:"gmx",icon:"🔵",title:"GMX",hideWith:"gmx",sum:function(){return txt("gmx-sum",110)||"loading…"}},
  {key:"fr",section:"fr",icon:"🎯",title:"Will anything fire?",sum:function(){return txt("fr-sum",140)}},
  {key:"lt",section:"lt",icon:"📐",title:"Live vs backtest",sum:function(){return txt("lt-sum",140)}},
- {key:"pt",section:"pt",icon:"🧪",title:"Paper tests",sum:function(){return txt("pt-sum",140)}}
+ {key:"pt",section:"pt",icon:"🧪",title:"Paper tests",sum:function(){return txt("pt-sum",140)}},
+ {key:"rot",section:"rot",icon:"🔄",title:"Money rotation",sum:function(){return txt("rot-sum",140)}}
 ];
 function stop(n){return !n||n.tagName==="H2"||n.tagName==="SECTION"||n.tagName==="FOOTER"||n.tagName==="DETAILS"||n.tagName==="SCRIPT"}
 function build(){
