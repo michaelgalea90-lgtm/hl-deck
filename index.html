@@ -235,7 +235,7 @@
     </div>
     <div class="tile">
       <div class="k">Paper only <span class="pill paper">FAKE MONEY</span></div>
-      <div class="sub">BTC 4H breakout · young-coin 1D breakout · crowd fade (OKX long/short extremes, BTC ETH SOL) · OI breakout (open interest +2% in 24h, BTC ETH SOL). Info only, never trade.</div>
+      <div class="sub">BTC 4H breakout · young-coin 1D breakout · crowd fade (OKX long/short extremes, BTC ETH SOL) · OI breakout (open interest +2% in 24h, BTC ETH SOL) · whale copy (piling in). Info only, never trade. Scorecards below.</div>
     </div>
     <div class="tile">
       <div class="k">Shared limits</div>
@@ -1482,7 +1482,6 @@ run();setInterval(run,600000);
     +(B.as_of?' <small style="color:var(--ink-3,#8b949e)">· latest '+esc(B.as_of)+"</small>":"");
    document.getElementById("pt-body").innerHTML=B.bots.map(card).join("")+'<p class="sub">'+esc(B.note)+"</p>";
   }).catch(function(e){document.getElementById("pt-sum").textContent="Paper results not published yet ("+e.message+")."})}
- var me=document.getElementById("pt"),lt=document.getElementById("lt");if(me&&lt&&lt.parentNode)lt.parentNode.insertBefore(me,lt.nextSibling);
  run();setInterval(run,600000);
 })();
 </script>
@@ -1519,7 +1518,8 @@ run();setInterval(run,600000);
    document.getElementById("rot-body").innerHTML='<p class="sub">'+btc+maj+"</p>"
     +'<div class="tw"><table><thead><tr><th>Sector</th><th>Today vs BTC</th><th>7 days vs BTC</th><th>Volume share (avg → now)</th><th>Flow</th><th>Leader today</th></tr></thead><tbody>'+rows+"</tbody></table></div>";
   }).catch(function(e){document.getElementById("rot-sum").textContent="No rotation published yet ("+e.message+"). It updates at 7am, 10am, 2pm and 6pm Sydney."})}
- var me=document.getElementById("rot"),pt=document.getElementById("pt");if(me&&pt&&pt.parentNode)pt.parentNode.insertBefore(me,pt.nextSibling);
+ var me=document.getElementById("rot"),h=document.getElementById("strat-tiles");while(h&&h.tagName!=="H2")h=h.previousElementSibling;
+ if(me&&h&&h.parentNode)h.parentNode.insertBefore(me,h);   // top of the page, above Strategies
  run();setInterval(run,600000);
 })();
 </script>
@@ -1584,16 +1584,15 @@ function txt(id,max){var e=$(id);if(!e)return "";var c=e.cloneNode(true);c.query
  var t=c.textContent.replace(/\s+/g," ").replace(/^( ?\u00b7 ?)+/,"").replace(/( \u00b7)+/g," \u00b7").trim();if(max&&t.length>max)t=t.slice(0,max-1)+"\u2026";return t}
 function tiles(id,n){var box=$(id);if(!box)return "";return Array.prototype.slice.call(box.querySelectorAll(".tile"),0,n).map(function(t){var k=t.querySelector(".k"),v=t.querySelector(".v");return (k?k.textContent.trim():"")+" "+(v?v.textContent.trim():"")}).join(" · ")}
 var S=[
- {key:"strat",anchor:"strat-tiles",icon:"🧠",title:"Strategies",sum:function(){return "1D · 1H · Dip · 1D shorts ("+txt("st-shorts")+") · paper bots info only"}},
+ {key:"rot",section:"rot",icon:"🔄",title:"Money rotation",openIf:function(){return true},sum:function(){return txt("rot-sum",140)}},
+ {key:"strat",anchor:"strat-tiles",icon:"🧠",title:"Strategies",with:["pt"],sum:function(){var p=txt("pt-sum",70);return "1D · 1H · Dip · 1D shorts ("+txt("st-shorts")+")"+(p?" · paper tests: "+p.replace(/^\d+ paper bots · /,""):"")}},
  {key:"mkt",anchor:"mkt-tiles",icon:"🌍",title:"Market",sum:function(){var o=txt("t-others");return o&&o!=="—"?"Others "+o+" ("+txt("t-others-gap-sub")+") · BTC.D "+txt("t-btcd")+" · total "+txt("t-total"):"loading…"}},
  {key:"acct",anchor:"acct-setup",icon:"💰",title:"Your account",openIf:function(){var a=$("acct");return !a||a.hidden},
   sum:function(){var a=$("acct");if(!a||a.hidden)return "tap to load your wallet";return "Bot "+txt("t-bot")+" · You "+txt("t-value")+" · open P/L "+txt("t-pnl")}},
  {key:"rp",anchor:"rp",icon:"🧾",title:"Realised P/L",hideWith:"rp",sum:function(){return tiles("rp-tiles",2)||"loading…"}},
  {key:"gmx",anchor:"gmx",icon:"🔵",title:"GMX",hideWith:"gmx",sum:function(){return txt("gmx-sum",110)||"loading…"}},
  {key:"fr",section:"fr",icon:"🎯",title:"Will anything fire?",sum:function(){return txt("fr-sum",140)}},
- {key:"lt",section:"lt",icon:"📐",title:"Live vs backtest",sum:function(){return txt("lt-sum",140)}},
- {key:"pt",section:"pt",icon:"🧪",title:"Paper tests",sum:function(){return txt("pt-sum",140)}},
- {key:"rot",section:"rot",icon:"🔄",title:"Money rotation",sum:function(){return txt("rot-sum",140)}}
+ {key:"lt",section:"lt",icon:"📐",title:"Live vs backtest",sum:function(){return txt("lt-sum",140)}}
 ];
 function stop(n){return !n||n.tagName==="H2"||n.tagName==="SECTION"||n.tagName==="FOOTER"||n.tagName==="DETAILS"||n.tagName==="SCRIPT"}
 function build(){
@@ -1602,6 +1601,7 @@ function build(){
   if(x.section){var sec=$(x.section);if(!sec)return;nodes=[sec]}
   else{var a=$(x.anchor);if(!a)return;var h=a.previousElementSibling;while(h&&h.tagName!=="H2")h=h.previousElementSibling;if(!h)return;
    nodes=[h];var n=h.nextElementSibling;while(!stop(n)){nodes.push(n);n=n.nextElementSibling}}
+  (x.with||[]).forEach(function(id){var e=$(id);if(e)nodes.push(e)});   // e.g. paper tests live inside Strategies
   var d=document.createElement("details");d.className="dk";d.dataset.key=x.key;
   d.innerHTML='<summary><span class="t">'+x.icon+" "+x.title+'</span><span class="s"></span><span class="a">▸</span></summary><div class="dk-body"></div>';
   nodes[0].parentNode.insertBefore(d,nodes[0]);
