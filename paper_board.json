@@ -371,7 +371,72 @@
    "avg_solo": null
   }
  ],
- "rotation": [],
+ "rotation": [
+  {
+   "id": "IN7",
+   "name": "Rotation: buy Money-IN sectors (7-day batches)",
+   "rule": "Each day buy the coins of the sectors the rotation alert calls Money IN, hold each daily batch 7 days",
+   "passes": "After 6 months: ahead of BOTH the alt basket and BTC, and most batches beat the alt basket",
+   "backtest": "+36%/yr, worst drop -60% (BTC +47%/yr) - weak in backtest",
+   "status": "collecting",
+   "progress": "day 1 of 182",
+   "since": "2026-09-26",
+   "ret": -0.01,
+   "btc": 0.0,
+   "alt": 0.0,
+   "batches": 0,
+   "open": 1,
+   "avg_batch": null,
+   "avg_excess": null,
+   "beat_pct": null,
+   "now_in": [
+    "Infra",
+    "AI",
+    "DeFi"
+   ],
+   "now_out": [],
+   "curve": [
+    [
+     "2026-09-26",
+     999.86
+    ]
+   ]
+  },
+  {
+   "id": "INOUT7",
+   "name": "Rotation: IN vs OUT (7-day batches)",
+   "rule": "Same, but half long Money-IN sectors, half short Money-OUT sectors (market-neutral)",
+   "passes": "After 6 months: positive, ahead of cash, and most batches positive",
+   "backtest": "+7%/yr, worst drop -22% - weak in backtest",
+   "status": "collecting",
+   "progress": "day 1 of 182",
+   "since": "2026-09-26",
+   "ret": -0.01,
+   "btc": 0.0,
+   "alt": 0.0,
+   "batches": 0,
+   "open": 1,
+   "avg_batch": null,
+   "avg_excess": null,
+   "beat_pct": null,
+   "now_in": [
+    "Infra",
+    "AI",
+    "DeFi"
+   ],
+   "now_out": [
+    "RWA",
+    "Privacy",
+    "Hyperliquid"
+   ],
+   "curve": [
+    [
+     "2026-09-26",
+     999.86
+    ]
+   ]
+  }
+ ],
  "shadow": {
   "votes": 0,
   "scored": 0,
