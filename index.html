@@ -254,7 +254,7 @@
       var q=Math.floor(m/3)*3+3;out.push({n:"Quarterly close",t:Date.UTC(y,q,1),big:1});
       out.push({n:"Yearly close",t:Date.UTC(y+1,0,1)});
       // crypto options (Deribit): every Friday 08:00 UTC; last Friday = monthly; Mar/Jun/Sep/Dec = quarterly
-      for(var k=0;k<3;k++){var mm=m+k,yy=y+Math.floor(mm/12);mm%=12;var lf=lastFriday(yy,mm);
+      for(var k=0;k<4;k++){var mm=m+k,yy=y+Math.floor(mm/12);mm%=12;var lf=lastFriday(yy,mm);
         out.push({n:(mm%3===2?"Quarterly":"Monthly")+" options expiry (Deribit)",t:Date.UTC(yy,mm,lf,8),big:mm%3===2});
         // CME bitcoin futures + options: last Friday, 4pm London
         out.push({n:"CME BTC expiry",t:zoned(yy,mm,lf,16,0,"Europe/London")});
@@ -273,7 +273,7 @@
       return d?d+"d "+h+"h":h?h+"h "+mi+"m":mi+"m"}
     function draw(){
       var now=Date.now(),box=document.getElementById("newsbar");if(!box)return;
-      box.innerHTML=events(now).slice(0,12).map(function(e){var dt=e.t-now,cls="ev"+(dt<=0?" now":dt<DAY?" soon":"")+(e.big?" big":"");
+      box.innerHTML=events(now).slice(0,14).map(function(e){var dt=e.t-now,cls="ev"+(dt<=0?" now":dt<DAY?" soon":"")+(e.big?" big":"");
         var when=new Date(e.t).toLocaleString([],{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
         return '<span class="'+cls+'" title="'+when+' (your time)">'+e.n+"<b>"+left(dt)+"</b></span>"}).join("");
     }
