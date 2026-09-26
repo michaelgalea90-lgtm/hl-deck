@@ -1477,7 +1477,7 @@ run();setInterval(run,600000);
   fetch("paper_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error("HTTP "+x.status);return x.json()}).then(function(B){
    var closed=0,open=0,judged=B.bots.filter(function(b){return b.status!=="collecting"});
    B.bots.forEach(function(b){closed+=b.n;open+=b.open.length});
-   document.getElementById("pt-sum").innerHTML="<b>"+B.bots.length+" paper bots</b> · "+closed+" closed trades, "+open+" open · "
+   document.getElementById("pt-sum").innerHTML="<b>"+B.bots.length+" paper bots</b> · "+closed+" closed trade"+(closed===1?"":"s")+", "+open+" open · "
     +(judged.length?judged.map(function(b){return esc(b.name)+" "+b.status}).join(", "):"none has enough trades to judge yet")
     +(B.as_of?' <small style="color:var(--ink-3,#8b949e)">· latest '+esc(B.as_of)+"</small>":"");
    document.getElementById("pt-body").innerHTML=B.bots.map(card).join("")+'<p class="sub">'+esc(B.note)+"</p>";
