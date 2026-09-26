@@ -1,0 +1,47 @@
+name: "@gpt"
+
+# ChatGPT as the second opinion (gpt_review.py):
+#   - every pull request from this repo gets an automatic ChatGPT review
+#   - "@gpt <question>" in an issue / PR comment gets an answer in the thread
+# Only the repo owner / collaborators can trigger it, so nobody else can
+# spend the API credit. Always runs the default branch's code (never a PR's),
+# ~1c per review or question.
+on:
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  # a new push to a PR replaces a review still running for the old one
+  group: gpt-chat-${{ github.event.issue.number || github.event.pull_request.number }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  answer:
+    if: >-
+      (github.event_name == 'pull_request' &&
+       !github.event.pull_request.draft &&
+       github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'issue_comment' &&
+       contains(github.event.comment.body, '@gpt') &&
+       !startsWith(github.event.comment.body, '🧠 **ChatGPT**') &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}   # never run a PR's code
+      - name: Ask ChatGPT
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          # the very first PR adds gpt_review.py; until it's on main there's nothing to run
+          if [ -f gpt_review.py ]; then python gpt_review.py; else echo "gpt_review.py not on the default branch yet"; fi
