@@ -1,0 +1,91 @@
+{
+ "as_of": "2026-09-26",
+ "note": "Fake money. Results in R = multiples of the risk taken on each trade.",
+ "bots": [
+  {
+   "id": "CF",
+   "name": "Crowd fade",
+   "rule": "Fade the crowd: OKX long/short ratio at a 30-day extreme, BTC ETH SOL, 1h",
+   "passes": "300+ trades, average \u2265 +0.05R, and OKX agrees with Binance \u2265 60% of signal hours",
+   "target": 300,
+   "backtest": 0.2,
+   "status": "collecting",
+   "progress": "0 of 300 trades",
+   "open": [
+    {
+     "coin": "SOL",
+     "side": "LONG",
+     "opened": "2026-09-26"
+    }
+   ],
+   "recent": [],
+   "n": 0,
+   "avg": null,
+   "win": null,
+   "lo": null,
+   "hi": null,
+   "overlap": null,
+   "avg_solo": null,
+   "okx_agree_pct": null
+  },
+  {
+   "id": "OB",
+   "name": "OI breakout",
+   "rule": "24h-high breakout with Hyperliquid open interest up 2%+ in 24h, BTC ETH SOL, long only",
+   "passes": "300+ trades and average at least +0.05R better than the bot's own breakouts",
+   "target": 300,
+   "backtest": 0.24,
+   "status": "collecting",
+   "progress": "1 of 300 trades",
+   "open": [
+    {
+     "coin": "SOL",
+     "side": "LONG",
+     "opened": "2026-09-26"
+    },
+    {
+     "coin": "ETH",
+     "side": "LONG",
+     "opened": "2026-09-26"
+    }
+   ],
+   "recent": [
+    {
+     "coin": "BTC",
+     "side": "LONG",
+     "opened": null,
+     "closed": "2026-09-25",
+     "r": -1.05
+    }
+   ],
+   "n": 1,
+   "avg": -1.05,
+   "win": 0,
+   "lo": null,
+   "hi": null,
+   "overlap": null,
+   "avg_solo": null,
+   "live_breakouts_avg": null,
+   "live_breakouts_n": 0
+  },
+  {
+   "id": "pile",
+   "name": "Whale copy (piling in)",
+   "rule": "Copy when 2+ top-20 whales pile into the same coin and side within 24h",
+   "passes": "500+ trades, 95% range above zero, and mostly NOT repeating the bot's own trades",
+   "target": 500,
+   "backtest": null,
+   "status": "collecting",
+   "progress": "0 of 500 trades",
+   "open": [],
+   "recent": [],
+   "n": 0,
+   "avg": null,
+   "win": null,
+   "lo": null,
+   "hi": null,
+   "overlap": null,
+   "avg_solo": null
+  }
+ ]
+}

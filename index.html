@@ -1432,6 +1432,60 @@ var me=document.getElementById("lt"),fr=document.getElementById("fr");if(me&&fr&
 run();setInterval(run,600000);
 })();
 </script>
+<!-- Paper tests - added 26 Sep 2026. Data: paper_board.json, pushed here hourly by
+     hl-scanner's scan job (paperboard.py): coins, dates and results in R only. -->
+<section id="pt" class="fr">
+<style>
+.pt-bar{height:6px;background:var(--line-soft,#21262d);border-radius:3px;overflow:hidden;margin:0 12px 10px}
+.pt-bar i{display:block;height:100%;background:#2962FF}
+.pt-st{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;border:1px solid var(--line,#30363d);color:var(--ink-3,#8b949e);white-space:nowrap}
+.pt-st.passed{color:#3b6cff;border-color:#3b6cff}
+.pt-st.failed{color:#FF6D00;border-color:#FF6D00}
+.pt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;padding:10px 12px 6px}
+.pt-grid b{display:block;font-size:15px;font-variant-numeric:tabular-nums}
+.pt-grid small{display:block;color:var(--ink-3,#8b949e);font-size:11px}
+.pt-rule{padding:2px 12px 10px;font-size:12.5px;color:var(--ink-2,#8b949e)}
+.pt-grp .tw{margin:0 12px 12px}
+</style>
+<h2>Paper tests</h2>
+<p class="sub">Fake-money bots being tested before any real money goes near them. Each has a pass rule; until it has enough trades it's only collecting. R = result as a multiple of the risk taken on the trade.</p>
+<div id="pt-sum" class="sum">Loading paper results&hellip;</div>
+<div id="pt-body"></div>
+</section>
+<script>
+(function(){
+ function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+ function r(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(2)+"R"}
+ function cell(v,k){return "<div><b>"+v+"</b><small>"+k+"</small></div>"}
+ function card(b){
+  var pct=Math.min(100,Math.round(100*b.n/b.target));
+  var st=b.status==="passed"?"Passed":b.status==="failed"?"Failed":"Collecting";
+  var g=cell(b.n+" / "+b.target,"closed trades")+cell(r(b.avg),"average per trade")
+   +cell(b.lo==null?"after 10 trades":r(b.lo)+" to "+r(b.hi),"realistic range (95%)")
+   +cell(b.win==null?"—":b.win+"%","winners")+cell(b.open.length,"open now")
+   +cell(b.overlap==null?"—":b.overlap+"%","repeat a real-bot trade")
+   +cell(b.backtest==null?"no backtest":r(b.backtest),"backtest expects");
+  if(b.id==="CF")g+=cell(b.okx_agree_pct==null?"from ~2 Oct":b.okx_agree_pct+"%","OKX agrees with Binance");
+  if(b.id==="OB")g+=cell(b.live_breakouts_avg==null?"no closed trades yet":r(b.live_breakouts_avg),"real bot's breakouts (to beat by +0.05R)");
+  var rows=b.recent.slice().reverse().slice(0,10).map(function(t){return "<tr><td><b>"+esc(t.coin)+'</b> <span class="dir '+(t.side==="LONG"?"L":"S")+'">'+esc(t.side)+"</span></td><td>"+esc(t.opened||"—")+"</td><td>"+esc(t.closed||"—")+'</td><td class="'+(t.r>=0?"good":"bad")+'">'+r(t.r)+"</td></tr>"}).join("");
+  var open=b.open.map(function(t){return esc(t.coin)+" "+esc(t.side)}).join(", ");
+  return '<div class="grp pt-grp"><div class="gh"><b>'+esc(b.name)+'</b><span class="pt-st '+esc(b.status)+'">'+st+" · "+esc(b.progress)+"</span></div>"
+   +'<div class="pt-grid">'+g+'</div><div class="pt-bar"><i style="width:'+pct+'%"></i></div>'
+   +'<div class="pt-rule"><b>Rule:</b> '+esc(b.rule)+"<br><b>Passes if:</b> "+esc(b.passes)+(open?"<br><b>Open:</b> "+open:"")+"</div>"
+   +(rows?'<div class="tw"><table><thead><tr><th>Trade</th><th>Opened</th><th>Closed</th><th>Result</th></tr></thead><tbody>'+rows+"</tbody></table></div>":"")+"</div>"}
+ function run(){
+  fetch("paper_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error("HTTP "+x.status);return x.json()}).then(function(B){
+   var closed=0,open=0,judged=B.bots.filter(function(b){return b.status!=="collecting"});
+   B.bots.forEach(function(b){closed+=b.n;open+=b.open.length});
+   document.getElementById("pt-sum").innerHTML="<b>"+B.bots.length+" paper bots</b> · "+closed+" closed trade"+(closed===1?"":"s")+", "+open+" open · "
+    +(judged.length?judged.map(function(b){return esc(b.name)+" "+b.status}).join(", "):"none has enough trades to judge yet")
+    +(B.as_of?' <small style="color:var(--ink-3,#8b949e)">· latest '+esc(B.as_of)+"</small>":"");
+   document.getElementById("pt-body").innerHTML=B.bots.map(card).join("")+'<p class="sub">'+esc(B.note)+"</p>";
+  }).catch(function(e){document.getElementById("pt-sum").textContent="Paper results not published yet ("+e.message+")."})}
+ var me=document.getElementById("pt"),lt=document.getElementById("lt");if(me&&lt&&lt.parentNode)lt.parentNode.insertBefore(me,lt.nextSibling);
+ run();setInterval(run,600000);
+})();
+</script>
 <script>
 (function(){
 // Market gauge: OTHERS dominance (= 100 - top-10 dominance, i.e. TradingView OTHERS.D),
@@ -1500,7 +1554,8 @@ var S=[
  {key:"rp",anchor:"rp",icon:"🧾",title:"Realised P/L",hideWith:"rp",sum:function(){return tiles("rp-tiles",2)||"loading…"}},
  {key:"gmx",anchor:"gmx",icon:"🔵",title:"GMX",hideWith:"gmx",sum:function(){return txt("gmx-sum",110)||"loading…"}},
  {key:"fr",section:"fr",icon:"🎯",title:"Will anything fire?",sum:function(){return txt("fr-sum",140)}},
- {key:"lt",section:"lt",icon:"📐",title:"Live vs backtest",sum:function(){return txt("lt-sum",140)}}
+ {key:"lt",section:"lt",icon:"📐",title:"Live vs backtest",sum:function(){return txt("lt-sum",140)}},
+ {key:"pt",section:"pt",icon:"🧪",title:"Paper tests",sum:function(){return txt("pt-sum",140)}}
 ];
 function stop(n){return !n||n.tagName==="H2"||n.tagName==="SECTION"||n.tagName==="FOOTER"||n.tagName==="DETAILS"||n.tagName==="SCRIPT"}
 function build(){
