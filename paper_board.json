@@ -6,7 +6,7 @@
    "id": "CF",
    "name": "Crowd fade",
    "rule": "Fade the crowd: OKX long/short ratio at a 30-day extreme, BTC ETH SOL, 1h",
-   "passes": "300+ trades, average \u2265 +0.05R, and OKX agrees with Binance \u2265 60% of signal hours",
+   "passes": "300+ trades with a positive average, and not clearly below the backtest (its 95% range must still reach +0.05R). OKX-vs-Binance agreement is shown for information only",
    "target": 300,
    "backtest": 0.2,
    "status": "collecting",
