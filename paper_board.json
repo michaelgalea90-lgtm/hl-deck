@@ -251,6 +251,11 @@
      "coin": "1D AVAX",
      "side": "LONG",
      "opened": "2026-09-26"
+    },
+    {
+     "coin": "1D ZEC",
+     "side": "LONG",
+     "opened": "2026-09-26"
     }
    ],
    "recent": [
@@ -485,7 +490,7 @@
   }
  ],
  "shadow": {
-  "votes": 0,
+  "votes": 1,
   "scored": 0,
   "judge_at": 20,
   "take": {
