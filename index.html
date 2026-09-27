@@ -807,8 +807,11 @@
   // ---------- realised P/L ----------
   // Read-only. Every fill Hyperliquid reports carries closedPnl (profit or
   // loss banked by that fill) and fee. Realised = sum(closedPnl) - sum(fee).
-  // Fills are fetched in pages of up to 2000, newest window last.
-  var RP_DAYS = 90, DAY = 86400000;
+  // Fills are fetched in pages of up to 2000 from RP_START (all the history
+  // Hyperliquid keeps - its API returns up to the latest 10,000 fills).
+  // 27 Sep 2026 (Mike): bot = this month + month by month + all time;
+  // your own trades = all time only; plus a combined total.
+  var RP_START = Date.UTC(2023, 0, 1), FUND_DAYS = 30, DAY = 86400000;
   var RP_TAGS = { d1: "1D", "44": "4H", "11": "1H", d9: "Dip" };
 
   function fillsSince(user, start) {
@@ -834,15 +837,17 @@
       .catch(function () { return []; });
   }
 
-  function sydMidnight() {
-    // start of today in Sydney, as a UTC timestamp
-    var now = new Date();
-    var parts = new Intl.DateTimeFormat("en-AU", { timeZone: "Australia/Sydney",
-      year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit",
-      hourCycle: "h23" }).formatToParts(now);
-    var g = {}; parts.forEach(function (p) { g[p.type] = p.value; });
-    var mins = (+g.hour) * 60 + (+g.minute);
-    return now.getTime() - mins * 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
+  // calendar month in Sydney time, e.g. "2026-09"
+  var SYD_YM = new Intl.DateTimeFormat("en-AU", { timeZone: "Australia/Sydney", year: "numeric", month: "2-digit" });
+  function sydMonth(ms) {
+    var g = {};
+    SYD_YM.formatToParts(new Date(ms)).forEach(function (p) { g[p.type] = p.value; });
+    return g.year + "-" + g.month;
+  }
+  function monthName(ym) {
+    var p = ym.split("-");
+    return new Date(Date.UTC(+p[0], +p[1] - 1, 15)).toLocaleString("en-AU",
+      { month: "short", year: "numeric", timeZone: "UTC" });
   }
 
   // group a user's fills into closed trades: one row per order that banked P/L
@@ -863,12 +868,20 @@
     return Object.keys(by).map(function (k) { return by[k]; });
   }
 
-  function sumPnl(fills, from) {
-    var t = 0;
-    fills.forEach(function (f) {
-      if (+f.time >= from) t += parseFloat(f.closedPnl || 0) - parseFloat(f.fee || 0);
+  // net (closed P/L minus every fee, opening fees included), won, lost and
+  // number of closed trades, for the fills whose time passes keep(t)
+  function tally(a, keep) {
+    var s = { net: 0, won: 0, lost: 0, n: 0 };
+    a.fills.forEach(function (f) {
+      if (keep(+f.time)) s.net += parseFloat(f.closedPnl || 0) - parseFloat(f.fee || 0);
     });
-    return t;
+    a.closed.forEach(function (r) {
+      if (!keep(r.time)) return;
+      var n = r.pnl - r.fee;
+      if (n >= 0) s.won += n; else s.lost += n;
+      s.n++;
+    });
+    return s;
   }
   function sumFunding(fund, from) {
     var t = 0;
@@ -879,12 +892,12 @@
   }
 
   function loadRealised(main, sub) {
-    var start = Date.now() - RP_DAYS * DAY;
     var who = [{ k: "you", a: main }];
     if (sub) who.push({ k: "bot", a: sub });
     return Promise.all(who.map(function (w) {
-      return Promise.all([fillsSince(w.a, start), fundingSince(w.a, start)])
-        .then(function (r) { return { k: w.k, fills: r[0], fund: r[1] }; });
+      return Promise.all([fillsSince(w.a, RP_START), fundingSince(w.a, Date.now() - FUND_DAYS * DAY),
+                          w.k === "bot" ? pnlHistory(w.a) : null])
+        .then(function (r) { return { k: w.k, fills: r[0], fund: r[1], closed: closes(r[0], w.k), hist: r[2] }; });
     })).then(drawRealised).catch(function (e) {
       document.getElementById("rp-h").hidden = false;
       document.getElementById("rp").hidden = false;
@@ -895,54 +908,164 @@
     });
   }
 
+  // Hyperliquid's own all-time P/L curve for an account: [[time, pnl], ...].
+  // It counts open trades at their current price (unrealised) and ignores
+  // deposits / withdrawals. Never throws - no chart is drawn without it.
+  function pnlHistory(user) {
+    return hl({ type: "portfolio", user: user }).then(function (p) {
+      var o = {};
+      (Array.isArray(p) ? p : []).forEach(function (x) { o[x[0]] = x[1]; });
+      return ((o.allTime || {}).pnlHistory || []).map(function (x) { return [+x[0], parseFloat(x[1])]; });
+    }).catch(function () { return null; });
+  }
+
+  // Bot lifetime chart: total P/L (realised + open trades) vs realised only.
+  // The gap between the two lines is the open trades' unrealised P/L.
+  function botChart(bot) {
+    var hist = bot.hist || [];
+    if (hist.length < 2) return null;
+    var fills = bot.fills.slice().sort(function (a, b) { return +a.time - +b.time; });
+    var times = hist.map(function (h) { return h[0]; });
+    fills.forEach(function (f) { if (+f.time > times[0]) times.push(+f.time); });
+    times.sort(function (a, b) { return a - b; });
+    // realised so far at each time (steps at fills); total interpolated from HL's curve
+    var i = 0, run = 0, j = 0, real = [], tot = [];
+    times.forEach(function (t) {
+      while (i < fills.length && +fills[i].time <= t) {
+        run += parseFloat(fills[i].closedPnl || 0) - parseFloat(fills[i].fee || 0); i++;
+      }
+      while (j < hist.length - 2 && hist[j + 1][0] <= t) j++;
+      var a = hist[j], b = hist[Math.min(j + 1, hist.length - 1)];
+      var v = b[0] > a[0] ? a[1] + (b[1] - a[1]) * Math.min(1, Math.max(0, (t - a[0]) / (b[0] - a[0]))) : a[1];
+      real.push(run); tot.push(v);
+    });
+    var t0 = times[0], t1 = times[times.length - 1];
+    var lo = Math.min(0, Math.min.apply(null, real), Math.min.apply(null, tot));
+    var hi = Math.max(0, Math.max.apply(null, real), Math.max.apply(null, tot));
+    if (hi - lo < 1) { hi += 0.5; lo -= 0.5; }
+    var W = 600, H = 160;
+    var X = function (t) { return ((t - t0) / Math.max(1, t1 - t0) * W).toFixed(1); };
+    var Y = function (v) { return ((hi - v) / (hi - lo) * H).toFixed(1); };
+    var pts = function (arr) { return times.map(function (t, k) { return X(t) + "," + Y(arr[k]); }).join(" "); };
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-label", "Bot profit and loss since it started");
+    svg.style.cssText = "width:100%;height:160px;display:block";
+    function line(d, color, width, dash) {
+      var l = document.createElementNS(ns, "polyline");
+      l.setAttribute("points", d); l.setAttribute("fill", "none");
+      l.setAttribute("stroke", color); l.setAttribute("stroke-width", width);
+      l.setAttribute("vector-effect", "non-scaling-stroke");
+      if (dash) l.setAttribute("stroke-dasharray", dash);
+      svg.appendChild(l);
+    }
+    line("0," + Y(0) + " " + W + "," + Y(0), "var(--ink-3)", 1, "3 4");   // break-even
+    line(pts(real), "var(--ink-2)", 2);
+    line(pts(tot), "var(--accent)", 2.5);
+    var nowTot = tot[tot.length - 1], nowReal = real[real.length - 1];
+    var box = el("div", "scroller");
+    box.style.cssText = "padding:10px 12px;margin-bottom:12px";
+    var head = el("div", "sub");
+    head.style.marginBottom = "6px";
+    var sw = function (color, dash) {
+      var x = el("span"); x.style.cssText = "display:inline-block;width:14px;height:0;vertical-align:middle;margin-right:5px;border-top:"
+        + (dash ? "2px solid " : "3px solid ") + color; return x; };
+    head.appendChild(sw("var(--accent)"));
+    head.appendChild(document.createTextNode("Total (closed + open) " + signed(nowTot) + "   "));
+    head.appendChild(sw("var(--ink-2)", true));
+    head.appendChild(document.createTextNode("Realised " + signed(nowReal) + "   · open trades & funding " + signed(nowTot - nowReal)));
+    box.appendChild(head);
+    box.appendChild(svg);
+    var d = function (t) { return new Date(t).toLocaleDateString("en-AU", { day: "numeric", month: "short" }); };
+    var foot = el("div", "sub", d(t0) + " → now · high " + signed(hi) + " · low " + signed(lo)
+      + " · dashed line = break-even");
+    foot.style.marginTop = "4px";
+    box.appendChild(foot);
+    return box;
+  }
+
+  function rpTile(box, k, v, subs) {
+    var t = el("div", "tile");
+    t.appendChild(el("div", "k", k));
+    t.appendChild(el("div", "v " + (v >= 0 ? "up" : "down"), signed(v)));
+    subs.forEach(function (s) { if (s) t.appendChild(el("div", "sub", s)); });
+    box.appendChild(t);
+  }
+
+  function rpRow(body, label, s, bold) {
+    var tr = el("tr");
+    var c = el("td", null, label);
+    c.appendChild(el("div", "sub", s.n + " closed"));
+    tr.appendChild(c);
+    tr.appendChild(el("td", "num up", signed(s.won)));
+    tr.appendChild(el("td", "num down", signed(s.lost)));
+    tr.appendChild(el("td", "num " + (s.net >= 0 ? "up" : "down"), signed(s.net)));
+    if (bold) tr.style.fontWeight = "600";
+    body.appendChild(tr);
+  }
+
   function drawRealised(acc) {
     document.getElementById("rp-h").hidden = false;
     document.getElementById("rp").hidden = false;
-    var now = Date.now();
-    var periods = [
-      { k: "Today", from: sydMidnight() },
-      { k: "7 days", from: now - 7 * DAY },
-      { k: "30 days", from: now - 30 * DAY },
-      { k: RP_DAYS + " days", from: now - RP_DAYS * DAY }
-    ];
+    var now = Date.now(), thisMonth = sydMonth(now);
+    var all = function () { return true; };
+    var inMonth = function (ym) { return function (t) { return sydMonth(t) === ym; }; };
+    var bot = acc.filter(function (a) { return a.k === "bot"; })[0];
+    var you = acc.filter(function (a) { return a.k === "you"; })[0];
+    var wl = function (s) { return "won " + signed(s.won) + " · lost " + signed(s.lost); };
+    var botAll = bot ? tally(bot, all) : null, youAll = you ? tally(you, all) : null;
+
     var box = document.getElementById("rp-tiles");
     box.textContent = "";
-    periods.forEach(function (p) {
-      var parts = acc.map(function (a) { return { k: a.k, v: sumPnl(a.fills, p.from) }; });
-      var tot = parts.reduce(function (s, x) { return s + x.v; }, 0);
-      var t = el("div", "tile");
-      t.appendChild(el("div", "k", p.k));
-      t.appendChild(el("div", "v " + (tot >= 0 ? "up" : "down"), signed(tot)));
-      t.appendChild(el("div", "sub", parts.map(function (x) {
-        return (x.k === "bot" ? "Bot " : "You ") + signed(x.v); }).join(" · ")));
-      // wins and losses shown separately, so it's clear losses are taken off
-      var won = 0, lost = 0;
-      acc.forEach(function (a) {
-        closes(a.fills, a.k).forEach(function (r) {
-          if (r.time < p.from) return;
-          var n = r.pnl - r.fee;
-          if (n >= 0) won += n; else lost += n;
-        });
-      });
-      t.appendChild(el("div", "sub", "won " + signed(won) + " · lost " + signed(lost)));
-      box.appendChild(t);
-    });
+    if (bot) {
+      var bm = tally(bot, inMonth(thisMonth));
+      rpTile(box, "Bot · " + monthName(thisMonth), bm.net, [bm.n + " closed · " + wl(bm)]);
+      var first = bot.fills.length ? Math.min.apply(null, bot.fills.map(function (f) { return +f.time; })) : null;
+      rpTile(box, "Bot · all time", botAll.net, [
+        (first ? "since " + new Date(first).toLocaleDateString("en-AU",
+          { day: "numeric", month: "short", year: "numeric" }) + " · " : "") + botAll.n + " closed",
+        wl(botAll)]);
+    }
+    if (you) rpTile(box, "Your trades · all time", youAll.net, [youAll.n + " closed", wl(youAll)]);
+    if (bot && you) rpTile(box, "Total · all time", botAll.net + youAll.net,
+                           ["Bot " + signed(botAll.net) + " · You " + signed(youAll.net)]);
 
-    // table of the most recent closed trades
-    var rows = [];
-    acc.forEach(function (a) { rows = rows.concat(closes(a.fills, a.k)); });
-    rows.sort(function (a, b) { return b.time - a.time; });
     var wrap = document.getElementById("rp-wrap");
     wrap.textContent = "";
-    var fund = acc.map(function (a) { return { k: a.k, v: sumFunding(a.fund, now - 30 * DAY) }; });
-    if (!rows.length) {
-      wrap.appendChild(el("div", "msg", "No closed trades in the last " + RP_DAYS + " days yet."));
-    } else {
+
+    // the bot's lifetime curve, then month by month
+    var chart = bot && botChart(bot);
+    if (chart) wrap.appendChild(chart);
+    if (bot && bot.fills.length) {
+      var months = {};
+      bot.fills.forEach(function (f) { months[sydMonth(+f.time)] = 1; });
       var sc = el("div", "scroller"), tb = el("table"), hd = el("thead"), hr = el("tr");
-      ["Coin", "Closed", "Size", "Exit", "Fees", "Realised"].forEach(function (h) {
-        hr.appendChild(el("th", null, h)); });
+      ["Bot by month", "Won", "Lost", "Net"].forEach(function (h) { hr.appendChild(el("th", null, h)); });
       hd.appendChild(hr); tb.appendChild(hd);
       var body = el("tbody");
+      Object.keys(months).sort().reverse().forEach(function (ym) {
+        rpRow(body, monthName(ym), tally(bot, inMonth(ym)));
+      });
+      rpRow(body, "All time", botAll, true);
+      tb.appendChild(body); sc.appendChild(tb);
+      wrap.appendChild(sc);
+    }
+
+    // most recent closed trades, collapsed - the tiles above are the summary
+    var rows = [];
+    acc.forEach(function (a) { rows = rows.concat(a.closed); });
+    rows.sort(function (a, b) { return b.time - a.time; });
+    var fund = acc.map(function (a) { return { k: a.k, v: sumFunding(a.fund, now - FUND_DAYS * DAY) }; });
+    if (!rows.length) {
+      wrap.appendChild(el("div", "msg", "No closed trades yet."));
+    } else {
+      var sc2 = el("div", "scroller"), tb2 = el("table"), hd2 = el("thead"), hr2 = el("tr");
+      ["Coin", "Closed", "Size", "Exit", "Fees", "Realised"].forEach(function (h) {
+        hr2.appendChild(el("th", null, h)); });
+      hd2.appendChild(hr2); tb2.appendChild(hd2);
+      var body2 = el("tbody");
       rows.slice(0, 25).forEach(function (r) {
         var tr = el("tr"), c = el("td"), net = r.pnl - r.fee;
         c.appendChild(el("span", "coin", r.coin));
@@ -957,21 +1080,20 @@
         tr.appendChild(el("td", "num", r.sz ? px(r.pxsz / r.sz) : "—"));
         tr.appendChild(el("td", "num", money(r.fee)));
         tr.appendChild(el("td", "num " + (net >= 0 ? "up" : "down"), signed(net)));
-        body.appendChild(tr);
+        body2.appendChild(tr);
       });
-      tb.appendChild(body); sc.appendChild(tb);
-      // collapsed by default - the tiles above are the summary
+      tb2.appendChild(body2); sc2.appendChild(tb2);
       var det = el("details", "rp-list");
-      var sm = el("summary", null, "Closed trades (" + rows.length + ") — tap to show");
-      det.appendChild(sm);
-      det.appendChild(sc);
+      det.style.marginTop = "12px";
+      det.appendChild(el("summary", null, "Closed trades (" + rows.length + ") — tap to show"));
+      det.appendChild(sc2);
       if (rows.length > 25) det.appendChild(el("div", "note", "Showing the latest 25 of " + rows.length + "."));
       wrap.appendChild(det);
     }
     document.getElementById("rp-note").textContent =
       "Each total = money won on closed trades minus money lost, minus trading fees (opening fees included, which is why a total can sit slightly below won − lost). "
-      + "Open trades aren't counted — they're in the table above. "
-      + "Funding, last 30 days (not included above): "
+      + "Months are Sydney calendar months. Open trades aren't counted — they're in the table above. "
+      + "Funding, last " + FUND_DAYS + " days (not included above): "
       + fund.map(function (x) { return (x.k === "bot" ? "Bot " : "You ") + signed(x.v); }).join(" · ") + ".";
   }
 
