@@ -895,8 +895,9 @@
     var who = [{ k: "you", a: main }];
     if (sub) who.push({ k: "bot", a: sub });
     return Promise.all(who.map(function (w) {
-      return Promise.all([fillsSince(w.a, RP_START), fundingSince(w.a, Date.now() - FUND_DAYS * DAY)])
-        .then(function (r) { return { k: w.k, fills: r[0], fund: r[1], closed: closes(r[0], w.k) }; });
+      return Promise.all([fillsSince(w.a, RP_START), fundingSince(w.a, Date.now() - FUND_DAYS * DAY),
+                          w.k === "bot" ? pnlHistory(w.a) : null])
+        .then(function (r) { return { k: w.k, fills: r[0], fund: r[1], closed: closes(r[0], w.k), hist: r[2] }; });
     })).then(drawRealised).catch(function (e) {
       document.getElementById("rp-h").hidden = false;
       document.getElementById("rp").hidden = false;
@@ -905,6 +906,84 @@
       w.textContent = "";
       w.appendChild(el("div", "msg err", "Couldn't load closed trades: " + e.message));
     });
+  }
+
+  // Hyperliquid's own all-time P/L curve for an account: [[time, pnl], ...].
+  // It counts open trades at their current price (unrealised) and ignores
+  // deposits / withdrawals. Never throws - no chart is drawn without it.
+  function pnlHistory(user) {
+    return hl({ type: "portfolio", user: user }).then(function (p) {
+      var o = {};
+      (Array.isArray(p) ? p : []).forEach(function (x) { o[x[0]] = x[1]; });
+      return ((o.allTime || {}).pnlHistory || []).map(function (x) { return [+x[0], parseFloat(x[1])]; });
+    }).catch(function () { return null; });
+  }
+
+  // Bot lifetime chart: total P/L (realised + open trades) vs realised only.
+  // The gap between the two lines is the open trades' unrealised P/L.
+  function botChart(bot) {
+    var hist = bot.hist || [];
+    if (hist.length < 2) return null;
+    var fills = bot.fills.slice().sort(function (a, b) { return +a.time - +b.time; });
+    var times = hist.map(function (h) { return h[0]; });
+    fills.forEach(function (f) { if (+f.time > times[0]) times.push(+f.time); });
+    times.sort(function (a, b) { return a - b; });
+    // realised so far at each time (steps at fills); total interpolated from HL's curve
+    var i = 0, run = 0, j = 0, real = [], tot = [];
+    times.forEach(function (t) {
+      while (i < fills.length && +fills[i].time <= t) {
+        run += parseFloat(fills[i].closedPnl || 0) - parseFloat(fills[i].fee || 0); i++;
+      }
+      while (j < hist.length - 2 && hist[j + 1][0] <= t) j++;
+      var a = hist[j], b = hist[Math.min(j + 1, hist.length - 1)];
+      var v = b[0] > a[0] ? a[1] + (b[1] - a[1]) * Math.min(1, Math.max(0, (t - a[0]) / (b[0] - a[0]))) : a[1];
+      real.push(run); tot.push(v);
+    });
+    var t0 = times[0], t1 = times[times.length - 1];
+    var lo = Math.min(0, Math.min.apply(null, real), Math.min.apply(null, tot));
+    var hi = Math.max(0, Math.max.apply(null, real), Math.max.apply(null, tot));
+    if (hi - lo < 1) { hi += 0.5; lo -= 0.5; }
+    var W = 600, H = 160;
+    var X = function (t) { return ((t - t0) / Math.max(1, t1 - t0) * W).toFixed(1); };
+    var Y = function (v) { return ((hi - v) / (hi - lo) * H).toFixed(1); };
+    var pts = function (arr) { return times.map(function (t, k) { return X(t) + "," + Y(arr[k]); }).join(" "); };
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-label", "Bot profit and loss since it started");
+    svg.style.cssText = "width:100%;height:160px;display:block";
+    function line(d, color, width, dash) {
+      var l = document.createElementNS(ns, "polyline");
+      l.setAttribute("points", d); l.setAttribute("fill", "none");
+      l.setAttribute("stroke", color); l.setAttribute("stroke-width", width);
+      l.setAttribute("vector-effect", "non-scaling-stroke");
+      if (dash) l.setAttribute("stroke-dasharray", dash);
+      svg.appendChild(l);
+    }
+    line("0," + Y(0) + " " + W + "," + Y(0), "var(--ink-3)", 1, "3 4");   // break-even
+    line(pts(real), "var(--ink-2)", 2);
+    line(pts(tot), "var(--accent)", 2.5);
+    var nowTot = tot[tot.length - 1], nowReal = real[real.length - 1];
+    var box = el("div", "scroller");
+    box.style.cssText = "padding:10px 12px;margin-bottom:12px";
+    var head = el("div", "sub");
+    head.style.marginBottom = "6px";
+    var sw = function (color, dash) {
+      var x = el("span"); x.style.cssText = "display:inline-block;width:14px;height:0;vertical-align:middle;margin-right:5px;border-top:"
+        + (dash ? "2px solid " : "3px solid ") + color; return x; };
+    head.appendChild(sw("var(--accent)"));
+    head.appendChild(document.createTextNode("Total (closed + open) " + signed(nowTot) + "   "));
+    head.appendChild(sw("var(--ink-2)", true));
+    head.appendChild(document.createTextNode("Realised " + signed(nowReal) + "   · open trades " + signed(nowTot - nowReal)));
+    box.appendChild(head);
+    box.appendChild(svg);
+    var d = function (t) { return new Date(t).toLocaleDateString("en-AU", { day: "numeric", month: "short" }); };
+    var foot = el("div", "sub", d(t0) + " → now · high " + signed(hi) + " · low " + signed(lo)
+      + " · dashed line = break-even");
+    foot.style.marginTop = "4px";
+    box.appendChild(foot);
+    return box;
   }
 
   function rpTile(box, k, v, subs) {
@@ -956,7 +1035,9 @@
     var wrap = document.getElementById("rp-wrap");
     wrap.textContent = "";
 
-    // the bot month by month, newest first, with the all-time total under it
+    // the bot's lifetime curve, then month by month
+    var chart = bot && botChart(bot);
+    if (chart) wrap.appendChild(chart);
     if (bot && bot.fills.length) {
       var months = {};
       bot.fills.forEach(function (f) { months[sydMonth(+f.time)] = 1; });
