@@ -917,8 +917,9 @@
 
   function rpRow(body, label, s, bold) {
     var tr = el("tr");
-    tr.appendChild(el("td", null, label));
-    tr.appendChild(el("td", "num", String(s.n)));
+    var c = el("td", null, label);
+    c.appendChild(el("div", "sub", s.n + " closed"));
+    tr.appendChild(c);
     tr.appendChild(el("td", "num up", signed(s.won)));
     tr.appendChild(el("td", "num down", signed(s.lost)));
     tr.appendChild(el("td", "num " + (s.net >= 0 ? "up" : "down"), signed(s.net)));
@@ -960,7 +961,7 @@
       var months = {};
       bot.fills.forEach(function (f) { months[sydMonth(+f.time)] = 1; });
       var sc = el("div", "scroller"), tb = el("table"), hd = el("thead"), hr = el("tr");
-      ["Bot by month", "Closed", "Won", "Lost", "Net"].forEach(function (h) { hr.appendChild(el("th", null, h)); });
+      ["Bot by month", "Won", "Lost", "Net"].forEach(function (h) { hr.appendChild(el("th", null, h)); });
       hd.appendChild(hr); tb.appendChild(hd);
       var body = el("tbody");
       Object.keys(months).sort().reverse().forEach(function (ym) {
