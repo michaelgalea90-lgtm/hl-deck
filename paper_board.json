@@ -43,6 +43,11 @@
      "coin": "SOL",
      "side": "LONG",
      "opened": "2026-09-27"
+    },
+    {
+     "coin": "BTC",
+     "side": "LONG",
+     "opened": "2026-09-27"
     }
    ],
    "recent": [
