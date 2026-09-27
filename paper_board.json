@@ -37,15 +37,10 @@
    "target": 300,
    "backtest": 0.24,
    "status": "collecting",
-   "progress": "2 of 300 trades",
+   "progress": "3 of 300 trades",
    "open": [
     {
      "coin": "SOL",
-     "side": "LONG",
-     "opened": "2026-09-27"
-    },
-    {
-     "coin": "BTC",
      "side": "LONG",
      "opened": "2026-09-27"
     }
@@ -64,16 +59,23 @@
      "opened": "2026-09-26",
      "closed": "2026-09-26",
      "r": -0.76
+    },
+    {
+     "coin": "BTC",
+     "side": "LONG",
+     "opened": "2026-09-27",
+     "closed": "2026-09-27",
+     "r": -1.11
     }
    ],
    "kind": "test",
-   "n": 2,
-   "avg": -0.905,
+   "n": 3,
+   "avg": -0.973,
    "win": 0,
    "lo": null,
    "hi": null,
-   "overlap": null,
-   "avg_solo": null,
+   "overlap": 0,
+   "avg_solo": -1.11,
    "live_breakouts_avg": null,
    "live_breakouts_n": 0
   },
