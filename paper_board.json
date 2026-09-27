@@ -176,42 +176,42 @@
     {
      "coin": "1D kSHIB",
      "side": "LONG",
-     "opened": "2026-09-25"
+     "opened": "2026-09-26"
     },
     {
      "coin": "1D BTC",
      "side": "LONG",
-     "opened": "2026-09-25"
+     "opened": "2026-09-26"
     },
     {
      "coin": "1D ETH",
      "side": "LONG",
-     "opened": "2026-09-25"
+     "opened": "2026-09-26"
     },
     {
      "coin": "1D BNB",
      "side": "LONG",
-     "opened": "2026-09-25"
+     "opened": "2026-09-26"
     },
     {
      "coin": "1D XRP",
      "side": "LONG",
-     "opened": "2026-09-25"
+     "opened": "2026-09-26"
     },
     {
      "coin": "1D ADA",
      "side": "LONG",
-     "opened": "2026-09-25"
+     "opened": "2026-09-26"
     },
     {
      "coin": "1D DOGE",
      "side": "LONG",
-     "opened": "2026-09-25"
+     "opened": "2026-09-26"
     },
     {
      "coin": "1D AVAX",
      "side": "LONG",
-     "opened": "2026-09-25"
+     "opened": "2026-09-26"
     }
    ],
    "recent": [
@@ -381,26 +381,30 @@
    "passes": "After 6 months: ahead of BOTH the alt basket and BTC, and most batches beat the alt basket",
    "backtest": "+36%/yr, worst drop -60% (BTC +47%/yr) - weak in backtest",
    "status": "collecting",
-   "progress": "day 1 of 182",
+   "progress": "day 2 of 182",
    "since": "2026-09-26",
-   "ret": -0.01,
-   "btc": 0.0,
-   "alt": 0.0,
+   "ret": 0.08,
+   "btc": 0.28,
+   "alt": 0.03,
    "batches": 0,
-   "open": 1,
+   "open": 2,
    "avg_batch": null,
    "avg_excess": null,
    "beat_pct": null,
    "now_in": [
+    "Privacy",
     "Infra",
-    "AI",
-    "DeFi"
+    "AI"
    ],
    "now_out": [],
    "curve": [
     [
      "2026-09-26",
      999.86
+    ],
+    [
+     "2026-09-27",
+     1000.78
     ]
    ]
   },
@@ -411,30 +415,32 @@
    "passes": "After 6 months: positive, ahead of cash, and most batches positive",
    "backtest": "+7%/yr, worst drop -22% - weak in backtest",
    "status": "collecting",
-   "progress": "day 1 of 182",
+   "progress": "day 2 of 182",
    "since": "2026-09-26",
-   "ret": -0.01,
-   "btc": 0.0,
-   "alt": 0.0,
+   "ret": -0.21,
+   "btc": 0.28,
+   "alt": 0.03,
    "batches": 0,
-   "open": 1,
+   "open": 2,
    "avg_batch": null,
    "avg_excess": null,
    "beat_pct": null,
    "now_in": [
+    "Privacy",
     "Infra",
-    "AI",
-    "DeFi"
+    "AI"
    ],
    "now_out": [
-    "RWA",
-    "Privacy",
-    "Hyperliquid"
+    "Memes"
    ],
    "curve": [
     [
      "2026-09-26",
      999.86
+    ],
+    [
+     "2026-09-27",
+     997.91
     ]
    ]
   }
