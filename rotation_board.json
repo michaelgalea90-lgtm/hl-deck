@@ -1,121 +1,122 @@
 {
- "as_of": "2026-09-26T21:02Z",
+ "as_of": "2026-09-27T00:02Z",
  "money_in": [
-  "Infra",
-  "AI"
+  "Privacy",
+  "AI",
+  "Infra"
  ],
  "money_out": [
   "Memes"
  ],
  "btc": {
-  "r24": 0.18,
-  "r7": 3.82
+  "r24": 0.33,
+  "r7": 3.76
  },
  "majors": {
-  "share_now": 40.42,
-  "share_avg": 58.84,
+  "share_now": 40.29,
+  "share_avg": 58.26,
   "verdict": "alts gaining vs BTC/ETH"
  },
  "sectors": [
   {
-   "name": "Infra",
-   "rel24": 1.02,
-   "rel7": 24.28,
-   "share_avg": 0.64,
-   "share_now": 1.3,
+   "name": "Privacy",
+   "rel24": 4.24,
+   "rel7": 3.8,
+   "share_avg": 8.18,
+   "share_now": 11.72,
    "flow": "in",
-   "top": "PYTH",
-   "top_r24": 7.45
+   "top": "DASH",
+   "top_r24": 11.94
   },
   {
    "name": "AI",
-   "rel24": 0.46,
-   "rel7": 19.33,
-   "share_avg": 1.69,
-   "share_now": 4.63,
+   "rel24": 0.51,
+   "rel7": 17.19,
+   "share_avg": 1.83,
+   "share_now": 4.08,
    "flow": "in",
    "top": "GRASS",
-   "top_r24": 11.84
+   "top_r24": 14.46
   },
   {
-   "name": "Payments",
-   "rel24": -1.62,
-   "rel7": 14.84,
-   "share_avg": 3.42,
-   "share_now": 5.05,
-   "flow": "flat",
-   "top": "LTC",
-   "top_r24": 0.45
-  },
-  {
-   "name": "RWA",
-   "rel24": -1.14,
-   "rel7": 12.19,
-   "share_avg": 0.69,
-   "share_now": 1.3,
-   "flow": "flat",
-   "top": "PAXG",
-   "top_r24": -0.01
+   "name": "Infra",
+   "rel24": 1.05,
+   "rel7": 13.72,
+   "share_avg": 0.66,
+   "share_now": 1.21,
+   "flow": "in",
+   "top": "PYTH",
+   "top_r24": 9.29
   },
   {
    "name": "DeFi",
-   "rel24": -0.41,
-   "rel7": 6.39,
-   "share_avg": 4.03,
-   "share_now": 6.82,
+   "rel24": -0.11,
+   "rel7": 8.26,
+   "share_avg": 3.97,
+   "share_now": 6.15,
    "flow": "flat",
    "top": "JTO",
-   "top_r24": 4.67
+   "top_r24": 4.4
   },
   {
    "name": "Layer 1s",
-   "rel24": -1.14,
-   "rel7": 9.96,
-   "share_avg": 11.13,
-   "share_now": 21.7,
+   "rel24": -1.05,
+   "rel7": 7.49,
+   "share_avg": 11.76,
+   "share_now": 20.19,
    "flow": "flat",
    "top": "ATOM",
-   "top_r24": 3.21
-  },
-  {
-   "name": "Privacy",
-   "rel24": 1.62,
-   "rel7": -4.51,
-   "share_avg": 8.2,
-   "share_now": 7.14,
-   "flow": "flat",
-   "top": "DASH",
-   "top_r24": 15.08
+   "top_r24": 3.79
   },
   {
    "name": "Layer 2s",
-   "rel24": -0.49,
-   "rel7": 5.97,
-   "share_avg": 0.72,
-   "share_now": 0.9,
+   "rel24": -1.41,
+   "rel7": 8.81,
+   "share_avg": 0.67,
+   "share_now": 0.74,
    "flow": "flat",
    "top": "POL",
-   "top_r24": 2.9
+   "top_r24": 3.28
+  },
+  {
+   "name": "Payments",
+   "rel24": -2.22,
+   "rel7": 12.77,
+   "share_avg": 3.44,
+   "share_now": 4.23,
+   "flow": "flat",
+   "top": "LTC",
+   "top_r24": -0.07
+  },
+  {
+   "name": "RWA",
+   "rel24": -1.64,
+   "rel7": 8.93,
+   "share_avg": 0.72,
+   "share_now": 1.1,
+   "flow": "flat",
+   "top": "PAXG",
+   "top_r24": -0.06
   },
   {
    "name": "Hyperliquid",
-   "rel24": 0.73,
-   "rel7": -4.95,
-   "share_avg": 7.7,
-   "share_now": 5.93,
+   "rel24": 0.12,
+   "rel7": -1.28,
+   "share_avg": 7.49,
+   "share_now": 5.65,
    "flow": "flat",
    "top": "PURR",
-   "top_r24": 1.81
+   "top_r24": 0.72
   },
   {
    "name": "Memes",
-   "rel24": -1.94,
-   "rel7": 7.04,
-   "share_avg": 2.93,
-   "share_now": 4.81,
+   "rel24": -2.73,
+   "rel7": 5.79,
+   "share_avg": 3.02,
+   "share_now": 4.65,
    "flow": "out",
    "top": "PUMP",
-   "top_r24": 5.7
+   "top_r24": 4.52
   }
  ]
 }
