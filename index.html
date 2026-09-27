@@ -975,7 +975,7 @@
     head.appendChild(sw("var(--accent)"));
     head.appendChild(document.createTextNode("Total (closed + open) " + signed(nowTot) + "   "));
     head.appendChild(sw("var(--ink-2)", true));
-    head.appendChild(document.createTextNode("Realised " + signed(nowReal) + "   · open trades " + signed(nowTot - nowReal)));
+    head.appendChild(document.createTextNode("Realised " + signed(nowReal) + "   · open trades & funding " + signed(nowTot - nowReal)));
     box.appendChild(head);
     box.appendChild(svg);
     var d = function (t) { return new Date(t).toLocaleDateString("en-AU", { day: "numeric", month: "short" }); };
