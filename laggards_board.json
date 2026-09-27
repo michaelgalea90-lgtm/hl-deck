@@ -1,50 +1,23 @@
 {
- "as_of": "2026-09-27T00:03Z",
+ "as_of": "2026-09-27T08:04Z",
  "hot_sectors": [
   {
-   "name": "Privacy",
-   "leader": "DASH",
-   "leader_24h": 11.8
-  },
-  {
    "name": "AI",
-   "leader": "GRASS",
-   "leader_24h": 14.4
+   "leader": "WLD",
+   "leader_24h": 11.7
   },
   {
    "name": "Infra",
    "leader": "PYTH",
-   "leader_24h": 9.3
-  }
- ],
- "picks": [
+   "leader_24h": 17.4
+  },
   {
-   "coin": "SOL",
-   "sector": "Layer 1s",
-   "hot": false,
-   "px": 121.29,
-   "range_pct": 9.3,
-   "vol_x": 1.0,
-   "entry": 122.94,
-   "stop": 112.46,
-   "target": 133.42000000000002,
-   "facts": {
-    "days": 220,
-    "vs_50d_avg_pct": 24.1,
-    "vs_200d_avg_pct": 43.0,
-    "from_40d_high_pct": -1.3,
-    "from_40d_low_pct": 61.4,
-    "from_220d_high_pct": -1.3,
-    "vol_3d_vs_prior_7d": 1.14,
-    "h4_higher_lows_of_last_6": 3,
-    "h4_last_24h_range_pct": 2.2,
-    "funding_hourly_pct": 0.0013,
-    "funding_apr_pct": 11.0,
-    "open_interest_usd_m": 685.4,
-    "day_volume_usd_m": 222.7
-   }
+   "name": "Privacy",
+   "leader": "DASH",
+   "leader_24h": 12.8
   }
  ],
+ "picks": [],
  "btc": {
   "vs_200d_avg_pct": 18.9,
   "last_7d_pct": 3.8
