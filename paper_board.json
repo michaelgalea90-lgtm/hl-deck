@@ -42,7 +42,14 @@
    "backtest": 0.24,
    "status": "collecting",
    "progress": "4 of 300 trades",
-   "open": [],
+   "open": [
+    {
+     "coin": "ETH",
+     "side": "LONG",
+     "opened": "2026-09-28",
+     "opened_at": "2026-09-28T19:00Z"
+    }
+   ],
    "recent": [
     {
      "coin": "BTC",
