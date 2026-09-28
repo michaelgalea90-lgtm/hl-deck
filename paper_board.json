@@ -15,7 +15,8 @@
     {
      "coin": "SOL",
      "side": "LONG",
-     "opened": "2026-09-28"
+     "opened": "2026-09-28",
+     "opened_at": "2026-09-28T03:00Z"
     }
    ],
    "recent": [],
@@ -42,7 +43,8 @@
     {
      "coin": "SOL",
      "side": "LONG",
-     "opened": "2026-09-28"
+     "opened": "2026-09-28",
+     "opened_at": "2026-09-28T03:00Z"
     }
    ],
    "recent": [
@@ -51,21 +53,27 @@
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-25",
-     "r": -1.05
+     "r": -1.05,
+     "opened_at": null,
+     "closed_at": "2026-09-25T15:17Z"
     },
     {
      "coin": "ETH",
      "side": "LONG",
      "opened": "2026-09-26",
      "closed": "2026-09-26",
-     "r": -0.76
+     "r": -0.76,
+     "opened_at": "2026-09-26T21:00Z",
+     "closed_at": "2026-09-26T21:17Z"
     },
     {
      "coin": "BTC",
      "side": "LONG",
      "opened": "2026-09-27",
      "closed": "2026-09-27",
-     "r": -1.11
+     "r": -1.11,
+     "opened_at": "2026-09-27T23:00Z",
+     "closed_at": "2026-09-27T23:18Z"
     }
    ],
    "kind": "test",
@@ -258,6 +266,11 @@
      "coin": "1D ZEC",
      "side": "LONG",
      "opened": "2026-09-27"
+    },
+    {
+     "coin": "1D ALGO",
+     "side": "LONG",
+     "opened": "2026-09-27"
     }
    ],
    "recent": [
@@ -266,133 +279,152 @@
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": 0.81
+     "r": 0.81,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D SOL",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": 0.55
+     "r": 0.55,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D AVAX",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": 4.34
+     "r": 4.34,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D ZEC",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": -0.15
+     "r": -0.15,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D NEAR",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": 1.79
+     "r": 1.79,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D BTC",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": 1.09
+     "r": 1.09,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D ALGO",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": 0.31
+     "r": 0.31,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D SUI",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": 1.55
+     "r": 1.55,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D INJ",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": -0.13
+     "r": -0.13,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D OP",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": 0.11
+     "r": 0.11,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D AR",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": -0.03
+     "r": -0.03,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D ENA",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": 0.11
+     "r": 0.11,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D BNB",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": 0.25
+     "r": 0.25,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D HBAR",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": 0.85
+     "r": 0.85,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1D DOGE",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-22",
-     "r": -0.19
+     "r": -0.19,
+     "closed_at": "2026-09-22T12:15Z"
     },
     {
      "coin": "1H XRP",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-23",
-     "r": 0.75
+     "r": 0.75,
+     "closed_at": "2026-09-23T17:04Z"
     },
     {
      "coin": "1H AVAX",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-23",
-     "r": 0.68
+     "r": 0.68,
+     "closed_at": "2026-09-23T17:05Z"
     },
     {
      "coin": "1H ENA",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-23",
-     "r": -0.15
+     "r": -0.15,
+     "closed_at": "2026-09-23T17:05Z"
     },
     {
      "coin": "1H ETH",
      "side": "LONG",
      "opened": null,
      "closed": "2026-09-23",
-     "r": -0.24
+     "r": -0.24,
+     "closed_at": "2026-09-23T17:05Z"
     }
    ],
    "kind": "reference",
@@ -502,7 +534,7 @@
   }
  ],
  "shadow": {
-  "votes": 1,
+  "votes": 2,
   "scored": 0,
   "judge_at": 20,
   "take": {
