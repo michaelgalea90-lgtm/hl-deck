@@ -217,47 +217,47 @@
     {
      "coin": "1D kSHIB",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     },
     {
      "coin": "1D BTC",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     },
     {
      "coin": "1D ETH",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     },
     {
      "coin": "1D BNB",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     },
     {
      "coin": "1D XRP",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     },
     {
      "coin": "1D ADA",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     },
     {
      "coin": "1D DOGE",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     },
     {
      "coin": "1D AVAX",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     },
     {
      "coin": "1D ZEC",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     }
    ],
    "recent": [
@@ -427,20 +427,20 @@
    "passes": "After 6 months: ahead of BOTH the alt basket and BTC, and most batches beat the alt basket",
    "backtest": "+36%/yr, worst drop -60% (BTC +47%/yr) - weak in backtest",
    "status": "collecting",
-   "progress": "day 2 of 182",
+   "progress": "day 3 of 182",
    "since": "2026-09-26",
-   "ret": 0.08,
-   "btc": 0.28,
-   "alt": 0.03,
+   "ret": 0.52,
+   "btc": 0.53,
+   "alt": 2.27,
    "batches": 0,
-   "open": 2,
+   "open": 3,
    "avg_batch": null,
    "avg_excess": null,
    "beat_pct": null,
    "now_in": [
-    "Privacy",
-    "Infra",
-    "AI"
+    "AI",
+    "RWA",
+    "Infra"
    ],
    "now_out": [],
    "curve": [
@@ -451,6 +451,10 @@
     [
      "2026-09-27",
      1000.78
+    ],
+    [
+     "2026-09-28",
+     1005.16
     ]
    ]
   },
@@ -461,23 +465,25 @@
    "passes": "After 6 months: positive, ahead of cash, and most batches positive",
    "backtest": "+7%/yr, worst drop -22% - weak in backtest",
    "status": "collecting",
-   "progress": "day 2 of 182",
+   "progress": "day 3 of 182",
    "since": "2026-09-26",
-   "ret": -0.21,
-   "btc": 0.28,
-   "alt": 0.03,
+   "ret": -0.36,
+   "btc": 0.53,
+   "alt": 2.27,
    "batches": 0,
-   "open": 2,
+   "open": 3,
    "avg_batch": null,
    "avg_excess": null,
    "beat_pct": null,
    "now_in": [
-    "Privacy",
-    "Infra",
-    "AI"
+    "AI",
+    "RWA",
+    "Infra"
    ],
    "now_out": [
-    "Memes"
+    "Payments",
+    "DeFi",
+    "Privacy"
    ],
    "curve": [
     [
@@ -487,6 +493,10 @@
     [
      "2026-09-27",
      997.91
+    ],
+    [
+     "2026-09-28",
+     996.44
     ]
    ]
   }
