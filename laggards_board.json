@@ -1,20 +1,20 @@
 {
- "as_of": "2026-09-28T00:04Z",
+ "as_of": "2026-09-28T08:04Z",
  "hot_sectors": [
   {
-   "name": "AI",
-   "leader": "GRASS",
-   "leader_24h": 9.1
-  },
-  {
    "name": "RWA",
-   "leader": "ONDO",
-   "leader_24h": 8.5
+   "leader": "PAXG",
+   "leader_24h": -2.8
   },
   {
-   "name": "Layer 2s",
-   "leader": "IMX",
-   "leader_24h": 13.8
+   "name": "Payments",
+   "leader": "LTC",
+   "leader_24h": -1.9
+  },
+  {
+   "name": "Layer 1s",
+   "leader": "MON",
+   "leader_24h": 6.2
   }
  ],
  "picks": [],
