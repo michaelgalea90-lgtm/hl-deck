@@ -1677,7 +1677,7 @@ run();setInterval(run,600000);
   (b.breakdown||[]).forEach(function(x){g+=cell(r(x.avg)+" <small>("+x.n+")</small>",esc(x.strat)+(x.expect==null?"":" · backtest "+r(x.expect)))});
   if(b.id==="OB")g+=cell(b.live_breakouts_avg==null?"no closed trades yet":r(b.live_breakouts_avg),"real bot's breakouts (to beat by +0.05R)");
   // exact times (UTC in the JSON) shown in the viewer's own time zone; date only when that's all we know
-  var when=function(at,day){if(at){var d=new Date(at);if(!isNaN(d))return d.toLocaleString([],{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}return day||"—"};
+  var when=function(at,day){if(at){var d=new Date(at);if(!isNaN(d.getTime()))return d.toLocaleString([],{day:"numeric",month:"short",year:d.getFullYear()!==new Date().getFullYear()?"numeric":undefined,hour:"numeric",minute:"2-digit"})}return day||"—"};
   var rows=b.recent.slice().reverse().slice(0,10).map(function(t){return "<tr><td><b>"+esc(t.coin)+'</b> <span class="dir '+(t.side==="LONG"?"L":"S")+'">'+esc(t.side)+"</span></td><td>"+esc(when(t.opened_at,t.opened))+"</td><td>"+esc(when(t.closed_at,t.closed))+'</td><td class="'+(t.r>=0?"good":"bad")+'">'+r(t.r)+"</td></tr>"}).join("");
   var open=b.open.map(function(t){return esc(t.coin)+" "+esc(t.side)+(t.opened_at?" <small>(since "+esc(when(t.opened_at))+")</small>":"")}).join(", ");
   return '<div class="grp pt-grp"><div class="gh"><b>'+esc(b.name)+'</b><span class="pt-st '+esc(b.status)+'">'+st+" · "+esc(b.progress)+"</span></div>"
