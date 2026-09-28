@@ -101,7 +101,14 @@
    "backtest": null,
    "status": "collecting",
    "progress": "0 of 500 trades",
-   "open": [],
+   "open": [
+    {
+     "coin": "ZEC",
+     "side": "LONG",
+     "opened": "2026-09-28",
+     "opened_at": "2026-09-28T06:18Z"
+    }
+   ],
    "recent": [],
    "kind": "test",
    "n": 0,
