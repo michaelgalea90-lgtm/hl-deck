@@ -1,5 +1,5 @@
 {
- "as_of": "2026-09-27",
+ "as_of": "2026-09-28",
  "note": "Fake money. Results in R = multiples of the risk taken on each trade.",
  "bots": [
   {
@@ -15,7 +15,7 @@
     {
      "coin": "SOL",
      "side": "LONG",
-     "opened": "2026-09-27"
+     "opened": "2026-09-28"
     }
    ],
    "recent": [],
@@ -42,7 +42,7 @@
     {
      "coin": "SOL",
      "side": "LONG",
-     "opened": "2026-09-27"
+     "opened": "2026-09-28"
     }
    ],
    "recent": [
@@ -152,22 +152,22 @@
     {
      "coin": "CC",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     },
     {
      "coin": "MET",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     },
     {
      "coin": "2Z",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     },
     {
      "coin": "GRAM",
      "side": "LONG",
-     "opened": "2026-09-26"
+     "opened": "2026-09-27"
     }
    ],
    "recent": [],
