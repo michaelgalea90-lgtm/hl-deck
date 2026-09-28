@@ -10,20 +10,23 @@
    "target": 300,
    "backtest": 0.2,
    "status": "collecting",
-   "progress": "0 of 300 trades",
-   "open": [
+   "progress": "1 of 300 trades",
+   "open": [],
+   "recent": [
     {
      "coin": "SOL",
      "side": "LONG",
      "opened": "2026-09-28",
-     "opened_at": "2026-09-28T03:00Z"
+     "closed": "2026-09-28",
+     "r": -0.55,
+     "opened_at": "2026-09-28T04:00Z",
+     "closed_at": "2026-09-28T04:18Z"
     }
    ],
-   "recent": [],
    "kind": "test",
-   "n": 0,
-   "avg": null,
-   "win": null,
+   "n": 1,
+   "avg": -0.55,
+   "win": 0,
    "lo": null,
    "hi": null,
    "overlap": null,
@@ -38,15 +41,8 @@
    "target": 300,
    "backtest": 0.24,
    "status": "collecting",
-   "progress": "3 of 300 trades",
-   "open": [
-    {
-     "coin": "SOL",
-     "side": "LONG",
-     "opened": "2026-09-28",
-     "opened_at": "2026-09-28T03:00Z"
-    }
-   ],
+   "progress": "4 of 300 trades",
+   "open": [],
    "recent": [
     {
      "coin": "BTC",
@@ -74,12 +70,21 @@
      "r": -1.11,
      "opened_at": "2026-09-27T23:00Z",
      "closed_at": "2026-09-27T23:18Z"
+    },
+    {
+     "coin": "SOL",
+     "side": "LONG",
+     "opened": "2026-09-28",
+     "closed": "2026-09-28",
+     "r": 0.34,
+     "opened_at": "2026-09-28T04:00Z",
+     "closed_at": "2026-09-28T04:18Z"
     }
    ],
    "kind": "test",
-   "n": 3,
-   "avg": -0.973,
-   "win": 0,
+   "n": 4,
+   "avg": -0.645,
+   "win": 25,
    "lo": null,
    "hi": null,
    "overlap": 0,
@@ -269,6 +274,16 @@
     },
     {
      "coin": "1D ALGO",
+     "side": "LONG",
+     "opened": "2026-09-27"
+    },
+    {
+     "coin": "1D ATOM",
+     "side": "LONG",
+     "opened": "2026-09-27"
+    },
+    {
+     "coin": "1D NEAR",
      "side": "LONG",
      "opened": "2026-09-27"
     }
