@@ -1,25 +1,25 @@
 {
- "as_of": "2026-09-27T08:04Z",
+ "as_of": "2026-09-28T00:04Z",
  "hot_sectors": [
   {
    "name": "AI",
-   "leader": "WLD",
-   "leader_24h": 11.7
+   "leader": "GRASS",
+   "leader_24h": 9.1
   },
   {
-   "name": "Infra",
-   "leader": "PYTH",
-   "leader_24h": 17.4
+   "name": "RWA",
+   "leader": "ONDO",
+   "leader_24h": 8.5
   },
   {
-   "name": "Privacy",
-   "leader": "DASH",
-   "leader_24h": 12.8
+   "name": "Layer 2s",
+   "leader": "IMX",
+   "leader_24h": 13.8
   }
  ],
  "picks": [],
  "btc": {
-  "vs_200d_avg_pct": 18.9,
-  "last_7d_pct": 3.8
+  "vs_200d_avg_pct": 18.8,
+  "last_7d_pct": 4.0
  }
 }
