@@ -1,170 +1,122 @@
 {
- "as_of": "2026-09-29T00:02Z",
+ "as_of": "2026-09-29T08:02Z",
  "money_in": [
-  "Infra",
-  "Layer 1s"
+  "Infra"
  ],
  "money_out": [
-  "Hyperliquid",
-  "Memes",
-  "AI"
+  "Privacy",
+  "Hyperliquid"
  ],
  "btc": {
-  "r24": -1.12,
-  "r7": -3.66
+  "r24": 1.34,
+  "r7": -3.03
  },
  "majors": {
-  "share_now": 51.69,
+  "share_now": 50.45,
   "share_avg": 54.26,
-  "verdict": "BTC/ETH share steady"
+  "verdict": "alts gaining vs BTC/ETH"
  },
  "sectors": [
   {
    "name": "Infra",
-   "rel24": -3.45,
-   "rel7": 21.52,
+   "rel24": 0.07,
+   "rel7": 18.46,
    "share_avg": 0.9,
-   "share_now": 1.4,
+   "share_now": 1.62,
    "flow": "in",
    "top": "LINK",
-   "top_r24": 10.9
+   "top_r24": 11.39
   },
   {
    "name": "Payments",
-   "rel24": -1.99,
-   "rel7": 13.21,
+   "rel24": 0.49,
+   "rel7": 11.53,
    "share_avg": 4.05,
-   "share_now": 3.81,
+   "share_now": 2.58,
    "flow": "flat",
    "top": "XLM",
-   "top_r24": 8.32
-  },
-  {
-   "name": "Layer 1s",
-   "rel24": -1.75,
-   "rel7": 5.18,
-   "share_avg": 12.94,
-   "share_now": 13.79,
-   "flow": "in",
-   "top": "HBAR",
-   "top_r24": 27.38
+   "top_r24": 11.49
   },
   {
    "name": "Layer 2s",
-   "rel24": -3.8,
-   "rel7": 6.74,
+   "rel24": 0.92,
+   "rel7": 5.67,
    "share_avg": 0.62,
-   "share_now": 0.55,
+   "share_now": 0.51,
    "flow": "flat",
    "top": "STRK",
-   "top_r24": -0.43
+   "top_r24": 9.37
   },
   {
    "name": "DeFi",
-   "rel24": -4.49,
-   "rel7": 6.22,
+   "rel24": -0.0,
+   "rel7": 9.52,
    "share_avg": 4.36,
-   "share_now": 4.42,
+   "share_now": 4.44,
    "flow": "flat",
    "top": "CRV",
-   "top_r24": 7.23
+   "top_r24": 22.2
   },
   {
-   "name": "Privacy",
-   "rel24": -4.26,
-   "rel7": -0.31,
-   "share_avg": 8.53,
-   "share_now": 7.82,
+   "name": "Layer 1s",
+   "rel24": -0.34,
+   "rel7": 6.0,
+   "share_avg": 12.94,
+   "share_now": 13.93,
    "flow": "flat",
-   "top": "XMR",
-   "top_r24": -1.14
+   "top": "HBAR",
+   "top_r24": 21.06
   },
   {
    "name": "RWA",
-   "rel24": -6.13,
-   "rel7": 7.68,
+   "rel24": -0.88,
+   "rel7": 7.9,
    "share_avg": 1.0,
-   "share_now": 1.5,
+   "share_now": 1.25,
    "flow": "flat",
-   "top": "PAXG",
-   "top_r24": -2.83
+   "top": "ONDO",
+   "top_r24": 1.06
   },
   {
    "name": "AI",
-   "rel24": -6.31,
-   "rel7": 7.56,
+   "rel24": -1.03,
+   "rel7": 7.02,
    "share_avg": 1.97,
    "share_now": 1.8,
-   "flow": "out",
-   "top": "VIRTUAL",
-   "top_r24": -1.66
-  },
-  {
-   "name": "Memes",
-   "rel24": -4.54,
-   "rel7": -2.45,
-   "share_avg": 3.54,
-   "share_now": 5.0,
-   "flow": "out",
-   "top": "DOGE",
-   "top_r24": -3.03
+   "flow": "flat",
+   "top": "GRASS",
+   "top_r24": 15.32
   },
   {
    "name": "Hyperliquid",
-   "rel24": -7.45,
-   "rel7": 6.0,
+   "rel24": -1.19,
+   "rel7": 7.09,
    "share_avg": 7.85,
-   "share_now": 8.23,
+   "share_now": 8.02,
    "flow": "out",
-   "top": "HYPE",
-   "top_r24": -4.73
+   "top": "PURR",
+   "top_r24": 0.64
+  },
+  {
+   "name": "Memes",
+   "rel24": 0.3,
+   "rel7": -2.01,
+   "share_avg": 3.54,
+   "share_now": 4.78,
+   "flow": "flat",
+   "top": "kBONK",
+   "top_r24": 5.56
+  },
+  {
+   "name": "Privacy",
+   "rel24": -6.2,
+   "rel7": -2.81,
+   "share_avg": 8.53,
+   "share_now": 10.62,
+   "flow": "out",
+   "top": "XMR",
+   "top_r24": 2.88
   }
  ],
- "catchup": {
-  "Infra": {
-   "sector_24h": -3.1,
-   "sector_7d": 3.6,
-   "picks": []
-  },
-  "Layer 1s": {
-   "sector_24h": -3.9,
-   "sector_7d": 1.6,
-   "picks": [
-    {
-     "coin": "CHZ",
-     "venues": [
-      "GMX"
-     ],
-     "cap": 166936598,
-     "ch24": -4.4,
-     "ch7": -0.9,
-     "turnover": 0.20536251134098227,
-     "tv": "BYBIT:CHZUSDT.P"
-    },
-    {
-     "coin": "S",
-     "venues": [
-      "GMX"
-     ],
-     "cap": 150964838,
-     "ch24": -4.1,
-     "ch7": -1.0,
-     "turnover": 0.18852572809040474,
-     "tv": "BYBIT:SUSDT.P"
-    },
-    {
-     "coin": "HYPE",
-     "venues": [
-      "HL",
-      "GMX"
-     ],
-     "cap": 19445902416,
-     "ch24": -4.6,
-     "ch7": -6.7,
-     "turnover": 0.04699289765272676,
-     "tv": "BYBIT:HYPEUSDT.P"
-    }
-   ]
-  }
- }
+ "catchup": {}
 }
