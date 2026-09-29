@@ -56,13 +56,13 @@
      "coin": "ETH",
      "side": "LONG",
      "opened": "2026-09-29",
-     "opened_at": "2026-09-29T20:00Z"
+     "opened_at": "2026-09-29T23:00Z"
     },
     {
      "coin": "SOL",
      "side": "LONG",
      "opened": "2026-09-29",
-     "opened_at": "2026-09-29T20:00Z"
+     "opened_at": "2026-09-29T23:00Z"
     }
    ],
    "recent": [
