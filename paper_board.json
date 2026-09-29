@@ -47,7 +47,7 @@
      "coin": "ETH",
      "side": "LONG",
      "opened": "2026-09-29",
-     "opened_at": "2026-09-29T06:00Z"
+     "opened_at": "2026-09-29T08:00Z"
     }
    ],
    "recent": [
@@ -245,9 +245,9 @@
   },
   {
    "id": "MIRROR",
-   "name": "Live rules on paper (reference)",
-   "rule": "The live bot's own signals (1D, 1H, Dip, shorts) traded with fake money - a check the rules behave as expected",
-   "passes": "Reference, not a test: compare each strategy's average with its backtest after ~20 trades",
+   "name": "Old bot rules on paper (reference)",
+   "rule": "The OLD bot's rules - curated 23-coin 1D list, 9-coin 1H list, Dip, 1D shorts - traded with fake money. The old bot is manage-only since 29 Sep 2026 (no new real trades on these rules); the new bot2 uses a monthly top-10 coin list instead",
+   "passes": "Reference, not a test: compare each old strategy's average with its backtest after ~20 trades",
    "target": null,
    "backtest": null,
    "status": "reference",
