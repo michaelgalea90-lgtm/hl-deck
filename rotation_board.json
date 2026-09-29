@@ -1,140 +1,170 @@
 {
- "as_of": "2026-09-28T08:02Z",
+ "as_of": "2026-09-29T00:02Z",
  "money_in": [
-  "RWA",
-  "Payments",
+  "Infra",
   "Layer 1s"
  ],
  "money_out": [
-  "Privacy",
-  "DeFi"
+  "Hyperliquid",
+  "Memes",
+  "AI"
  ],
  "btc": {
-  "r24": -1.95,
-  "r7": 2.34
+  "r24": -1.12,
+  "r7": -3.66
  },
  "majors": {
-  "share_now": 49.72,
-  "share_avg": 57.77,
-  "verdict": "alts gaining vs BTC/ETH"
+  "share_now": 51.69,
+  "share_avg": 54.26,
+  "verdict": "BTC/ETH share steady"
  },
  "sectors": [
   {
-   "name": "Hyperliquid",
-   "rel24": 1.77,
-   "rel7": 1.0,
-   "share_avg": 7.43,
-   "share_now": 7.03,
-   "flow": "flat",
-   "top": "PURR",
-   "top_r24": 4.36
-  },
-  {
-   "name": "RWA",
-   "rel24": -1.21,
-   "rel7": 5.98,
-   "share_avg": 0.76,
-   "share_now": 1.29,
+   "name": "Infra",
+   "rel24": -3.45,
+   "rel7": 21.52,
+   "share_avg": 0.9,
+   "share_now": 1.4,
    "flow": "in",
-   "top": "PAXG",
-   "top_r24": -2.79
+   "top": "LINK",
+   "top_r24": 10.9
   },
   {
    "name": "Payments",
-   "rel24": -3.17,
-   "rel7": 9.32,
-   "share_avg": 3.7,
-   "share_now": 5.27,
-   "flow": "in",
-   "top": "LTC",
-   "top_r24": -1.93
-  },
-  {
-   "name": "AI",
-   "rel24": -4.48,
-   "rel7": 13.65,
-   "share_avg": 1.99,
-   "share_now": 2.97,
+   "rel24": -1.99,
+   "rel7": 13.21,
+   "share_avg": 4.05,
+   "share_now": 3.81,
    "flow": "flat",
-   "top": "GRASS",
-   "top_r24": 5.97
+   "top": "XLM",
+   "top_r24": 8.32
   },
   {
    "name": "Layer 1s",
-   "rel24": -3.22,
-   "rel7": 4.75,
-   "share_avg": 11.96,
-   "share_now": 14.54,
+   "rel24": -1.75,
+   "rel7": 5.18,
+   "share_avg": 12.94,
+   "share_now": 13.79,
    "flow": "in",
-   "top": "MON",
-   "top_r24": 6.24
-  },
-  {
-   "name": "Memes",
-   "rel24": -4.55,
-   "rel7": 3.74,
-   "share_avg": 3.25,
-   "share_now": 4.82,
-   "flow": "flat",
-   "top": "PUMP",
-   "top_r24": 9.57
+   "top": "HBAR",
+   "top_r24": 27.38
   },
   {
    "name": "Layer 2s",
-   "rel24": -4.26,
-   "rel7": 1.59,
+   "rel24": -3.8,
+   "rel7": 6.74,
    "share_avg": 0.62,
-   "share_now": 0.66,
+   "share_now": 0.55,
    "flow": "flat",
-   "top": "IMX",
-   "top_r24": 5.02
-  },
-  {
-   "name": "Infra",
-   "rel24": -6.57,
-   "rel7": 11.18,
-   "share_avg": 0.71,
-   "share_now": 0.89,
-   "flow": "flat",
-   "top": "LINK",
-   "top_r24": -5.02
+   "top": "STRK",
+   "top_r24": -0.43
   },
   {
    "name": "DeFi",
-   "rel24": -5.28,
-   "rel7": 3.55,
-   "share_avg": 3.97,
-   "share_now": 4.86,
-   "flow": "out",
-   "top": "SKY",
-   "top_r24": 2.02
+   "rel24": -4.49,
+   "rel7": 6.22,
+   "share_avg": 4.36,
+   "share_now": 4.42,
+   "flow": "flat",
+   "top": "CRV",
+   "top_r24": 7.23
   },
   {
    "name": "Privacy",
-   "rel24": -5.47,
-   "rel7": -4.06,
-   "share_avg": 7.85,
-   "share_now": 7.96,
-   "flow": "out",
+   "rel24": -4.26,
+   "rel7": -0.31,
+   "share_avg": 8.53,
+   "share_now": 7.82,
+   "flow": "flat",
    "top": "XMR",
-   "top_r24": -5.8
+   "top_r24": -1.14
+  },
+  {
+   "name": "RWA",
+   "rel24": -6.13,
+   "rel7": 7.68,
+   "share_avg": 1.0,
+   "share_now": 1.5,
+   "flow": "flat",
+   "top": "PAXG",
+   "top_r24": -2.83
+  },
+  {
+   "name": "AI",
+   "rel24": -6.31,
+   "rel7": 7.56,
+   "share_avg": 1.97,
+   "share_now": 1.8,
+   "flow": "out",
+   "top": "VIRTUAL",
+   "top_r24": -1.66
+  },
+  {
+   "name": "Memes",
+   "rel24": -4.54,
+   "rel7": -2.45,
+   "share_avg": 3.54,
+   "share_now": 5.0,
+   "flow": "out",
+   "top": "DOGE",
+   "top_r24": -3.03
+  },
+  {
+   "name": "Hyperliquid",
+   "rel24": -7.45,
+   "rel7": 6.0,
+   "share_avg": 7.85,
+   "share_now": 8.23,
+   "flow": "out",
+   "top": "HYPE",
+   "top_r24": -4.73
   }
  ],
  "catchup": {
-  "RWA": {
-   "sector_24h": -2.9,
-   "sector_7d": 0.5,
-   "picks": []
-  },
-  "Payments": {
-   "sector_24h": -4.8,
-   "sector_7d": 0.9,
+  "Infra": {
+   "sector_24h": -3.1,
+   "sector_7d": 3.6,
    "picks": []
   },
   "Layer 1s": {
-   "sector_24h": -5.4,
-   "sector_7d": 4.3,
-   "picks": []
+   "sector_24h": -3.9,
+   "sector_7d": 1.6,
+   "picks": [
+    {
+     "coin": "CHZ",
+     "venues": [
+      "GMX"
+     ],
+     "cap": 166936598,
+     "ch24": -4.4,
+     "ch7": -0.9,
+     "turnover": 0.20536251134098227,
+     "tv": "BYBIT:CHZUSDT.P"
+    },
+    {
+     "coin": "S",
+     "venues": [
+      "GMX"
+     ],
+     "cap": 150964838,
+     "ch24": -4.1,
+     "ch7": -1.0,
+     "turnover": 0.18852572809040474,
+     "tv": "BYBIT:SUSDT.P"
+    },
+    {
+     "coin": "HYPE",
+     "venues": [
+      "HL",
+      "GMX"
+     ],
+     "cap": 19445902416,
+     "ch24": -4.6,
+     "ch7": -6.7,
+     "turnover": 0.04699289765272676,
+     "tv": "BYBIT:HYPEUSDT.P"
+    }
+   ]
   }
  }
 }

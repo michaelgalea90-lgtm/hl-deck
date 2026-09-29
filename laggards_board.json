@@ -1,25 +1,99 @@
 {
- "as_of": "2026-09-28T08:04Z",
+ "as_of": "2026-09-29T00:04Z",
  "hot_sectors": [
   {
-   "name": "RWA",
-   "leader": "PAXG",
-   "leader_24h": -2.8
-  },
-  {
-   "name": "Payments",
-   "leader": "LTC",
-   "leader_24h": -1.9
+   "name": "Infra",
+   "leader": "LINK",
+   "leader_24h": 10.9
   },
   {
    "name": "Layer 1s",
-   "leader": "MON",
-   "leader_24h": 6.2
+   "leader": "HBAR",
+   "leader_24h": 27.4
   }
  ],
- "picks": [],
+ "picks": [
+  {
+   "coin": "ADA",
+   "sector": "Layer 1s",
+   "hot": true,
+   "px": 0.2471,
+   "range_pct": 14.1,
+   "vol_x": 1.13,
+   "entry": 0.26555,
+   "stop": 0.23281,
+   "target": 0.29829000000000006,
+   "facts": {
+    "days": 220,
+    "vs_50d_avg_pct": 16.9,
+    "vs_200d_avg_pct": 15.5,
+    "from_40d_high_pct": -6.9,
+    "from_40d_low_pct": 35.9,
+    "from_220d_high_pct": -21.1,
+    "vol_3d_vs_prior_7d": 0.84,
+    "h4_higher_lows_of_last_6": 1,
+    "h4_last_24h_range_pct": 7.8,
+    "funding_hourly_pct": 0.0013,
+    "funding_apr_pct": 11.0,
+    "open_interest_usd_m": 40.5,
+    "day_volume_usd_m": 16.3
+   }
+  },
+  {
+   "coin": "XRP",
+   "sector": "Payments",
+   "hot": false,
+   "px": 1.4987,
+   "range_pct": 12.4,
+   "vol_x": 1.06,
+   "entry": 1.6314,
+   "stop": 1.4509,
+   "target": 1.8118999999999998,
+   "facts": {
+    "days": 220,
+    "vs_50d_avg_pct": 11.9,
+    "vs_200d_avg_pct": 17.2,
+    "from_40d_high_pct": -12.1,
+    "from_40d_low_pct": 37.7,
+    "from_220d_high_pct": -12.1,
+    "vol_3d_vs_prior_7d": 0.79,
+    "h4_higher_lows_of_last_6": 3,
+    "h4_last_24h_range_pct": 4.4,
+    "funding_hourly_pct": 0.0013,
+    "funding_apr_pct": 11.0,
+    "open_interest_usd_m": 285.1,
+    "day_volume_usd_m": 225.9
+   }
+  },
+  {
+   "coin": "kBONK",
+   "sector": "Memes",
+   "hot": false,
+   "px": 0.003513,
+   "range_pct": 14.2,
+   "vol_x": 1.12,
+   "entry": 0.003853,
+   "stop": 0.003375,
+   "target": 0.004331,
+   "facts": {
+    "days": 220,
+    "vs_50d_avg_pct": 19.2,
+    "vs_200d_avg_pct": -22.7,
+    "from_40d_high_pct": -16.6,
+    "from_40d_low_pct": 44.5,
+    "from_220d_high_pct": -57.8,
+    "vol_3d_vs_prior_7d": 0.8,
+    "h4_higher_lows_of_last_6": 1,
+    "h4_last_24h_range_pct": 12.8,
+    "funding_hourly_pct": 0.0013,
+    "funding_apr_pct": 11.0,
+    "open_interest_usd_m": 13.5,
+    "day_volume_usd_m": 6.9
+   }
+  }
+ ],
  "btc": {
-  "vs_200d_avg_pct": 18.8,
-  "last_7d_pct": 4.0
+  "vs_200d_avg_pct": 17.3,
+  "last_7d_pct": -3.7
  }
 }
