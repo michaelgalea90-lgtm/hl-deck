@@ -10,15 +10,8 @@
    "target": 300,
    "backtest": 0.2,
    "status": "collecting",
-   "progress": "1 of 300 trades",
-   "open": [
-    {
-     "coin": "ETH",
-     "side": "LONG",
-     "opened": "2026-09-29",
-     "opened_at": "2026-09-29T14:00Z"
-    }
-   ],
+   "progress": "2 of 300 trades",
+   "open": [],
    "recent": [
     {
      "coin": "SOL",
@@ -28,16 +21,25 @@
      "r": -0.55,
      "opened_at": "2026-09-28T04:00Z",
      "closed_at": "2026-09-28T04:18Z"
+    },
+    {
+     "coin": "ETH",
+     "side": "LONG",
+     "opened": "2026-09-29",
+     "closed": "2026-09-29",
+     "r": -1.04,
+     "opened_at": "2026-09-29T16:00Z",
+     "closed_at": "2026-09-29T17:17Z"
     }
    ],
    "kind": "test",
-   "n": 1,
-   "avg": -0.55,
+   "n": 2,
+   "avg": -0.795,
    "win": 0,
    "lo": null,
    "hi": null,
-   "overlap": null,
-   "avg_solo": null,
+   "overlap": 0,
+   "avg_solo": -1.04,
    "okx_agree_pct": 19
   },
   {
@@ -54,13 +56,13 @@
      "coin": "ETH",
      "side": "LONG",
      "opened": "2026-09-29",
-     "opened_at": "2026-09-29T14:00Z"
+     "opened_at": "2026-09-29T17:00Z"
     },
     {
      "coin": "SOL",
      "side": "LONG",
      "opened": "2026-09-29",
-     "opened_at": "2026-09-29T14:00Z"
+     "opened_at": "2026-09-29T17:00Z"
     }
    ],
    "recent": [
@@ -109,8 +111,8 @@
    "hi": null,
    "overlap": 0,
    "avg_solo": -1.11,
-   "live_breakouts_avg": null,
-   "live_breakouts_n": 0
+   "live_breakouts_avg": 0.767,
+   "live_breakouts_n": 1
   },
   {
    "id": "pile",
@@ -127,6 +129,12 @@
      "side": "LONG",
      "opened": "2026-09-28",
      "opened_at": "2026-09-28T06:18Z"
+    },
+    {
+     "coin": "PUMP",
+     "side": "LONG",
+     "opened": "2026-09-29",
+     "opened_at": "2026-09-29T17:17Z"
     }
    ],
    "recent": [],
