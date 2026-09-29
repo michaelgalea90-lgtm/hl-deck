@@ -47,7 +47,7 @@
      "coin": "ETH",
      "side": "LONG",
      "opened": "2026-09-29",
-     "opened_at": "2026-09-29T03:00Z"
+     "opened_at": "2026-09-29T04:00Z"
     }
    ],
    "recent": [
@@ -135,7 +135,14 @@
    "backtest": null,
    "status": "collecting",
    "progress": "0 of 100 trades",
-   "open": [],
+   "open": [
+    {
+     "coin": "ETH",
+     "side": "LONG",
+     "opened": "2026-09-29",
+     "opened_at": "2026-09-29T04:18Z"
+    }
+   ],
    "recent": [],
    "kind": "test",
    "n": 0,
