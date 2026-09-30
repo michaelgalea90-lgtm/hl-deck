@@ -1,20 +1,20 @@
 {
  "algo_version": "sectorwatch-1.0",
- "alt_breadth_pct": 48.1,
- "board_id": "sw-20260930T063026Z",
+ "alt_breadth_pct": 48.3,
+ "board_id": "sw-20260930T123028Z",
  "btc": {
   "above_10d_avg": false,
-  "r1": 0.21,
-  "r24": -0.07,
-  "r4": -0.08
+  "r1": 0.01,
+  "r24": -0.51,
+  "r4": 0.74
  },
  "candidates": [],
  "changes": [],
  "data": {
-  "coins_fetched": 10,
+  "coins_fetched": 8,
   "fetch_failed": [],
-  "last_bar_close": "2026-09-30T06:00:00Z",
-  "meta_at": "2026-09-30T06:30:26Z",
+  "last_bar_close": "2026-09-30T12:00:00Z",
+  "meta_at": "2026-09-30T12:30:28Z",
   "perps_listed": 178
  },
  "data_age_min": 30,
@@ -22,36 +22,40 @@
   "reason": "status no_sector",
   "status": "not_attempted"
  },
- "generated_at": "2026-09-30T06:30:26Z",
- "generated_ms": 1790749826569,
+ "generated_at": "2026-09-30T12:30:28Z",
+ "generated_ms": 1790771428622,
  "members": [],
  "posted": false,
  "problems": [],
  "record_version": "sectorwatch-records-2",
- "regime": "BTC downtrend (-0.1% 24h), alt breadth mixed (48% of alts beat BTC)",
+ "regime": "BTC downtrend (-0.5% 24h), alt breadth mixed (48% of alts beat BTC)",
  "rejected": {
   "1INCH": "not listed on Hyperliquid",
+  "AERO": "spread 0.34% > 0.3%",
   "AI16Z": "delisted on Hyperliquid",
-  "AIXBT": "24h turnover $0.2M < $1M",
+  "AIXBT": "24h turnover $0.1M < $1M",
   "AKT": "not listed on Hyperliquid",
+  "ALGO": "spread 0.31% > 0.3%",
   "APE": "24h turnover $0.4M < $1M",
-  "AR": "24h turnover $0.9M < $1M",
   "ARC": "not listed on Hyperliquid",
   "ATOM": "24h turnover $0.7M < $1M",
-  "AXS": "24h turnover $0.1M < $1M",
+  "AXS": "24h turnover $0.2M < $1M",
+  "BERA": "spread 0.43% > 0.3%",
   "BIGTIME": "24h turnover $0.1M < $1M",
   "BLAST": "delisted on Hyperliquid",
   "BOME": "24h turnover $0.2M < $1M",
   "BRETT": "24h turnover $0.1M < $1M",
   "BSV": "24h turnover $0.2M < $1M",
   "CAKE": "24h turnover $0.7M < $1M",
-  "COMP": "24h turnover $0.5M < $1M",
+  "COMP": "24h turnover $0.4M < $1M",
   "CRO": "not listed on Hyperliquid",
   "DYDX": "24h turnover $0.2M < $1M",
+  "EIGEN": "spread 0.56% > 0.3%",
   "ENS": "24h turnover $0.2M < $1M",
   "ETC": "24h turnover $0.5M < $1M",
+  "ETHFI": "spread 0.32% > 0.3%",
   "EUL": "not listed on Hyperliquid",
-  "GALA": "24h turnover $0.3M < $1M",
+  "GALA": "24h turnover $0.2M < $1M",
   "GMX": "24h turnover $0.1M < $1M",
   "GOAT": "24h turnover $0.3M < $1M",
   "GRIFFAIN": "24h turnover $0.1M < $1M",
@@ -61,18 +65,18 @@
   "IMX": "24h turnover $0.3M < $1M",
   "IO": "24h turnover $0.3M < $1M",
   "IOTX": "not listed on Hyperliquid",
-  "KAITO": "24h turnover $0.5M < $1M",
-  "KAS": "24h turnover $0.3M < $1M",
+  "KAITO": "24h turnover $0.4M < $1M",
+  "KAS": "24h turnover $0.4M < $1M",
   "KMNO": "not listed on Hyperliquid",
   "MANA": "not listed on Hyperliquid",
   "MANTA": "24h turnover $0.1M < $1M",
-  "MEGA": "24h turnover $0.4M < $1M",
+  "MEGA": "24h turnover $0.3M < $1M",
   "METIS": "not listed on Hyperliquid",
   "MEW": "delisted on Hyperliquid",
-  "MNT": "24h turnover $0.3M < $1M",
+  "MNT": "24h turnover $0.4M < $1M",
   "MOODENG": "24h turnover $0.2M < $1M",
   "OM": "delisted on Hyperliquid",
-  "OP": "24h turnover $0.6M < $1M",
+  "OP": "24h turnover $0.8M < $1M",
   "ORCA": "not listed on Hyperliquid",
   "PIXEL": "delisted on Hyperliquid",
   "PLUME": "not listed on Hyperliquid",
@@ -81,23 +85,29 @@
   "PYTH": "24h turnover $0.5M < $1M",
   "RAY": "not listed on Hyperliquid",
   "S": "24h turnover $0.2M < $1M",
-  "SAND": "24h turnover $0.1M < $1M",
+  "SAND": "24h turnover $0.3M < $1M",
   "SCR": "delisted on Hyperliquid",
+  "SKY": "spread 0.31% > 0.3%",
   "SNX": "24h turnover $0.2M < $1M",
+  "SPX": "spread 0.34% > 0.3%",
   "STX": "24h turnover $0.3M < $1M",
   "SUPER": "24h turnover $0.1M < $1M",
   "SUSHI": "24h turnover $0.3M < $1M",
+  "SYRUP": "spread 0.49% > 0.3%",
   "TAIKO": "not listed on Hyperliquid",
   "THETA": "not listed on Hyperliquid",
+  "TIA": "24h turnover $0.7M < $1M",
   "TON": "delisted on Hyperliquid",
   "TURBO": "24h turnover $0.1M < $1M",
+  "USELESS": "spread 0.31% > 0.3%",
+  "W": "spread 0.59% > 0.3%",
   "YFI": "not listed on Hyperliquid",
   "YGG": "24h turnover $0.1M < $1M",
-  "ZEN": "24h turnover $0.4M < $1M",
-  "ZK": "24h turnover $0.2M < $1M",
-  "kFLOKI": "24h turnover $0.1M < $1M",
-  "kNEIRO": "24h turnover $0.3M < $1M",
-  "kSHIB": "24h turnover $0.7M < $1M"
+  "ZEN": "24h turnover $0.5M < $1M",
+  "ZK": "24h turnover $0.3M < $1M",
+  "kFLOKI": "24h turnover $0.2M < $1M",
+  "kNEIRO": "24h turnover $0.2M < $1M",
+  "kSHIB": "24h turnover $0.6M < $1M"
  },
  "schema_version": 2,
  "sector_map_version": "2026-09-30.1",
@@ -105,49 +115,63 @@
   {
    "active": false,
    "label": "not active",
-   "leader_vol_share": 0.78,
+   "leader_vol_share": 0.02,
    "leaders": [
     {
-     "coin": "PUMP",
-     "r24": 16.5
+     "coin": "kBONK",
+     "r24": 6.2
     },
     {
-     "coin": "kBONK",
-     "r24": 9.6
+     "coin": "WIF",
+     "r24": 5.5
     }
    ],
-   "med1": 0.36,
-   "med24": 4.78,
-   "med4": -0.65,
-   "n": 10,
+   "med1": -0.13,
+   "med24": 1.99,
+   "med4": 1.88,
+   "n": 8,
    "parts": {
     "breadth_highs": 0.0,
     "breadth_up": 2.0,
-    "rel24": 0.97,
-    "rel4": -0.23,
-    "volume": -0.13
+    "rel24": 0.5,
+    "rel4": 0.45,
+    "volume": 0.08
    },
-   "rel24": 4.85,
-   "rel4": -0.57,
-   "score": 2.61,
+   "rel24": 2.51,
+   "rel4": 1.13,
+   "score": 3.03,
    "sector": "Memes",
    "share_highs": 0.0,
    "share_up": 1.0,
-   "up": 10,
-   "vol_x": 0.91,
-   "why": "one coin (PUMP) is 78% of turnover - low confidence"
+   "up": 8,
+   "vol_x": 1.05,
+   "why": "score 3.03 < 3.5"
   },
   {
    "active": false,
-   "n": 3,
-   "sector": "Lending",
+   "n": 2,
+   "sector": "Infrastructure",
    "stage": 1,
-   "why": "only 3 eligible members"
+   "why": "only 2 eligible members"
+  },
+  {
+   "active": false,
+   "n": 5,
+   "sector": "DEX",
+   "stage": 1,
+   "why": "median 24h +1.0% not 1.5 pts above BTC"
+  },
+  {
+   "active": false,
+   "n": 9,
+   "sector": "DeFi",
+   "stage": 1,
+   "why": "breadth 5/9 up"
   },
   {
    "active": false,
    "n": 3,
-   "sector": "DePIN",
+   "sector": "Privacy",
    "stage": 1,
    "why": "only 3 eligible members"
   },
@@ -160,13 +184,6 @@
   },
   {
    "active": false,
-   "n": 4,
-   "sector": "Payments",
-   "stage": 1,
-   "why": "breadth 0/4 up"
-  },
-  {
-   "active": false,
    "n": 0,
    "sector": "Gaming",
    "stage": 1,
@@ -174,62 +191,55 @@
   },
   {
    "active": false,
-   "n": 3,
-   "sector": "Privacy",
-   "stage": 1,
-   "why": "only 3 eligible members"
-  },
-  {
-   "active": false,
-   "n": 3,
+   "n": 2,
    "sector": "Real-world assets",
    "stage": 1,
-   "why": "only 3 eligible members"
-  },
-  {
-   "active": false,
-   "n": 14,
-   "sector": "DeFi",
-   "stage": 1,
-   "why": "breadth 6/14 up"
-  },
-  {
-   "active": false,
-   "n": 19,
-   "sector": "Layer 1",
-   "stage": 1,
-   "why": "breadth 9/19 up"
-  },
-  {
-   "active": false,
-   "n": 7,
-   "sector": "AI",
-   "stage": 1,
-   "why": "breadth 3/7 up"
-  },
-  {
-   "active": false,
-   "n": 6,
-   "sector": "DEX",
-   "stage": 1,
-   "why": "breadth 2/6 up"
+   "why": "only 2 eligible members"
   },
   {
    "active": false,
    "n": 4,
    "sector": "Exchange tokens",
    "stage": 1,
+   "why": "breadth 2/4 up"
+  },
+  {
+   "active": false,
+   "n": 4,
+   "sector": "Payments",
+   "stage": 1,
    "why": "breadth 1/4 up"
   },
   {
    "active": false,
    "n": 4,
-   "sector": "Infrastructure",
+   "sector": "DePIN",
    "stage": 1,
-   "why": "breadth 2/4 up"
+   "why": "breadth 1/4 up"
+  },
+  {
+   "active": false,
+   "n": 16,
+   "sector": "Layer 1",
+   "stage": 1,
+   "why": "breadth 6/16 up"
+  },
+  {
+   "active": false,
+   "n": 7,
+   "sector": "AI",
+   "stage": 1,
+   "why": "breadth 2/7 up"
+  },
+  {
+   "active": false,
+   "n": 2,
+   "sector": "Lending",
+   "stage": 1,
+   "why": "only 2 eligible members"
   }
  ],
- "slot": "2026-09-30 16:30",
+ "slot": "2026-09-30 22:30",
  "status": "no_sector",
  "take": {
   "change_id": null,
@@ -238,9 +248,9 @@
  },
  "timing": {
   "candle_time_semantics": "t = bar open, T = close - 1 ms (checked on this response)",
-  "decision_ms": 1790749826569,
-  "decision_utc": "2026-09-30T06:30:26Z",
-  "source_bar_close_ms": 1790748000000,
-  "source_bar_close_utc": "2026-09-30T06:00:00Z"
+  "decision_ms": 1790771428622,
+  "decision_utc": "2026-09-30T12:30:28Z",
+  "source_bar_close_ms": 1790769600000,
+  "source_bar_close_utc": "2026-09-30T12:00:00Z"
  }
 }
