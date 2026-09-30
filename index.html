@@ -348,6 +348,10 @@
   @media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
   .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
   .tile.bot { border-color: var(--accent); }
+  .tile.tot { background: var(--accent-soft, var(--surface)); border-color: var(--ink-3); }
+  .tile.tot .v { font-weight: 700; }
+  #tot-wrap .tiles { grid-template-columns: repeat(5, 1fr); }
+  @media (max-width: 900px) { #tot-wrap .tiles { grid-template-columns: repeat(2, 1fr); } }
   .tile .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); font-weight: 600; }
   .tile .v { font-family: var(--mono); font-size: clamp(15px, 4.4vw, 20px); font-weight: 500; letter-spacing: -0.02em; margin-top: 2px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
   .sub { font-size: 12px; color: var(--ink-2); }
@@ -1500,12 +1504,20 @@ run();setInterval(run,600000);
     return t;
   }
 
+  // every bot account: the old bot plus the bot2 sleeves saved in this browser
+  var BOTS = { bot: { name: "Old bot", color: "var(--orange)" },
+               b2d: { name: "bot2 1D", color: "var(--blue)", key: "hl-deck-b2-1d" },
+               b2h: { name: "bot2 1H", color: "var(--warn)", key: "hl-deck-b2-1h" } };
   function loadRealised(main, sub) {
     var who = [{ k: "you", a: main }];
     if (sub) who.push({ k: "bot", a: sub });
+    ["b2d", "b2h"].forEach(function (k) {
+      var a = recall(BOTS[k].key);
+      if (isAddr(a)) who.push({ k: k, a: a });
+    });
     return Promise.all(who.map(function (w) {
       return Promise.all([fillsSince(w.a, RP_START), fundingSince(w.a, Date.now() - FUND_DAYS * DAY),
-                          w.k === "bot" ? pnlHistory(w.a) : null])
+                          w.k !== "you" ? pnlHistory(w.a) : null])
         .then(function (r) { return { k: w.k, fills: r[0], fund: r[1], closed: closes(r[0], w.k), hist: r[2] }; });
     })).then(drawRealised).catch(function (e) {
       document.getElementById("rp-h").hidden = false;
@@ -1528,29 +1540,44 @@ run();setInterval(run,600000);
     }).catch(function () { return null; });
   }
 
-  // Bot lifetime chart: total P/L (realised + open trades) vs realised only.
-  // The gap between the two lines is the open trades' unrealised P/L.
-  function botChart(bot) {
-    var hist = bot.hist || [];
-    if (hist.length < 2) return null;
-    var fills = bot.fills.slice().sort(function (a, b) { return +a.time - +b.time; });
-    var times = hist.map(function (h) { return h[0]; });
-    fills.forEach(function (f) { if (+f.time > times[0]) times.push(+f.time); });
+  // Bots' lifetime chart: every bot combined - total P/L (realised + open
+  // trades) vs realised only - plus a thin line per bot when there's more
+  // than one. The gap between the two thick lines is the open trades.
+  function botChart(bots) {
+    bots = bots.filter(function (b) { return b.hist && b.hist.length >= 2; });
+    if (!bots.length) return null;
+    var fills = [];
+    bots.forEach(function (b) { fills = fills.concat(b.fills); });
+    fills.sort(function (a, b) { return +a.time - +b.time; });
+    var t0 = Math.min.apply(null, bots.map(function (b) { return b.hist[0][0]; }));
+    var seen = {}, times = [];
+    var add = function (t) { if (t >= t0 && !seen[t]) { seen[t] = 1; times.push(t); } };
+    bots.forEach(function (b) { b.hist.forEach(function (h) { add(h[0]); }); });
+    fills.forEach(function (f) { add(+f.time); });
     times.sort(function (a, b) { return a - b; });
-    // realised so far at each time (steps at fills); total interpolated from HL's curve
-    var i = 0, run = 0, j = 0, real = [], tot = [];
+    // HL's curve at time t: 0 before the account's first point, flat after its last
+    var at = function (hist, t) {
+      if (t < hist[0][0]) return 0;
+      var n = hist.length - 1;
+      if (t >= hist[n][0]) return hist[n][1];
+      var lo = 0, hi = n;
+      while (hi - lo > 1) { var m = (lo + hi) >> 1; if (hist[m][0] <= t) lo = m; else hi = m; }
+      var a = hist[lo], b = hist[hi];
+      return a[1] + (b[1] - a[1]) * (t - a[0]) / Math.max(1, b[0] - a[0]);
+    };
+    var i = 0, run = 0, real = [], tot = [], each = bots.map(function () { return []; });
     times.forEach(function (t) {
       while (i < fills.length && +fills[i].time <= t) {
         run += parseFloat(fills[i].closedPnl || 0) - parseFloat(fills[i].fee || 0); i++;
       }
-      while (j < hist.length - 2 && hist[j + 1][0] <= t) j++;
-      var a = hist[j], b = hist[Math.min(j + 1, hist.length - 1)];
-      var v = b[0] > a[0] ? a[1] + (b[1] - a[1]) * Math.min(1, Math.max(0, (t - a[0]) / (b[0] - a[0]))) : a[1];
-      real.push(run); tot.push(v);
+      var sum = 0;
+      bots.forEach(function (b, k) { var v = at(b.hist, t); each[k].push(v); sum += v; });
+      real.push(run); tot.push(sum);
     });
-    var t0 = times[0], t1 = times[times.length - 1];
-    var lo = Math.min(0, Math.min.apply(null, real), Math.min.apply(null, tot));
-    var hi = Math.max(0, Math.max.apply(null, real), Math.max.apply(null, tot));
+    var t1 = times[times.length - 1];
+    var every = real.concat(tot);
+    if (bots.length > 1) each.forEach(function (e) { every = every.concat(e); });
+    var lo = Math.min(0, Math.min.apply(null, every)), hi = Math.max(0, Math.max.apply(null, every));
     if (hi - lo < 1) { hi += 0.5; lo -= 0.5; }
     var W = 600, H = 160;
     var X = function (t) { return ((t - t0) / Math.max(1, t1 - t0) * W).toFixed(1); };
@@ -1560,7 +1587,7 @@ run();setInterval(run,600000);
     var svg = document.createElementNS(ns, "svg");
     svg.setAttribute("viewBox", "0 0 " + W + " " + H);
     svg.setAttribute("preserveAspectRatio", "none");
-    svg.setAttribute("aria-label", "Old bot profit and loss since it started");
+    svg.setAttribute("aria-label", "All bots' profit and loss since they started");
     svg.style.cssText = "width:100%;height:160px;display:block";
     function line(d, color, width, dash) {
       var l = document.createElementNS(ns, "polyline");
@@ -1571,6 +1598,7 @@ run();setInterval(run,600000);
       svg.appendChild(l);
     }
     line("0," + Y(0) + " " + W + "," + Y(0), "var(--ink-3)", 1, "3 4");   // break-even
+    if (bots.length > 1) bots.forEach(function (b, k) { line(pts(each[k]), BOTS[b.k].color, 1.25); });
     line(pts(real), "var(--ink-2)", 2);
     line(pts(tot), "var(--accent)", 2.5);
     var nowTot = tot[tot.length - 1], nowReal = real[real.length - 1];
@@ -1578,18 +1606,19 @@ run();setInterval(run,600000);
     box.style.cssText = "padding:10px 12px;margin-bottom:12px";
     var head = el("div", "sub");
     head.style.marginBottom = "6px";
-    var sw = function (color, dash) {
+    var sw = function (color, thin) {
       var x = el("span"); x.style.cssText = "display:inline-block;width:14px;height:0;vertical-align:middle;margin-right:5px;border-top:"
-        + (dash ? "2px solid " : "3px solid ") + color; return x; };
-    head.appendChild(sw("var(--accent)"));
-    head.appendChild(document.createTextNode("Total (closed + open) " + signed(nowTot) + "   "));
-    head.appendChild(sw("var(--ink-2)", true));
-    head.appendChild(document.createTextNode("Realised " + signed(nowReal) + "   · open trades & funding " + signed(nowTot - nowReal)));
+        + (thin ? "2px solid " : "3px solid ") + color; return x; };
+    var item = function (color, thin, text) {
+      var s = el("span"); s.style.cssText = "white-space:nowrap;margin-right:12px;display:inline-block";
+      s.appendChild(sw(color, thin)); s.appendChild(document.createTextNode(text)); head.appendChild(s); };
+    item("var(--accent)", false, (bots.length > 1 ? "All bots " : "Total ") + signed(nowTot));
+    item("var(--ink-2)", true, "Realised " + signed(nowReal));
+    if (bots.length > 1) bots.forEach(function (b, k) { item(BOTS[b.k].color, true, BOTS[b.k].name + " " + signed(each[k][each[k].length - 1])); });
     box.appendChild(head);
     box.appendChild(svg);
     var d = function (t) { return new Date(t).toLocaleDateString("en-AU", { timeZone: "Australia/Sydney", day: "numeric", month: "short" }); };
-    var foot = el("div", "sub", d(t0) + " → now · high " + signed(hi) + " · low " + signed(lo)
-      + " · dashed line = break-even");
+    var foot = el("div", "sub", d(t0) + " → now · thick line = closed + open trades, grey = closed only · dashed = break-even");
     foot.style.marginTop = "4px";
     box.appendChild(foot);
     return box;
@@ -1621,7 +1650,10 @@ run();setInterval(run,600000);
     var now = Date.now(), thisMonth = sydMonth(now);
     var all = function () { return true; };
     var inMonth = function (ym) { return function (t) { return sydMonth(t) === ym; }; };
-    var bot = acc.filter(function (a) { return a.k === "bot"; })[0];
+    var bots = acc.filter(function (a) { return a.k !== "you"; });
+    var bot = bots.length ? { fills: [].concat.apply([], bots.map(function (b) { return b.fills; })),
+                              closed: [].concat.apply([], bots.map(function (b) { return b.closed; })) } : null;
+    var botsName = bots.length > 1 ? "All bots" : bots.length ? BOTS[bots[0].k].name : "";
     var you = acc.filter(function (a) { return a.k === "you"; })[0];
     var wl = function (s) { return "won " + signed(s.won) + " · lost " + signed(s.lost); };
     var botAll = bot ? tally(bot, all) : null, youAll = you ? tally(you, all) : null;
@@ -1630,28 +1662,29 @@ run();setInterval(run,600000);
     box.textContent = "";
     if (bot) {
       var bm = tally(bot, inMonth(thisMonth));
-      rpTile(box, "Old bot · " + monthName(thisMonth), bm.net, [bm.n + " closed · " + wl(bm)]);
+      rpTile(box, botsName + " · " + monthName(thisMonth), bm.net, [bm.n + " closed · " + wl(bm)]);
       var first = bot.fills.length ? Math.min.apply(null, bot.fills.map(function (f) { return +f.time; })) : null;
-      rpTile(box, "Old bot · all time", botAll.net, [
+      rpTile(box, botsName + " · all time", botAll.net, [
         (first ? "since " + new Date(first).toLocaleDateString("en-AU",
           { timeZone: "Australia/Sydney", day: "numeric", month: "short", year: "numeric" }) + " · " : "") + botAll.n + " closed",
-        wl(botAll)]);
+        wl(botAll),
+        bots.length > 1 ? bots.map(function (b) { return BOTS[b.k].name + " " + signed(tally(b, all).net); }).join(" · ") : ""]);
     }
     if (you) rpTile(box, "Your trades · all time", youAll.net, [youAll.n + " closed", wl(youAll)]);
     if (bot && you) rpTile(box, "Total · all time", botAll.net + youAll.net,
-                           ["Old bot " + signed(botAll.net) + " · You " + signed(youAll.net)]);
+                           [botsName + " " + signed(botAll.net) + " · You " + signed(youAll.net)]);
 
     var wrap = document.getElementById("rp-wrap");
     wrap.textContent = "";
 
     // the bot's lifetime curve, then month by month
-    var chart = bot && botChart(bot);
+    var chart = botChart(bots);
     if (chart) wrap.appendChild(chart);
     if (bot && bot.fills.length) {
       var months = {};
       bot.fills.forEach(function (f) { months[sydMonth(+f.time)] = 1; });
       var sc = el("div", "scroller"), tb = el("table"), hd = el("thead"), hr = el("tr");
-      ["Old bot by month", "Won", "Lost", "Net"].forEach(function (h) { hr.appendChild(el("th", null, h)); });
+      [botsName + " by month", "Won", "Lost", "Net"].forEach(function (h) { hr.appendChild(el("th", null, h)); });
       hd.appendChild(hr); tb.appendChild(hd);
       var body = el("tbody");
       Object.keys(months).sort().reverse().forEach(function (ym) {
@@ -1681,6 +1714,8 @@ run();setInterval(run,600000);
         if (r.who === "bot") {
           var tag = r.cloid && r.cloid.length === 34 && RP_TAGS[r.cloid.slice(2, 4).toLowerCase()];
           c.appendChild(el("span", "tag", tag ? "old bot · " + tag : "old bot"));
+        } else if (BOTS[r.who]) {
+          c.appendChild(el("span", "tag", BOTS[r.who].name));
         }
         tr.appendChild(c);
         tr.appendChild(el("td", "num", new Date(r.time).toLocaleString([], {
@@ -1706,7 +1741,7 @@ run();setInterval(run,600000);
       "Each total = money won on closed trades minus money lost, minus trading fees (opening fees included, which is why a total can sit slightly below won − lost). "
       + "Months are Sydney calendar months. Open trades aren't counted — they're in the positions table. "
       + "Funding, last " + FUND_DAYS + " days (not included above): "
-      + fund.map(function (x) { return (x.k === "bot" ? "Old bot " : "You ") + signed(x.v); }).join(" · ") + ".";
+      + fund.map(function (x) { return (BOTS[x.k] ? BOTS[x.k].name + " " : "You ") + signed(x.v); }).join(" · ") + ".";
   }
 
   // ---------- GMX (Arbitrum) ----------
@@ -1911,8 +1946,8 @@ run();setInterval(run,600000);
       var v = recall(a.k), m = document.getElementById(a.m);
       if (m) m.textContent = isAddr(v) ? "· saved " + mask(v) : "· not set";
     });
-    var list = ACCTS.map(function (a) { return { a: a, addr: recall(a.k) }; })
-                    .filter(function (x) { return isAddr(x.addr); });
+    var all = ACCTS.map(function (a) { return { a: a, addr: recall(a.k) }; });
+    var list = all.filter(function (x) { return isAddr(x.addr); });
     if (!list.length) {
       window.hlWalletLine = "";
       wrap.textContent = "";
@@ -1921,40 +1956,38 @@ run();setInterval(run,600000);
       document.getElementById("acct-setup").open = true;
       return Promise.resolve();
     }
-    return Promise.all(list.map(function (x) {
-      return acctValue(x.addr).catch(function () { return null; });
+    return Promise.all(all.map(function (x) {
+      return isAddr(x.addr) ? acctValue(x.addr).catch(function () { return null; }) : Promise.resolve(undefined);
     })).then(function (res) {
       if (run !== totalsRun) return;                  // a newer refresh is already drawing
       var total = 0, open = 0, read = 0;
-      var sc = el("div", "tw"), tb = el("table"), hd = el("thead"), hr = el("tr");
-      ["Account", "Address", "Value", "Open"].forEach(function (h, i) {
-        hr.appendChild(el("th", i >= 2 ? "r" : null, h)); });
-      hd.appendChild(hr); tb.appendChild(hd);
-      var body = el("tbody");
-      list.forEach(function (x, i) {
-        var r = res[i], tr = el("tr");
-        tr.appendChild(el("td", null, x.a.name));
-        tr.appendChild(el("td", "mono", mask(x.addr)));
-        var v = el("td", "r");
-        if (r) {
-          v.appendChild(document.createTextNode(money(r.value)));
-          v.appendChild(el("small", null, r.unified ? " unified" : " perps"));
+      var grid = el("div", "tiles");
+      all.forEach(function (x, i) {
+        var r = res[i], t = el("div", "tile" + (i >= 2 ? " bot" : ""));
+        t.appendChild(el("div", "k", x.a.name));
+        if (r === undefined) {                          // no address saved for this account
+          t.appendChild(el("div", "v", "—"));
+          var add = el("div", "sub"); var ln = el("a", null, "add address");
+          ln.href = "#acct-setup";
+          ln.addEventListener("click", function (ev) { ev.preventDefault(); var d = document.getElementById("acct-setup");
+            d.open = true; document.getElementById(x.a.inp).focus(); });
+          add.appendChild(ln); t.appendChild(add);
+        } else if (r) {
+          t.appendChild(el("div", "v", money(r.value)));
+          t.appendChild(el("div", "sub", r.open + " open · " + (r.unified ? "unified" : "perps") + " · " + mask(x.addr)));
           total += r.value; open += r.open; read++;
         } else {
-          v.appendChild(el("span", "bad", "couldn't read"));
+          t.appendChild(el("div", "v", "—"));
+          t.appendChild(el("div", "sub bad", "couldn't read · " + mask(x.addr)));
         }
-        tr.appendChild(v);
-        tr.appendChild(el("td", "r", r ? String(r.open) : "—"));
-        body.appendChild(tr);
+        grid.appendChild(t);
       });
-      var tt = el("tr", "tot");
-      tt.appendChild(el("td", null, "Total"));
-      tt.appendChild(el("td", null, read + " of " + list.length + " account" + (list.length === 1 ? "" : "s")));
-      tt.appendChild(el("td", "r", money(total)));
-      tt.appendChild(el("td", "r", String(open)));
-      body.appendChild(tt);
-      tb.appendChild(body); sc.appendChild(tb);
-      wrap.textContent = ""; wrap.appendChild(sc);
+      var tt = el("div", "tile tot");
+      tt.appendChild(el("div", "k", "Total"));
+      tt.appendChild(el("div", "v", money(total)));
+      tt.appendChild(el("div", "sub", read + " account" + (read === 1 ? "" : "s") + " · " + open + " open"));
+      grid.appendChild(tt);
+      wrap.textContent = ""; wrap.appendChild(grid);
       var hhmm = new Date().toLocaleTimeString([], { timeZone: "Australia/Sydney", hour: "numeric", minute: "2-digit" });
       when.textContent = "Updated " + hhmm + " Sydney. Unified accounts are valued at their spot USDC; others at their perp account value."
         + (read < list.length ? " Accounts that couldn't be read are left out of the total." : "");
