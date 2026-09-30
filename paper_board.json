@@ -56,7 +56,7 @@
      "coin": "SOL",
      "side": "LONG",
      "opened": "2026-09-30",
-     "opened_at": "2026-09-30T15:00Z"
+     "opened_at": "2026-09-30T18:00Z"
     }
    ],
    "recent": [
@@ -134,14 +134,8 @@
    "target": 500,
    "backtest": null,
    "status": "collecting",
-   "progress": "0 of 500 trades",
+   "progress": "1 of 500 trades",
    "open": [
-    {
-     "coin": "ZEC",
-     "side": "LONG",
-     "opened": "2026-09-28",
-     "opened_at": "2026-09-28T06:18Z"
-    },
     {
      "coin": "PUMP",
      "side": "LONG",
@@ -155,14 +149,24 @@
      "opened_at": "2026-09-30T09:30Z"
     }
    ],
-   "recent": [],
+   "recent": [
+    {
+     "coin": "ZEC",
+     "side": "LONG",
+     "opened": "2026-09-28",
+     "closed": "2026-09-30",
+     "r": -0.3,
+     "opened_at": "2026-09-28T06:18Z",
+     "closed_at": "2026-09-30T18:30Z"
+    }
+   ],
    "kind": "test",
-   "n": 0,
-   "avg": null,
-   "win": null,
+   "n": 1,
+   "avg": -0.3,
+   "win": 0,
    "lo": null,
    "hi": null,
-   "overlap": null,
+   "overlap": 100,
    "avg_solo": null
   },
   {
@@ -173,20 +177,23 @@
    "target": 100,
    "backtest": null,
    "status": "collecting",
-   "progress": "0 of 100 trades",
-   "open": [
+   "progress": "1 of 100 trades",
+   "open": [],
+   "recent": [
     {
      "coin": "ETH",
      "side": "LONG",
      "opened": "2026-09-29",
-     "opened_at": "2026-09-29T04:18Z"
+     "closed": "2026-09-30",
+     "r": 0.03,
+     "opened_at": "2026-09-29T04:18Z",
+     "closed_at": "2026-09-30T18:30Z"
     }
    ],
-   "recent": [],
    "kind": "test",
-   "n": 0,
-   "avg": null,
-   "win": null,
+   "n": 1,
+   "avg": 0.03,
+   "win": 100,
    "lo": null,
    "hi": null,
    "overlap": null,
