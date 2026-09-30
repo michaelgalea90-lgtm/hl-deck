@@ -1,0 +1,112 @@
+{
+ "as_of": "2026-09-30T00:02Z",
+ "note": "bot2: 70% 1D-R / 30% corrected 1H-AL on two separate sub-accounts; 70/30 is the INITIAL allocation only, never rebalanced. Status comes from each run's actual state. Coin lists are the public monthly top-10 rule, not holdings.",
+ "bot2": {
+  "1D": {
+   "status": "VERIFICATION",
+   "stale": false,
+   "last_run": "2026-09-29T23:02Z"
+  },
+  "1H": {
+   "status": "DRY RUN",
+   "stale": false,
+   "last_run": "2026-09-29T23:02Z"
+  }
+ },
+ "bot2_lists": [
+  {
+   "month": "2026-09",
+   "coins": [
+    "BTC",
+    "ETH",
+    "BNB",
+    "XRP",
+    "SOL",
+    "TRX",
+    "HYPE",
+    "ZEC",
+    "DOGE",
+    "XMR"
+   ],
+   "status": "published",
+   "effective": "2026-09-01T00:00Z",
+   "source": "research list (frozen)"
+  },
+  {
+   "month": "2026-10",
+   "coins": [],
+   "status": "pending",
+   "effective": "2026-10-01T00:00Z",
+   "source": "bot2-universe"
+  }
+ ],
+ "old_bot": {
+  "status": "manage-only",
+  "note": "Old bot (live.py) opens nothing new since 29 Sep 2026 and only manages its remaining positions. Its lists below are the OLD rules - reference only, no bot trades them.",
+  "lists": {
+   "1D (curated)": [
+    "BTC",
+    "ETH",
+    "BNB",
+    "SOL",
+    "XRP",
+    "ADA",
+    "DOGE",
+    "AVAX",
+    "ZEC",
+    "XLM",
+    "TRX",
+    "HBAR",
+    "kSHIB",
+    "ALGO",
+    "ICP",
+    "ATOM",
+    "LINK",
+    "NEAR",
+    "SUI",
+    "INJ",
+    "OP",
+    "AR",
+    "ENA"
+   ],
+   "1H (9-coin)": [
+    "WLD",
+    "LINK",
+    "AVAX",
+    "SOL",
+    "VVV",
+    "BTC",
+    "ETH",
+    "ARB",
+    "BNB"
+   ],
+   "Dip": [
+    "BTC",
+    "ETH",
+    "BNB",
+    "SOL",
+    "XRP",
+    "ADA",
+    "AVAX",
+    "ZEC",
+    "XLM",
+    "TRX",
+    "HBAR",
+    "kSHIB",
+    "ALGO",
+    "ICP",
+    "ATOM",
+    "LINK",
+    "NEAR",
+    "SUI",
+    "INJ",
+    "OP",
+    "AR",
+    "ENA",
+    "LDO",
+    "LTC",
+    "STX"
+   ]
+  }
+ }
+}

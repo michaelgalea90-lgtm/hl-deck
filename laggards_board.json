@@ -1,42 +1,99 @@
 {
- "as_of": "2026-09-29T08:04Z",
+ "as_of": "2026-09-30T00:06Z",
  "hot_sectors": [
   {
-   "name": "Infra",
-   "leader": "LINK",
-   "leader_24h": 11.4
+   "name": "DeFi",
+   "leader": "AAVE",
+   "leader_24h": 10.9
+  },
+  {
+   "name": "Memes",
+   "leader": "PUMP",
+   "leader_24h": 20.1
   }
  ],
  "picks": [
   {
-   "coin": "ADA",
-   "sector": "Layer 1s",
+   "coin": "XLM",
+   "sector": "Payments",
    "hot": false,
-   "px": 0.252661,
-   "range_pct": 14.1,
-   "vol_x": 1.15,
-   "entry": 0.26555,
-   "stop": 0.23281,
-   "target": 0.29829000000000006,
+   "px": 0.22269,
+   "range_pct": 14.6,
+   "vol_x": 2.9,
+   "entry": 0.2373,
+   "stop": 0.20715,
+   "target": 0.26745,
    "facts": {
     "days": 220,
     "vs_50d_avg_pct": 19.5,
-    "vs_200d_avg_pct": 18.1,
-    "from_40d_high_pct": -4.9,
-    "from_40d_low_pct": 39.0,
-    "from_220d_high_pct": -19.3,
-    "vol_3d_vs_prior_7d": 0.84,
+    "vs_200d_avg_pct": 24.2,
+    "from_40d_high_pct": -6.2,
+    "from_40d_low_pct": 30.0,
+    "from_220d_high_pct": -25.1,
+    "vol_3d_vs_prior_7d": 2.35,
     "h4_higher_lows_of_last_6": 2,
-    "h4_last_24h_range_pct": 6.2,
+    "h4_last_24h_range_pct": 8.0,
     "funding_hourly_pct": 0.0013,
     "funding_apr_pct": 11.0,
-    "open_interest_usd_m": 40.7,
-    "day_volume_usd_m": 17.2
+    "open_interest_usd_m": 22.5,
+    "day_volume_usd_m": 9.7
+   }
+  },
+  {
+   "coin": "ADA",
+   "sector": "Layer 1s",
+   "hot": false,
+   "px": 0.24435,
+   "range_pct": 11.2,
+   "vol_x": 1.11,
+   "entry": 0.26555,
+   "stop": 0.23888,
+   "target": 0.29222000000000004,
+   "facts": {
+    "days": 220,
+    "vs_50d_avg_pct": 15.0,
+    "vs_200d_avg_pct": 14.3,
+    "from_40d_high_pct": -8.0,
+    "from_40d_low_pct": 28.9,
+    "from_220d_high_pct": -21.9,
+    "vol_3d_vs_prior_7d": 0.94,
+    "h4_higher_lows_of_last_6": 3,
+    "h4_last_24h_range_pct": 6.6,
+    "funding_hourly_pct": -0.0051,
+    "funding_apr_pct": -44.7,
+    "open_interest_usd_m": 38.6,
+    "day_volume_usd_m": 10.0
+   }
+  },
+  {
+   "coin": "HYPE",
+   "sector": "Hyperliquid",
+   "hot": false,
+   "px": 86.023,
+   "range_pct": 11.3,
+   "vol_x": 1.03,
+   "entry": 94.367,
+   "stop": 84.759,
+   "target": 103.97500000000001,
+   "facts": {
+    "days": 220,
+    "vs_50d_avg_pct": 7.6,
+    "vs_200d_avg_pct": 44.7,
+    "from_40d_high_pct": -12.2,
+    "from_40d_low_pct": 20.9,
+    "from_220d_high_pct": -12.2,
+    "vol_3d_vs_prior_7d": 0.84,
+    "h4_higher_lows_of_last_6": 2,
+    "h4_last_24h_range_pct": 5.0,
+    "funding_hourly_pct": 0.0009,
+    "funding_apr_pct": 7.7,
+    "open_interest_usd_m": 1766.1,
+    "day_volume_usd_m": 508.2
    }
   }
  ],
  "btc": {
-  "vs_200d_avg_pct": 17.3,
-  "last_7d_pct": -3.7
+  "vs_200d_avg_pct": 17.4,
+  "last_7d_pct": -3.0
  }
 }
