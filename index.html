@@ -7,6 +7,7 @@
 <meta name="robots" content="noindex, nofollow">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>HL Scanner Deck</title>
+<meta name="description" content="Public status page for the HL Scanner bots: bot status, live signal checks, paper tests.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
@@ -147,28 +148,6 @@
   .pill.tag   { background: var(--surface-2); color: var(--ink-2); }
   .pill.live  { background: var(--accent-sf); color: var(--accent); }
 
-  /* signal radar rows */
-  .radar { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
-  .row {
-    display: grid; grid-template-columns: 84px 1fr 96px; align-items: center;
-    gap: 12px; padding: 10px 14px;
-  }
-  .row + .row { border-top: 1px solid var(--line-soft); }
-  .row .who { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
-  .row .who .coin { font-size: 14px; }
-  .row .who .tf { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
-  .row .who .side { font-family: var(--mono); font-size: 9.5px; font-weight: 600;
-    letter-spacing: 0.04em; padding: 1px 5px; border-radius: 4px; }
-  .row .who .side.l { color: var(--up); background: var(--up-sf); }
-  .row .who .side.s { color: var(--down); background: var(--down-sf); }
-  .track { position: relative; height: 22px; }
-  .track .base { position: absolute; inset: 9px 0 auto; height: 4px; border-radius: 2px; background: var(--surface-2); }
-  .track .fill { position: absolute; top: 9px; height: 4px; border-radius: 2px; background: var(--accent); }
-  .track .trig { position: absolute; top: 4px; right: 0; width: 2px; height: 14px; background: var(--ink-3); border-radius: 1px; }
-  .dist { font-family: var(--mono); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
-  .row.blocked { opacity: 0.5; }
-  .row.hot .fill { background: var(--up); }
-
   .note { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; }
   .note code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
 
@@ -199,6 +178,99 @@
   .banner strong { color: var(--warn); }
   footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 12px; color: var(--ink-3); }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  .lede { font-size: 12.5px; color: var(--ink-3); margin: 10px 0 12px; line-height: 1.45; }
+
+  /* Every area is one collapsible card: a title, a label, and a one-line summary.
+     Open/closed is remembered in this browser only. */
+  details.dk{border:1px solid var(--line);border-radius:var(--radius);margin:10px 0;background:var(--surface)}
+  details.dk>summary{list-style:none;cursor:pointer;display:flex;gap:6px 10px;align-items:baseline;flex-wrap:wrap;padding:12px 14px;min-height:24px}
+  details.dk>summary::-webkit-details-marker{display:none}
+  details.dk>summary .t{font-weight:700;white-space:nowrap}
+  details.dk>summary .s{flex:1 1 100%;min-width:0;color:var(--ink-2);font-size:13px;overflow-wrap:anywhere;order:3}
+  details.dk>summary .a{margin-left:auto;color:var(--ink-3);transition:transform .15s}
+  details.dk[open]>summary .a{transform:rotate(90deg)}
+  details.dk[open]>summary .s{display:none}   /* open: the card shows the full summary itself */
+  details.dk .dk-body{padding:0 14px 14px}
+  .tg{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--ink-3);white-space:nowrap}
+  .tg.now{color:var(--accent);border-color:var(--accent)}
+  .tg.paper{border-style:dashed;color:var(--ink-2)}
+  .tg.priv{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
+
+  /* shared section styles (were repeated inside each section) */
+  .fr{font-size:14px;line-height:1.5;color:var(--ink)}
+  .fr h3{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:22px 0 6px;font-weight:600}
+  .fr h3:first-child{margin-top:4px}
+  .fr p.sub{color:var(--ink-2);font-size:12.5px;margin:0 0 10px;max-width:68ch}
+  .fr .key{display:flex;gap:10px;font-size:12px;color:var(--ink-3);margin:0 0 12px;flex-wrap:wrap;align-items:center}
+  .fr .sum{border:1px solid var(--line);border-left:4px solid #2962FF;background:var(--surface);border-radius:8px;padding:12px 14px;font-size:15px;margin:0 0 16px}
+  .fr .sum.warn{border-left-color:#FF6D00}
+  .fr .sum b{color:var(--ink)}
+  .fr .grp{border:1px solid var(--line);border-radius:8px;margin:0 0 14px;overflow:hidden}
+  .fr .gh{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;padding:9px 12px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+  .fr .gh b{font-size:14px}
+  .fr .gh span{font-size:12px;color:var(--ink-3)}
+  .fr .row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap;background:var(--surface)}
+  .fr .row:last-child{border-bottom:0}
+  .fr .coin{width:64px;font-weight:600}
+  .fr .dir{font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:4px;min-width:44px;text-align:center}
+  .fr .L{background:rgba(41,98,255,.18);color:#7da2ff}
+  .fr .S{background:rgba(255,109,0,.18);color:#ff9a4d}
+  .fr .N{background:var(--surface-2);color:var(--ink-3)}
+  .fr .pills{display:flex;gap:5px;flex-wrap:wrap;flex:1;min-width:210px}
+  .fr .p{font-size:11.5px;padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--ink-3);white-space:nowrap}
+  .fr .p.ok{background:#2962FF;border-color:#2962FF;color:#fff}
+  .fr .st{font-size:12px;color:var(--ink-3);min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
+  .fr .st.go{color:#fff;background:#2962FF;border-radius:5px;padding:2px 8px;font-weight:700;text-align:center}
+  .fr .note{font-size:11.5px;color:var(--ink-3);margin:6px 0 0}
+  .fr .tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;margin:0 0 14px}
+  .fr .tw table{width:100%;border-collapse:collapse;font-size:13px}
+  .fr .tw th,.fr .tw td{padding:7px 10px;border-bottom:1px solid var(--line-soft);text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .fr .tw tbody tr:last-child td{border-bottom:0}
+  .fr .tw th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;background:var(--surface-2)}
+  .fr .tw td small{color:var(--ink-3);font-size:11px}
+  .fr .tw td.good{color:#3b6cff;font-weight:600}
+  .fr .tw td.bad,.fr .bad{color:#FF6D00;font-weight:600}
+
+  /* bots */
+  .bt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
+  .bt-cell{min-width:0;padding:10px 12px;background:var(--surface)}
+  .bt-cell small{display:block;color:var(--ink-3);font-size:11.5px}
+  .bt-cell .bt-st{display:block;font-size:16px;font-weight:700;margin:2px 0}
+  .bt-cell .bt-st.on{color:var(--up)}
+  .bt-cell .bt-rule{font-size:12.5px;color:var(--ink-2);margin:6px 0 0;line-height:1.4}
+  .bt-stale{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;color:var(--warn);background:var(--warn-sf);border-radius:4px;padding:1px 6px;vertical-align:2px}
+  .bt-list{padding:8px 12px;border-top:1px solid var(--line-soft);font-size:13px}
+  .bt-list small{color:var(--ink-3)}
+  .bt-list .pills{margin-top:5px;min-width:0}
+  .bt-txt{padding:8px 12px 10px;font-size:12.5px;color:var(--ink-2)}
+  .bt-old>summary{cursor:pointer;padding:8px 12px;font-size:12.5px;color:var(--ink-2)}
+  .bt-old .bt-list{border-top:0;padding-top:2px}
+
+  /* paper tests: one line per test, tap for the detail */
+  .pt-grp>summary{cursor:pointer;list-style:none}
+  .pt-grp>summary::-webkit-details-marker{display:none}
+  .pt-grp:not([open])>summary{border-bottom:0}
+  .pt-bar{height:6px;background:var(--line-soft);border-radius:3px;overflow:hidden;margin:0 12px 10px}
+  .pt-bar i{display:block;height:100%;background:#2962FF}
+  .pt-st{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;border:1px solid var(--line);color:var(--ink-3);white-space:nowrap}
+  .pt-st.passed{color:#3b6cff;border-color:#3b6cff}
+  .pt-st.failed{color:#FF6D00;border-color:#FF6D00}
+  .pt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;padding:10px 12px 6px}
+  .pt-grid b{display:block;font-size:15px;font-variant-numeric:tabular-nums}
+  .pt-grid small{display:block;color:var(--ink-3);font-size:11px}
+  .pt-rule{padding:2px 12px 10px;font-size:12.5px;color:var(--ink-2)}
+  .pt-grp .tw{margin:0 12px 12px}
+
+  /* money rotation */
+  .rot-flow{font-weight:700}
+  .rot-flow.in{color:#3b6cff}
+  .rot-flow.out{color:#FF6D00}
+
+  /* old bot rules */
+  .old-rules{margin:0 0 12px;padding:0;list-style:none;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .old-rules li{padding:8px 12px;font-size:12.5px;color:var(--ink-2);border-top:1px solid var(--line-soft)}
+  .old-rules li:first-child{border-top:0}
+  .old-rules li b{color:var(--ink)}
 </style>
 
 </head>
@@ -209,6 +281,7 @@
     <button class="ghost" id="refresh" type="button">Refresh</button>
     <div class="stamp" id="stamp">—</div>
   </header>
+  <p class="lede">Public status page: what the bots are doing, whether anything is about to fire, and the fake-money tests. Read-only - nothing here can trade, and no balances, positions or wallet addresses are published. All times are <b>Sydney time</b>.</p>
 
   <div class="banner" id="blocked" hidden>
     <strong>Live data is blocked here.</strong>
@@ -275,166 +348,12 @@
     function draw(){
       var now=Date.now(),box=document.getElementById("newsbar");if(!box)return;
       box.innerHTML=events(now).slice(0,14).map(function(e){var dt=e.t-now,cls="ev"+(dt<=0?" now":dt<DAY?" soon":"")+(e.big?" big":"");
-        var when=new Date(e.t).toLocaleString([],{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
-        return '<span class="'+cls+'" title="'+when+' (your time)">'+e.n+"<b>"+left(dt)+"</b></span>"}).join("");
+        var when=new Date(e.t).toLocaleString([],{timeZone:"Australia/Sydney",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
+        return '<span class="'+cls+'" title="'+when+' Sydney time">'+e.n+"<b>"+left(dt)+"</b></span>"}).join("");
     }
     draw();setInterval(draw,30000);
   })();
   </script>
-
-  <h2>Strategies <span class="qual">— bot2 (70% 1D / 30% 1H on the monthly top-10 list), then the old bot's rules for reference</span></h2>
-  <div class="tiles" id="strat-tiles">
-    <!-- bot2 tiles (29 Sep 2026). Pills are set from bot_board.json by the Bots section. -->
-    <div class="tile bot">
-      <div class="k">bot2 · 1D breakout · 70% <span class="pill idle" id="st-b2-1D">…</span></div>
-      <div class="sub">This month's top-10 list. Daily close above the prior 40-day high close and above the 200-day average. 3 ATR stop, 4 ATR trail on daily closes. Signal retried hourly that UTC day; skipped if price is more than 1.5% from the signal close.</div>
-    </div>
-    <div class="tile bot">
-      <div class="k">bot2 · 1H breakout · 30% <span class="pill idle" id="st-b2-1H">…</span></div>
-      <div class="sub">Same top-10 list. Hourly close above the prior 96-hour high close, AND daily at/above its 200-day <em>or</em> hourly 50-EMA over 200-EMA, AND daily above its 50-day, AND the last 4H close above its 50-bar average. 6 ATR stop, 12 ATR trail. One try, next hour.</div>
-    </div>
-    <div class="tile">
-      <div class="k">Old · 1D breakout longs <span class="pill idle">OLD RULES</span></div>
-      <div class="sub">23 coins. Close above the 40-day high close and above the 200-day average. 3 ATR stop, 4 ATR trail. <strong>1.5% risk</strong> (was 3% until 27 Sep 2026).</div>
-    </div>
-    <div class="tile">
-      <div class="k">Old · 1H breakout longs <span class="pill idle">OLD RULES</span></div>
-      <div class="sub">9 coins. Close above the 96-hour high close. Gate: daily above 200-day <em>or</em> hourly 50-EMA over 200-EMA (bear-market rallies). 3 ATR stop, 10 ATR trail. <strong>1% risk</strong>.</div>
-    </div>
-    <div class="tile">
-      <div class="k">Old · Dip Buy <span class="pill idle">OLD RULES</span></div>
-      <div class="sub">25 coins (1D list minus DOGE, plus LDO, LTC, STX). RSI(2) under 5 while above the 200-day. Fixed 5 ATR stop; out on a close above the 10-day average or after 30 days. <strong>3% risk</strong>.</div>
-    </div>
-    <div class="tile">
-      <div class="k">Old · 1D shorts <span class="pill idle">OLD RULES</span></div>
-      <div class="sub">9 big coins only (BTC ETH ZEC SOL NEAR XRP DOGE LINK SUI). Mirror of the old 1D longs, but only while BTC closes below its 200-day. Own 3 slots / 6% cap. <strong>2% risk</strong>.</div>
-    </div>
-    <div class="tile">
-      <div class="k">Paper only <span class="pill paper">FAKE MONEY</span></div>
-      <div class="sub">BTC 4H breakout · young-coin 1D breakout · crowd fade (OKX long/short extremes, BTC ETH SOL) · OI breakout (open interest +2% in 24h, BTC ETH SOL) · whale copy (piling in / 5 whales) · money-rotation models · live rules on paper · ChatGPT votes. Info only, never trade. Scorecards below.</div>
-    </div>
-    <div class="tile">
-      <div class="k">Old bot limits <span class="pill idle">OLD RULES</span></div>
-      <div class="sub">12 long slots / 36% open risk shared by the old 1D, 1H and Dip rules. Shorts separate: 3 slots / 6%. Max 3 new orders per run, no chasing past 1.5%, daily loss stop 15%.</div>
-    </div>
-  </div>
-  <div class="note">🔒 The old bot is <strong>manage-only</strong> since 29 Sep 2026: it opens nothing new and only manages the positions it already has. Tiles marked OLD RULES are reference only.</div>
-  <style>
-    .pill{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.3px;vertical-align:middle}
-    .pill.live{background:var(--up-sf,#E4F3E9);color:var(--up,#15803D);border:1px solid var(--up,#15803D)}
-    .pill.idle{background:var(--surface-2,#EDF1F2);color:var(--ink-3,#74858B);border:1px solid var(--line,#D8E0E2)}
-    .pill.paper{background:var(--surface-2,#EDF1F2);color:var(--ink-2,#47565B);border:1px dashed var(--line,#D8E0E2)}
-    #strat-tiles .sub{white-space:normal;line-height:1.35}
-  </style>
-
-  <h2>Market <span class="qual">— alt-season gauge</span></h2>
-  <div class="tiles" id="mkt-tiles">
-    <div class="tile" id="t-others-tile">
-      <div class="k">Others dominance</div>
-      <div class="v" id="t-others">—</div>
-      <div class="sub" id="t-others-sub">loading…</div>
-      <div class="meter" id="t-others-meter"><i style="width:0%"></i></div>
-    </div>
-    <div class="tile">
-      <div class="k">BTC dominance</div>
-      <div class="v" id="t-btcd">—</div>
-      <div class="sub" id="t-btcd-sub">&nbsp;</div>
-    </div>
-    <div class="tile">
-      <div class="k">Total crypto market</div>
-      <div class="v" id="t-total">—</div>
-      <div class="sub" id="t-total-sub">&nbsp;</div>
-    </div>
-    <div class="tile">
-      <div class="k">Sell-alts line</div>
-      <div class="v" id="t-others-gap">—</div>
-      <div class="sub" id="t-others-gap-sub">&nbsp;</div>
-    </div>
-  </div>
-  <div class="note">
-    <strong>Others dominance</strong> = every coin outside the top 10, as a share of the whole crypto market
-    (TradingView's OTHERS.D, worked out from CoinGecko and adjusted −0.5 pt so it matches TradingView; calibrated 25 Sep 2026). Mike's rule: <strong>at 13% it's time to sell out of alts</strong> (past cycle tops: ~13% in 2018 and 2024, ~14% May 2021, ~17% Jan 2022).
-  </div>
-
-  <h2>Your Hyperliquid account</h2>
-  <div id="acct-setup" class="panel">
-    <label class="fld" for="addr">Public wallet address — read-only. It cannot sign or move anything.</label>
-    <div class="addr-row">
-      <input type="text" id="addr" placeholder="0x… your main account" spellcheck="false" autocomplete="off">
-      <button id="save" type="button">Load account</button>
-    </div>
-    <label class="fld" for="subaddr" style="margin-top:10px">Bot sub-account — optional, shown separately.</label>
-    <div class="addr-row">
-      <input type="text" id="subaddr" placeholder="0x… bot sub-account" spellcheck="false" autocomplete="off">
-      <button id="savesub" type="button">Save</button>
-    </div>
-    <div class="note" id="addr-msg">Both stored in this browser only. Never sent anywhere except Hyperliquid's public API.</div>
-  </div>
-
-  <div id="acct" hidden>
-    <div class="tiles">
-      <div class="tile bot">
-        <div class="k">Bot account</div>
-        <div class="v" id="t-bot">—</div>
-        <div class="sub" id="t-bot-sub">&nbsp;</div>
-      </div>
-      <div class="tile">
-        <div class="k">Your account</div>
-        <div class="v" id="t-value">—</div>
-        <div class="sub" id="t-value-sub">&nbsp;</div>
-      </div>
-      <div class="tile">
-        <div class="k">Unrealised P/L</div>
-        <div class="v" id="t-pnl">—</div>
-        <div class="sub" id="t-pnl-sub">&nbsp;</div>
-      </div>
-      <div class="tile">
-        <div class="k">Leverage</div>
-        <div class="v" id="t-lev">—</div>
-        <div class="sub" id="t-lev-sub">&nbsp;</div>
-        <div class="meter" id="t-lev-meter"><i style="width:0%"></i></div>
-      </div>
-    </div>
-    <div id="pos-wrap" style="margin-top:12px"></div>
-    <div class="note">
-      Live from Hyperliquid. <strong>This is your real account</strong> — separate from the paper bot,
-      whose ledger and closed trades still report into Discord.
-    </div>
-  </div>
-
-  <h2 id="rp-h" hidden>Realised profit / loss <span class="qual">— closed trades only, after fees (no open-trade P/L)</span></h2>
-  <div id="rp" hidden>
-    <div class="tiles" id="rp-tiles"></div>
-    <div id="rp-wrap" style="margin-top:12px"></div>
-    <div class="note" id="rp-note">
-      Money actually banked from closed (or part-closed) trades, after trading fees.
-      Open trades aren't counted here — they're in the table above. Funding payments are shown separately.
-    </div>
-  </div>
-
-  <h2 id="gmx-h" hidden>Your GMX positions <span class="qual">— Arbitrum, same wallet</span></h2>
-  <div id="gmx" hidden>
-    <div class="note" id="gmx-sum"></div>
-    <div id="gmx-wrap" style="margin-top:8px"></div>
-    <div class="note">
-      Live from GMX's public data. Profit/loss is <strong>before GMX's borrowing and
-      funding fees</strong>, so the real figure is a little lower.
-    </div>
-  </div>
-
-  <h2>Signal radar <span class="qual">— how far each watchlist coin is from its trigger</span></h2>
-  <div id="radar-wrap"><div class="msg" id="radar-msg">Loading live candles…</div></div>
-  <div class="note">
-    <strong>1D Breakout</strong> fires above the 40-day high close while price holds above the 200-day average.
-    <strong>1H Breakout</strong> fires above the 96-hour (4-day) high close when EITHER the daily is above its 200-day average OR (since 25 Sep) the hourly 50-EMA is above the 200-EMA with price above it — the second gate is what lets it trade bear-market rallies.
-    Dimmed rows are below their 200-day average with no hourly uptrend either, so both gates block them whatever the breakout does.
-    Above the 200-day average a coin is hunting a <strong>LONG</strong> breakout; below it, a <strong>SHORT</strong> breakdown, and the bar measures the distance to whichever one is live. 1H is long-only for now, so 1H coins under their average are dimmed rather than flipped. <strong>4H Pullback</strong> isn't shown — it triggers on an RSI cross, not a price level, so "distance" doesn't apply.
-  </div>
-
-  <footer>
-    Read-only. Prices and account data pulled straight from Hyperliquid's public API; candles are reused in your browser until they close, so refreshing stays under Hyperliquid's rate limit.
-  </footer>
-</div>
 
 <script>
 // Hyperliquid allows each internet connection 1200 "weight" a minute. One
@@ -573,20 +492,464 @@
 })();
 </script>
 
+<!-- 1. Bots - data: bot_board.json, written by hl-scanner's daily report
+     (bot2status.public_board, allow-list checked by bot2status.check_public).
+     Status labels, run times and the public monthly coin LISTS only - never
+     balances, sizes, positions, P/L or addresses. Everything read from the file
+     is escaped before it is shown. -->
+<details class="dk" data-key="bots" open>
+<summary><span class="t">🤖 Bots</span><span class="tg now">status now</span><span class="s" id="dk-s-bots"></span><span class="a">▸</span></summary>
+<div class="dk-body">
+<section id="bots" class="fr">
+<p class="sub">Which bot is trading, and what state it is in. Each bot reports its own last run; hl-scanner's daily report publishes that twice a day.</p>
+<div id="bots-sum" class="sum">Loading bot status&hellip;</div>
+<div class="grp">
+ <div class="gh"><b>bot2 · trades this month's top-10 coins</b><span>money split 70% / 30%, set once at launch (not rebalanced)</span></div>
+ <div class="bt-grid">
+  <div class="bt-cell">
+   <small>1D breakout · 70%</small>
+   <span class="bt-st" id="b2-1D-st">…</span>
+   <small id="b2-1D-run">&nbsp;</small>
+   <p class="bt-rule">Buys when a coin's <b>daily close</b> beats its previous 40-day high close while above its 200-day average. Stop 3 ATR, trailing stop 4 ATR on daily closes. Retries hourly that day; skips if price is more than 1.5% from the signal close. <b>Up to 4 open at once</b> (launch cap).</p>
+  </div>
+  <div class="bt-cell">
+   <small>1H breakout · 30%</small>
+   <span class="bt-st" id="b2-1H-st">…</span>
+   <small id="b2-1H-run">&nbsp;</small>
+   <p class="bt-rule">Buys when the <b>hourly close</b> beats the previous 96-hour high close, with every trend check on: daily at/above its 200-day (or hourly 50-EMA over 200-EMA), daily above its 50-day, last 4-hour close above its 50-bar average. Stop 6 ATR, trailing 12 ATR. One try, next hour. <b>Up to 2 open at once</b> (launch cap).</p>
+  </div>
+ </div>
+ <div id="b2-lists"></div>
+</div>
+<div class="grp">
+ <div class="gh"><b>Old bot (live.py)</b><span id="old-st">🔒 manage-only</span></div>
+ <div class="bt-txt">Opens nothing new since 29 Sep 2026; it only looks after the positions it already has. Its old rules and coin lists are in <b>Old bot</b> at the bottom - reference only.</div>
+</div>
+<p class="note"><b>Status key:</b> 💵 LIVE = real orders · 🧪 DRY RUN = simulates, no real orders · 🔬 VERIFICATION = live setup being checked, not trading yet · ⏸️ PAUSED = stopped · ⚠️ STALE = hasn't reported on time.</p>
+<p class="note" id="bots-when"></p>
+</section>
+</div>
+</details>
+<script>
+(function(){
+ // One shared read of bot_board.json for this section, "Will anything fire?" and
+ // the old bot's lists. cache "no-cache" makes the browser re-check GitHub Pages
+ // every time (cheap 304 when unchanged). Never throws: on any problem it resolves
+ // to {error: "..."} so every section can fail soft.
+ var memo=null,memoAt=0;
+ window.hlBotBoard=function(){
+  if(memo&&Date.now()-memoAt<60000)return memo;
+  memoAt=Date.now();
+  memo=fetch("bot_board.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error(r.status===404?"not published yet":"HTTP "+r.status);return r.json()})
+   .then(function(b){if(!b||typeof b!=="object"||Array.isArray(b))throw new Error("unreadable");return b})
+   .catch(function(e){return {error:String((e&&e.message)||e||"unavailable")}});
+  return memo};
+ function $(id){return document.getElementById(id)}
+ function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+ // "2026-09-29T08:02Z" (no seconds) -> Date; older Safari wants the seconds
+ function iso(s){if(!s)return null;s=String(s);if(/T\d\d:\d\dZ$/.test(s))s=s.replace("Z",":00Z");var d=new Date(s);return isNaN(d.getTime())?null:d}
+ function local(d){return d.toLocaleString([],{timeZone:"Australia/Sydney",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
+ function ago(d){var h=(Date.now()-d.getTime())/36e5;if(h<0)return "just now";return h<1?Math.max(1,Math.round(h*60))+" min ago":h<48?Math.round(h)+"h ago":Math.round(h/24)+" days ago"}
+ function ym(ms){var d=new Date(ms);return d.getUTCFullYear()+"-"+("0"+(d.getUTCMonth()+1)).slice(-2)}
+ function nextYm(m){var a=m.split("-"),y=+a[0],mo=+a[1]+1;if(mo>12){mo=1;y++}return y+"-"+("0"+mo).slice(-2)}
+ function monthName(m){var a=/^(\d{4})-(\d{2})$/.exec(m||"");return a?new Date(Date.UTC(+a[1],+a[2]-1,1)).toLocaleString([],{month:"long",year:"numeric",timeZone:"UTC"}):String(m||"?")}
+ var LBL={"LIVE":"💵 LIVE","DRY RUN":"🧪 DRY RUN","VERIFICATION":"🔬 VERIFICATION","PAUSED":"⏸️ PAUSED","STALE":"⚠️ STALE","NO DATA":"NO DATA"};
+ function lbl(st){return LBL[st]||(st?String(st):"NO DATA")}
+ function stale(s){return !!(s&&s.stale&&s.status!=="STALE")}
+ var OLDL={"manage-only":"🔒 manage-only","trading":"🟢 trading","archived":"📦 archived"};
+ function pills(cs){return '<div class="pills">'+cs.map(function(c){return '<span class="p">'+esc(c)+"</span>"}).join("")+"</div>"}
+ function coinsOf(L){return L&&Array.isArray(L.coins)?L.coins.filter(function(c){return typeof c==="string"}):[]}
+ function listLine(L,m,fallbackWhy){
+  var cs=coinsOf(L),eff=L&&iso(L.effective);
+  var head="<b>"+esc(monthName(m))+" list</b>";
+  if(L&&L.status==="published"&&cs.length)
+   return '<div class="bt-list">'+head+" <small>· "+cs.length+" coins"+(eff?" · from "+esc(local(eff)):"")+"</small>"+pills(cs)+"</div>";
+  return '<div class="bt-list">'+head+" <small>· pending"+(eff?" · takes effect "+esc(local(eff)):"")+" · "+esc(L?"not published yet":fallbackWhy)+"</small></div>"}
+ function sleeve(k,s){
+  var st=$("b2-"+k+"-st"),rn=$("b2-"+k+"-run");if(!st||!rn)return;
+  if(!s){st.textContent="status unavailable";st.className="bt-st";rn.textContent="";return}
+  var d=iso(s.last_run);
+  st.innerHTML=esc(lbl(s.status))+(stale(s)?'<span class="bt-stale">⚠️ STALE</span>':"");
+  st.className="bt-st"+(s.status==="LIVE"&&!s.stale?" on":"");
+  rn.textContent=d?"last run "+local(d)+" ("+ago(d)+")":"no run recorded"}
+ function render(B){
+  var sum=$("bots-sum"),lists=$("b2-lists"),when=$("bots-when"),oldBox=$("old-lists");
+  if(!B||B.error){
+   sum.className="sum warn";sum.innerHTML="<b>Bot status unavailable</b> <small>(bot_board.json: "+esc(B?B.error:"missing")+")</small>";
+   sleeve("1D",null);sleeve("1H",null);lists.innerHTML="";when.textContent="";
+   if(oldBox)oldBox.innerHTML="";return}
+  var b2=B.bot2&&typeof B.bot2==="object"?B.bot2:{},as=iso(B.as_of),old=B.old_bot&&typeof B.old_bot==="object"?B.old_bot:{};
+  var L=Array.isArray(B.bot2_lists)?B.bot2_lists.filter(function(x){return x&&typeof x==="object"}):[];
+  var cur=ym(Date.now()),nxt=nextYm(cur);
+  var Lc=L.filter(function(x){return x.month===cur})[0],Ln=L.filter(function(x){return x.month===nxt})[0];
+  var boardH=as?(Date.now()-as.getTime())/36e5:null,oldBoard=boardH==null||boardH>20;   // the daily report writes it 2x a day
+  sleeve("1D",b2["1D"]||{});sleeve("1H",b2["1H"]||{});
+  lists.innerHTML=listLine(Lc,cur,"not in the published status yet")+listLine(Ln,nxt,"published around the 1st");
+  var oldSt=OLDL[old.status]||(old.status?String(old.status):"🔒 manage-only");
+  $("old-st").textContent=oldSt;
+  // old bot's lists go to the "Old bot" card at the bottom (reference only)
+  var ol=old.lists&&typeof old.lists==="object"&&!Array.isArray(old.lists)?Object.keys(old.lists):[];
+  if(oldBox)oldBox.innerHTML=ol.length?'<details class="grp bt-old"><summary>Old coin lists - reference only, no bot trades them ('+ol.length+" list"+(ol.length===1?"":"s")+")</summary>"
+     +ol.map(function(k){var cs=Array.isArray(old.lists[k])?old.lists[k].filter(function(c){return typeof c==="string"}):[];
+      return '<div class="bt-list"><b>'+esc(k)+"</b> <small>· "+cs.length+" coins</small>"+pills(cs)+"</div>"}).join("")+"</details>":"";
+  var cs=coinsOf(Lc);
+  function one(k){var s=b2[k]||{};return k+" "+esc(lbl(s.status))+(stale(s)?" ⚠️ STALE":"")}
+  sum.className="sum"+(oldBoard?" warn":"");
+  sum.innerHTML=(oldBoard?"<b>⚠️ This status is "+(boardH==null?"of unknown age":Math.round(boardH)+"h old")+"</b> (normally refreshed twice a day).<br>":"")
+   +"<b>bot2</b> "+one("1D")+" · "+one("1H")
+   +"<br><b>"+esc(monthName(cur))+" coins:</b> "+(cs.length&&Lc.status==="published"?esc(cs.join(", ")):"list pending")
+   +"<br><b>Old bot</b> "+esc(oldSt);
+  when.textContent=as?"Status as of "+local(as)+" ("+ago(as)+"). The page re-checks every 10 minutes.":"";
+ }
+ function run(){window.hlBotBoard().then(render)}
+ // the old bot's list box is further down the page: wait for the whole page
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run);else run();
+ setInterval(run,600000);
+})();
+</script>
+
+
+<!-- 2. Will anything fire? - checks bot2's rules (bot2/signals_1d.py 1D-R and
+     bot2/signals_1h.py 1H-AL in hl-scanner) on bot2's monthly top-10 list for the
+     CURRENT UTC month, read from bot_board.json - no hardcoded coin list. The old
+     bot is manage-only, so its rules are not checked. -->
+<details class="dk" data-key="fr">
+<summary><span class="t">🎯 Will anything fire?</span><span class="tg now">bot2 rules, live prices</span><span class="s" id="dk-s-fr"></span><span class="a">▸</span></summary>
+<div class="dk-body">
+<section id="fr" class="fr">
+<p class="sub">bot2's entry rules checked on this month's top-10 coins. Each box is one rule; a coin only fires when <b>every box on its row is blue</b>. Uses the last closed candle, the same way the bot does.</p>
+<div class="key"><span class="p ok">rule met</span><span class="p">not yet</span><span class="dir L">LONG</span></div>
+<div id="fr-sum" class="sum">Checking live prices&hellip;</div>
+<div id="fr-body"></div>
+<p class="note" id="fr-when"></p>
+</section>
+</div>
+</details>
+
+<script>
+(function(){
+var API="https://api.hyperliquid.xyz/info",DAY=864e5,HR=36e5,EXT=1.5;
+var OLD_NOTE="The old bot is manage-only, so its old rules aren't checked here.";
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function post(b){return fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json()})}
+// closed candles only (the bot never looks at the candle still forming)
+function bars(coin,iv,days){var e=Date.now(),ms=iv==="1d"?DAY:HR;return post({type:"candleSnapshot",req:{coin:coin,interval:iv,startTime:e-days*DAY,endTime:e}}).then(function(j){if(!Array.isArray(j)||j.length<3)return null;var now=Date.now();return j.map(function(x){return{t:+x.t,c:+x.c}}).filter(function(x){return x.t+ms<=now})}).catch(function(){return null})}
+function smaAt(a,n,i){if(i+1<n)return null;var s=0;for(var k=i-n+1;k<=i;k++)s+=a[k];return s/n}
+function emaSeeded(a,n){var o=a.map(function(){return null});if(a.length<n)return o;var k=2/(n+1),e=0,i;for(i=0;i<n;i++)e+=a[i];e/=n;o[n-1]=e;for(i=n;i<a.length;i++){e=a[i]*k+e*(1-k);o[i]=e}return o}   // = bot2 common.ema_seeded
+function priorMax(a,n,i){return i<n?null:Math.max.apply(null,a.slice(i-n,i))}   // max of the PRIOR n closes
+function pct(a,b){return (a/b-1)*100}
+function f1(x){return Math.abs(x).toFixed(1)+"%"}
+function ym(ms){var d=new Date(ms);return d.getUTCFullYear()+"-"+("0"+(d.getUTCMonth()+1)).slice(-2)}
+function monthName(m){var a=/^(\d{4})-(\d{2})$/.exec(m||"");return a?new Date(Date.UTC(+a[1],+a[2]-1,1)).toLocaleString([],{month:"long",year:"numeric",timeZone:"UTC"}):String(m||"?")}
+function localHour(utcH){var d=new Date();d.setUTCHours(utcH,0,0,0);return d.toLocaleTimeString([],{timeZone:"Australia/Sydney",hour:"numeric",minute:"2-digit"}).replace(" ","").toLowerCase()}
+function row(coin,dir,rules,extra){return {coin:coin,dir:dir,rules:rules,met:rules.filter(function(r){return r.ok}).length,extra:extra||0}}
+function nodata(coin,why){return row(coin,"-",[{t:why,ok:false}],-999)}
+// entry check: the bot skips when price is more than 1.5% from the signal close
+function ext(rules,close,mid){if(!mid||rules.some(function(r){return !r.ok}))return;var x=Math.abs(pct(mid,close));rules.push({t:"price "+x.toFixed(1)+"% from the close"+(x<=EXT?"":" · too far, 1.5% max"),ok:x<=EXT})}
+// bot2 1D-R: last closed daily close > max(prior 40 closes) AND > 200-day average (202+ daily bars)
+function d1(coin,D,mid){if(!D)return nodata(coin,"no Hyperliquid candles");var c=D.map(function(x){return x.c}),i=c.length-1;
+ if(c.length<202)return nodata(coin,"only "+c.length+" daily candles · needs 202");
+ var last=c[i],m200=smaAt(c,200,i),hi=priorMax(c,40,i),up=last>m200,bo=last>hi;
+ var rules=[{t:up?"above 200-day":"below 200-day \u00b7 "+f1(pct(m200,last))+" away",ok:up},{t:bo?"new 40-day high close":"40-day high \u00b7 "+f1(pct(hi,last))+" away",ok:bo}];
+ ext(rules,last,mid);return row(coin,"L",rules,pct(last,hi))}
+// bot2 1H-AL: last closed hour; all four must hold (see bot2/signals_1h.py)
+function h1(coin,D,Hh,mid){if(!D||!Hh)return nodata(coin,"no Hyperliquid candles");
+ var dc=D.map(function(x){return x.c}),j=dc.length-1,c=Hh.map(function(x){return x.c}),i=c.length-1;
+ if(dc.length<200)return nodata(coin,"only "+dc.length+" daily candles · needs 200");
+ if(c.length<97)return nodata(coin,"not enough hourly candles");
+ var last=c[i],hi=priorMax(c,96,i),m200=smaAt(dc,200,j),m50=smaAt(dc,50,j),dUp=dc[j]>=m200;
+ var e50=emaSeeded(c,50),e200=emaSeeded(c,200),eUp=e200[i]!=null&&e50[i]>e200[i]&&last>e200[i];
+ // complete UTC 4-hour bars built from the closed hourly candles (as bot2/bars.bars_4h)
+ var g={},ks=[];Hh.forEach(function(x){var k=Math.floor(x.t/(4*HR));if(!g[k]){g[k]={n:0,c:0};ks.push(k)}g[k].n++;g[k].c=x.c});
+ var c4=ks.filter(function(k){return g[k].n===4}).map(function(k){return g[k].c}),q=c4.length-1,s4=smaAt(c4,50,q),ok4=s4!=null&&c4[q]>s4;
+ var rules=[{t:dUp?"daily at/above 200-day":eUp?"hourly 50-EMA over 200-EMA (daily below 200)":"daily below 200-day \u00b7 hourly EMAs down",ok:dUp||eUp},
+  {t:dc[j]>m50?"daily above 50-day":"daily below 50-day \u00b7 "+f1(pct(m50,dc[j]))+" away",ok:dc[j]>m50},
+  {t:s4==null?"4H average not ready":ok4?"4H above its 50-bar average":"4H below its 50-bar average",ok:ok4},
+  {t:last>hi?"new 96-hour high close":"96-hour high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}];
+ ext(rules,last,mid);return row(coin,"L",rules,pct(last,hi))}
+function card(title,when,rows){rows=rows.filter(Boolean).sort(function(a,b){var fa=a.met/a.rules.length,fb=b.met/b.rules.length;return fb-fa||b.extra-a.extra});
+ var h='<div class="grp"><div class="gh"><b>'+esc(title)+"</b><span>"+esc(when)+"</span></div>";
+ rows.forEach(function(r){var all=r.met===r.rules.length&&r.dir!=="-";h+='<div class="row"><span class="coin">'+esc(r.coin)+'</span><span class="dir '+(r.dir==="L"?"L":"N")+'">'+(r.dir==="L"?"LONG":"\u2014")+'</span><div class="pills">'+r.rules.map(function(x){return '<span class="p'+(x.ok?" ok":"")+'">'+esc(x.t)+"</span>"}).join("")+'</div><span class="st'+(all?" go":"")+'">'+(all?"READY":r.met+" of "+r.rules.length)+"</span></div>"});
+ return {html:h+"</div>",rows:rows,title:title}}
+function batch(list,fn){var out={},i=0;function next(){var ch=list.slice(i,i+6);i+=6;if(!ch.length)return Promise.resolve(out);return Promise.all(ch.map(function(c){return fn(c).then(function(v){out[c]=v})})).then(next)}return next()}
+var LBL={"LIVE":"💵 LIVE","DRY RUN":"🧪 DRY RUN","VERIFICATION":"🔬 VERIFICATION","PAUSED":"⏸️ PAUSED","NO DATA":"NO DATA"};
+function lbl(s){s=s||{};return (LBL[s.status]||(s.status?String(s.status):"NO DATA"))+(s.stale?" \u26a0\ufe0f STALE":"")}
+function stop(msg){$("fr-sum").innerHTML=msg;$("fr-body").innerHTML="";$("fr-when").textContent=OLD_NOTE}
+function run(){
+ var load=window.hlBotBoard?window.hlBotBoard():Promise.resolve({error:"loader missing"});
+ load.then(function(B){
+  if(!B||B.error){stop("<b>Can't check right now:</b> bot2's coin list is unavailable (bot_board.json: "+esc(B?B.error:"missing")+").");return}
+  var m=ym(Date.now()),L=(Array.isArray(B.bot2_lists)?B.bot2_lists:[]).filter(function(x){return x&&x.month===m})[0];
+  // coin names go into API requests: keep only plain Hyperliquid tickers
+  var coins=L&&L.status==="published"&&Array.isArray(L.coins)?L.coins.filter(function(c){return typeof c==="string"&&/^[A-Za-z0-9]{1,20}$/.test(c)}):[];
+  if(!coins.length){stop("<b>bot2 has no "+esc(monthName(m))+" coin list yet</b> ("+(L?"pending":"not in the published status yet")+"), so it opens nothing new until the list is published.");return}
+  var b2=B.bot2||{},st1=b2["1D"]||{},st2=b2["1H"]||{};
+  return post({type:"allMids"}).catch(function(){return {}}).then(function(mids){
+   return batch(coins,function(c){return bars(c,"1d",420)}).then(function(D){return batch(coins,function(c){return bars(c,"1h",35)}).then(function(H1){
+    var r1=[],r2=[];coins.forEach(function(c){var mid=+(mids||{})[c]||null;r1.push(d1(c,D[c],mid));r2.push(h1(c,D[c],H1[c],mid))});
+    var cards=[card("bot2 \u00b7 1D breakout \u00b7 70%",lbl(st1)+" \u00b7 checks daily at "+localHour(0)+", retries hourly that day",r1),
+               card("bot2 \u00b7 1H breakout \u00b7 30%",lbl(st2)+" \u00b7 checks every hour, one try",r2)];
+    $("fr-body").innerHTML=cards.map(function(k){return k.html}).join("");
+    var ready=[],best=null,live={"1D":st1.status==="LIVE"&&!st1.stale,"1H":st2.status==="LIVE"&&!st2.stale};
+    cards.forEach(function(k,n){var tag=n?"1H":"1D";k.rows.forEach(function(r){if(r.dir==="-")return;var f=r.met/r.rules.length;if(r.met===r.rules.length)ready.push(esc(r.coin)+" ("+tag+")");else if(!best||f>best.f)best={f:f,r:r,tag:tag}})});
+    var anyLive=live["1D"]||live["1H"];
+    $("fr-sum").innerHTML=(ready.length?"<b>Ready to fire:</b> "+ready.join(", "):"<b>Nothing ready to fire.</b>")
+     +(ready.length&&!(live["1D"]&&live["1H"])?" <small>"+(anyLive?"Only a LIVE sleeve places real orders; the other one simulates.":"bot2 isn't LIVE, so this would be a simulated entry, no real order.")+"</small>":"")
+     +(best?" Closest: <b>"+esc(best.r.coin)+"</b> on the "+best.tag+" \u2014 "+best.r.met+" of "+best.r.rules.length+" rules met.":"");
+    $("fr-when").textContent="Checked "+new Date().toLocaleTimeString([],{timeZone:"Australia/Sydney",hour:"numeric",minute:"2-digit"})+". Re-checks every 10 minutes. Coins: bot2's "+monthName(m)+" top-10 list. bot2 also skips a coin it already holds (holdings aren't shown on this public page). "+OLD_NOTE;
+   })})});
+ }).catch(function(e){$("fr-sum").textContent="Could not reach Hyperliquid. "+e})}
+run();setInterval(run,600000);
+})();
+</script>
+
+<!-- 3. Paper tests - data: paper_board.json, pushed hourly by hl-scanner's scan
+     job (paperboard.py): coins, dates and results in R only. -->
+<details class="dk" data-key="pt">
+<summary><span class="t">🧪 Paper tests</span><span class="tg paper">paper · fake money</span><span class="s" id="dk-s-pt"></span><span class="a">▸</span></summary>
+<div class="dk-body">
+<section id="pt" class="fr">
+<p class="sub">Fake-money bots tested before any real money goes near them. Each has a pass rule; until it has enough trades it's only collecting. Tap a test for the detail. R = result as a multiple of the risk taken on the trade.</p>
+<div id="pt-sum" class="sum">Loading paper results&hellip;</div>
+<div id="pt-body"></div>
+</section>
+</div>
+</details>
+
+<script>
+(function(){
+ function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+ function r(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(2)+"R"}
+ function cell(v,k){return "<div><b>"+v+"</b><small>"+k+"</small></div>"}
+ function card(b){
+  var ref=b.kind==="reference",pct=ref||!b.target?0:Math.min(100,Math.round(100*b.n/b.target));
+  var st=b.status==="passed"?"Passed":b.status==="failed"?"Failed":ref?"Reference":"Collecting";
+  var g=cell(ref?b.n:b.n+" / "+b.target,"closed trades")+cell(r(b.avg),"average per trade")
+   +cell(b.lo==null?"after 10 trades":r(b.lo)+" to "+r(b.hi),"realistic range (95%)")
+   +cell(b.win==null?"—":b.win+"%","winners")+cell(b.open.length,"open now")
+   +(ref?"":cell(b.overlap==null?"—":b.overlap+"%","repeat a real-bot trade"))
+   +(ref?"":cell(b.backtest==null?"no backtest":r(b.backtest),"backtest expects"));
+  if(b.id==="CF")g+=cell(b.okx_agree_pct==null?"from ~2 Oct":b.okx_agree_pct+"%","OKX agrees with Binance");
+  (b.breakdown||[]).forEach(function(x){g+=cell(r(x.avg)+" <small>("+x.n+")</small>",esc(x.strat)+(x.expect==null?"":" · backtest "+r(x.expect)))});
+  if(b.id==="OB")g+=cell(b.live_breakouts_avg==null?"no closed trades yet":r(b.live_breakouts_avg),"real bot's breakouts (to beat by +0.05R)");
+  // exact times (UTC in the JSON) shown in the viewer's own time zone; date only when that's all we know
+  var when=function(at,day){if(at){var d=new Date(at);if(!isNaN(d.getTime()))return d.toLocaleString([],{timeZone:"Australia/Sydney",day:"numeric",month:"short",year:d.getFullYear()!==new Date().getFullYear()?"numeric":undefined,hour:"numeric",minute:"2-digit"})}return day||"—"};
+  var rows=b.recent.slice().reverse().slice(0,10).map(function(t){return "<tr><td><b>"+esc(t.coin)+'</b> <span class="dir '+(t.side==="LONG"?"L":"S")+'">'+esc(t.side)+"</span></td><td>"+esc(when(t.opened_at,t.opened))+"</td><td>"+esc(when(t.closed_at,t.closed))+'</td><td class="'+(t.r>=0?"good":"bad")+'">'+r(t.r)+"</td></tr>"}).join("");
+  var open=b.open.map(function(t){return esc(t.coin)+" "+esc(t.side)+(t.opened_at?" <small>(since "+esc(when(t.opened_at))+")</small>":"")}).join(", ");
+  return '<details class="grp pt-grp"><summary class="gh"><b>'+esc(b.name)+'</b><span><span class="pt-st '+esc(b.status)+'">'+st+"</span> "+esc(b.progress)+(b.n?" · avg "+r(b.avg):"")+"</span></summary>"
+   +(ref?"":'<div class="pt-bar" style="margin-top:10px"><i style="width:'+pct+'%"></i></div>')+'<div class="pt-grid">'+g+'</div>'
+   +'<div class="pt-rule"><b>Rule:</b> '+esc(b.rule)+"<br><b>Passes if:</b> "+esc(b.passes)+(open?"<br><b>Open:</b> "+open:"")+"</div>"
+   +(rows?'<div class="tw"><table><thead><tr><th>Trade</th><th>Opened</th><th>Closed</th><th>Result</th></tr></thead><tbody>'+rows+"</tbody></table></div>":"")+"</details>"}
+ function asOf(s){var d=/T/.test(s)?new Date(String(s).replace(/T(\d\d:\d\d)Z$/,"T$1:00Z")):null;return d&&!isNaN(d.getTime())?d.toLocaleString([],{timeZone:"Australia/Sydney",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):String(s)}
+ function pc(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(1)+"%"}
+ function spark(c){if(!c||c.length<2)return "";var v=c.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),w=240,h=36,r=hi-lo||1;
+  var pts=v.map(function(y,i){return (i*w/(v.length-1)).toFixed(1)+","+(h-2-(y-lo)*(h-4)/r).toFixed(1)}).join(" ");
+  return '<svg viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'" style="margin:0 12px 8px;display:block" aria-label="equity curve"><polyline points="'+pts+'" fill="none" stroke="#2962FF" stroke-width="1.5"/></svg>'}
+ function rcard(m){
+  var st=m.status==="passed"?"Passed":m.status==="failed"?"Failed":"Collecting";
+  var g=cell(pc(m.ret),"since "+esc(m.since||"start"))+cell(pc(m.btc),"BTC same period")+cell(pc(m.alt),"alt basket same period")
+   +cell(m.batches,"7-day batches done")+cell(pc(m.avg_batch),"average batch")+cell(pc(m.avg_excess),"batch vs alt basket")
+   +cell(m.beat_pct==null?"—":m.beat_pct+"%","batches beating basket")+cell(m.open,"batches open");
+  var now=(m.now_in&&m.now_in.length?"long "+m.now_in.join(", "):"")+(m.now_out&&m.now_out.length?" · short "+m.now_out.join(", "):"");
+  return '<details class="grp pt-grp"><summary class="gh"><b>'+esc(m.name)+'</b><span><span class="pt-st '+esc(m.status)+'">'+st+"</span> "+esc(m.progress)+" · "+pc(m.ret)+"</span></summary>"
+   +'<div class="pt-grid">'+g+"</div>"+spark(m.curve)
+   +'<div class="pt-rule"><b>Rule:</b> '+esc(m.rule)+"<br><b>Passes if:</b> "+esc(m.passes)+"<br><b>Backtest:</b> "+esc(m.backtest)+(now?"<br><b>Latest batch:</b> "+esc(now):"")+"</div></details>"}
+ function run(){
+  fetch("paper_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error("HTTP "+x.status);return x.json()}).then(function(B){
+   var T=B.bots.filter(function(b){return b.kind!=="reference"}),closed=0,open=0,judged=T.filter(function(b){return b.status==="passed"||b.status==="failed"});
+   T.forEach(function(b){closed+=b.n;open+=b.open.length});
+   document.getElementById("pt-sum").innerHTML="<b>"+(T.length+(B.rotation||[]).length)+" paper tests</b> · "+closed+" closed trade"+(closed===1?"":"s")+", "+open+" open · "
+    +(judged.length?judged.map(function(b){return esc(b.name)+" "+b.status}).join(", "):"none has enough trades to judge yet")
+    +(B.as_of?' <small style="color:var(--ink-3)">· data from '+esc(asOf(B.as_of))+"</small>":"");
+   var tests=B.bots.filter(function(b){return b.kind!=="reference"}),refs=B.bots.filter(function(b){return b.kind==="reference"});
+   var sh=B.shadow,shc=sh?'<details class="grp pt-grp"><summary class="gh"><b>ChatGPT votes (shadow mode)</b><span><span class="pt-st">Reference</span> '+sh.scored+" of ~"+sh.judge_at+" scored</span></summary>"
+     +'<div class="pt-grid">'+cell(sh.votes,"votes cast")+cell(sh.scored,"matched to real trades")
+     +cell(sh.take.avg==null?"—":r(sh.take.avg)+" <small>("+sh.take.n+")</small>","trades ChatGPT said TAKE")
+     +cell(sh.skip.avg==null?"—":r(sh.skip.avg)+" <small>("+sh.skip.n+")</small>","trades ChatGPT said SKIP")+"</div>"
+     +'<div class="pt-rule">ChatGPT votes TAKE or SKIP on every live signal; nothing acts on it. Useful only if SKIP trades end up clearly worse than TAKE trades.</div></details>':"";
+   document.getElementById("pt-body").innerHTML='<h3>Being tested</h3>'
+    +tests.map(card).join("")+'<p class="sub">'+esc(B.note)+"</p>"
+    +(B.rotation&&B.rotation.length?B.rotation.map(rcard).join("")+'<p class="sub">'+esc(B.rotation_note||"")+"</p>":"")
+    +(refs.length||shc?'<h3>Reference (not tests)</h3>'+refs.map(card).join("")+shc:"");
+  }).catch(function(e){document.getElementById("pt-sum").textContent="Paper results unavailable ("+e.message+")."})}
+ run();setInterval(run,600000);
+})();
+</script>
+
+<!-- 4. Market - alt-season gauge (CoinGecko, in the browser) and money rotation
+     (rotation_board.json, pushed by hl-scanner's live job after each rotation run:
+     7am, 10am, 2pm, 6pm Sydney). Market data only. -->
+<details class="dk" data-key="mkt">
+<summary><span class="t">🌍 Market</span><span class="tg">info only</span><span class="s" id="dk-s-mkt"></span><span class="a">▸</span></summary>
+<div class="dk-body">
+<section id="mkt" class="fr">
+<h3>Alt-season gauge</h3>
+<div class="tiles" id="mkt-tiles">
+  <div class="tile" id="t-others-tile">
+    <div class="k">Others dominance</div>
+    <div class="v" id="t-others">—</div>
+    <div class="sub" id="t-others-sub">loading…</div>
+    <div class="meter" id="t-others-meter"><i style="width:0%"></i></div>
+  </div>
+  <div class="tile">
+    <div class="k">BTC dominance</div>
+    <div class="v" id="t-btcd">—</div>
+    <div class="sub" id="t-btcd-sub">&nbsp;</div>
+  </div>
+  <div class="tile">
+    <div class="k">Total crypto market</div>
+    <div class="v" id="t-total">—</div>
+    <div class="sub" id="t-total-sub">&nbsp;</div>
+  </div>
+</div>
+<p class="note"><b>Others dominance</b> = every coin outside the top 10, as a share of the whole crypto market (TradingView's OTHERS.D, worked out from CoinGecko, adjusted −0.5 pt to match TradingView; calibrated 25 Sep 2026). Mike's rule: <b>at 13% it's time to sell out of alts</b> (past cycle tops: ~13% in 2018 and 2024, ~14% May 2021, ~17% Jan 2022).</p>
+<h3>Money rotation</h3>
+<p class="sub">Which crypto sectors money is moving into or out of: price vs BTC today and this week, and each sector's share of trading volume now vs its 7-day average. Same numbers as the Discord report. Not a trade signal.</p>
+<div id="rot-sum" class="sum">Loading the latest rotation&hellip;</div>
+<div id="rot-body"></div>
+</section>
+</div>
+</details>
+
+<script>
+(function(){
+ function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+ function p(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(1)+"%"}
+ function cls(x){return x==null?"":x>=0?"good":"bad"}
+ function when(iso){iso=String(iso||"");var d=new Date(/T\d\d:\d\dZ$/.test(iso)?iso.replace("Z",":00Z"):iso);return isNaN(d)?iso:d.toLocaleString([],{timeZone:"Australia/Sydney",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
+ function run(){
+  fetch("rotation_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error("HTTP "+x.status);return x.json()}).then(function(B){
+   var mi=Array.isArray(B.money_in)?B.money_in:[],mo=Array.isArray(B.money_out)?B.money_out:[];
+   var ins=mi.length?mi.join(", "):"nothing clear",outs=mo.length?mo.join(", "):"nothing clear";
+   document.getElementById("rot-sum").innerHTML='<span class="rot-flow in">▲ In:</span> <b>'+esc(ins)+'</b> · <span class="rot-flow out">▼ Out:</span> <b>'+esc(outs)+"</b>"
+    +' <small style="color:var(--ink-3,#8b949e)">· '+esc(when(B.as_of))+"</small>";
+   var rows=(Array.isArray(B.sectors)?B.sectors:[]).map(function(s){var f=s.flow==="in"?'<span class="rot-flow in">▲ in</span>':s.flow==="out"?'<span class="rot-flow out">▼ out</span>':"";
+    return "<tr><td><b>"+esc(s.name)+"</b></td><td class=\""+cls(s.rel24)+"\">"+p(s.rel24)+"</td><td class=\""+cls(s.rel7)+"\">"+p(s.rel7)+"</td><td>"
+     +(s.share_avg==null?"—":s.share_avg.toFixed(1)+"% → "+s.share_now.toFixed(1)+"%")+"</td><td>"+f+"</td><td>"+esc(s.top)+" <small>"+p(s.top_r24)+"</small></td></tr>"}).join("");
+   var btc=B.btc?"BTC "+p(B.btc.r24)+" today, "+p(B.btc.r7)+" this week":"";
+   var maj=B.majors?" · BTC+ETH "+B.majors.share_now.toFixed(0)+"% of volume (avg "+B.majors.share_avg.toFixed(0)+"%) → "+esc(B.majors.verdict):"";
+   document.getElementById("rot-body").innerHTML='<p class="sub">'+btc+maj+"</p>"
+    +'<div class="tw"><table><thead><tr><th>Sector</th><th>Today vs BTC</th><th>7 days vs BTC</th><th>Volume share (avg → now)</th><th>Flow</th><th>Leader today</th></tr></thead><tbody>'+rows+"</tbody></table></div>";
+  }).catch(function(e){document.getElementById("rot-sum").textContent="Money rotation unavailable ("+e.message+"). It updates at 7am, 10am, 2pm and 6pm Sydney."})}
+ run();setInterval(run,600000);
+})();
+</script>
+<script>
+(function(){
+// Market gauge: OTHERS dominance (= 100 - top-10 dominance, i.e. TradingView OTHERS.D),
+// BTC dominance and total cap, from CoinGecko's public /global endpoint.
+var SELL_AT=13.0, WARN_AT=11.0, METER_MAX=17.0;
+// CoinGecko's figure runs a little above TradingView's OTHERS.D (different total / top-10 basket).
+// Offset calibrated 25 Sep 2026: CoinGecko 8.93 vs TradingView 8.43. Re-check monthly.
+var TV_OFFSET=-0.50;
+function $(id){return document.getElementById(id)}
+function fmtT(n){return n>=1e12?"$"+(n/1e12).toFixed(2)+"T":"$"+(n/1e9).toFixed(0)+"B"}
+function run(){
+ fetch("https://api.coingecko.com/api/v3/global").then(function(r){return r.json()}).then(function(j){
+  var d=j.data,p=d.market_cap_percentage||{},top10=0,keys=Object.keys(p);
+  keys.forEach(function(k){top10+=p[k]});
+  if(keys.length<10||!top10)throw new Error("top-10 data missing");
+  var raw=100-top10,others=raw+TV_OFFSET,btcd=p.btc||0,total=d.total_market_cap&&d.total_market_cap.usd,chg=d.market_cap_change_percentage_24h_usd;
+  var gap=SELL_AT-others;
+  $("t-others").textContent=others.toFixed(2)+"%";
+  $("t-others").style.color=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--up)";
+  $("t-others-sub").textContent=(gap<=0?"AT/ABOVE the 13% sell line · sell-alts zone":Math.abs(gap).toFixed(2)+" pts below the 13% sell line"+(others>=WARN_AT?" · getting close":" · alts still on"))+" (raw CoinGecko "+raw.toFixed(2)+"%)";
+  var m=$("t-others-meter");m.className="meter"+(others>=WARN_AT?" over":"");m.firstElementChild.style.width=Math.min(100,others/METER_MAX*100).toFixed(1)+"%";
+  $("t-btcd").textContent=btcd.toFixed(1)+"%";
+  $("t-btcd-sub").textContent="ETH "+(p.eth||0).toFixed(1)+"% · stables "+(((p.usdt||0)+(p.usdc||0))).toFixed(1)+"%";
+  $("t-total").textContent=total?fmtT(total):"—";
+  $("t-total-sub").textContent=chg==null?"":(chg>=0?"+":"")+chg.toFixed(1)+"% in 24h";
+  $("t-total-sub").style.color=chg>=0?"var(--up)":"var(--down)";
+  $("t-others-tile").style.borderColor=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--line)";
+ }).catch(function(e){$("t-others-sub").textContent="CoinGecko unreachable ("+e.message+")"});
+}
+run();setInterval(run,600000);
+})();
+</script>
+
+<!-- 5. Your wallet - read in the VIEWER's browser from an address they type in;
+     the address is kept in their browser only. Nothing here is published, and no
+     address or balance is ever written into this repo. -->
+<details class="dk" data-key="wallet">
+<summary><span class="t">💰 Your wallet</span><span class="tg priv">this browser only</span><span class="s" id="dk-s-wallet"></span><span class="a">▸</span></summary>
+<div class="dk-body">
+<section id="wallet" class="fr">
+  <div id="acct-setup" class="panel">
+    <label class="fld" for="addr">Public wallet address — read-only. It cannot sign or move anything.</label>
+    <div class="addr-row">
+      <input type="text" id="addr" placeholder="0x… your main account" spellcheck="false" autocomplete="off">
+      <button id="save" type="button">Load account</button>
+    </div>
+    <label class="fld" for="subaddr" style="margin-top:10px">Old bot's sub-account — optional, shown separately.</label>
+    <div class="addr-row">
+      <input type="text" id="subaddr" placeholder="0x… old bot sub-account" spellcheck="false" autocomplete="off">
+      <button id="savesub" type="button">Save</button>
+    </div>
+    <div class="note" id="addr-msg">Both stored in this browser only - never published on this page. Only sent to Hyperliquid's and GMX's public APIs to read them.</div>
+  </div>
+
+  <div id="acct" hidden>
+    <div class="tiles">
+      <div class="tile bot">
+        <div class="k">Old bot sub-account</div>
+        <div class="v" id="t-bot">—</div>
+        <div class="sub" id="t-bot-sub">&nbsp;</div>
+      </div>
+      <div class="tile">
+        <div class="k">Your account</div>
+        <div class="v" id="t-value">—</div>
+        <div class="sub" id="t-value-sub">&nbsp;</div>
+      </div>
+      <div class="tile">
+        <div class="k">Unrealised P/L</div>
+        <div class="v" id="t-pnl">—</div>
+        <div class="sub" id="t-pnl-sub">&nbsp;</div>
+      </div>
+      <div class="tile">
+        <div class="k">Leverage</div>
+        <div class="v" id="t-lev">—</div>
+        <div class="sub" id="t-lev-sub">&nbsp;</div>
+        <div class="meter" id="t-lev-meter"><i style="width:0%"></i></div>
+      </div>
+    </div>
+    <div id="pos-wrap" style="margin-top:12px"></div>
+    <div class="note">
+      Live from Hyperliquid, read by this browser only. Rows tagged <b>old bot</b> are on the old bot's sub-account.
+      bot2's two sub-accounts aren't included here.
+    </div>
+  </div>
+
+  <h3 id="rp-h" hidden>Realised profit / loss <span style="text-transform:none;letter-spacing:0;font-weight:400">— closed trades only, after fees</span></h3>
+  <div id="rp" hidden>
+    <div class="tiles" id="rp-tiles"></div>
+    <div id="rp-wrap" style="margin-top:12px"></div>
+    <div class="note" id="rp-note">
+      Money actually banked from closed (or part-closed) trades, after trading fees.
+      Open trades aren't counted here. Funding payments are shown separately.
+    </div>
+  </div>
+
+  <h3 id="gmx-h" hidden>Your GMX positions <span style="text-transform:none;letter-spacing:0;font-weight:400">— Arbitrum, same wallet</span></h3>
+  <div id="gmx" hidden>
+    <div class="note" id="gmx-sum"></div>
+    <div id="gmx-wrap" style="margin-top:8px"></div>
+    <div class="note">
+      Live from GMX's public data. Profit/loss is <strong>before GMX's borrowing and
+      funding fees</strong>, so the real figure is a little lower.
+    </div>
+  </div>
+</section>
+</div>
+</details>
+
 <script>
 (function () {
   "use strict";
 
   var API = "https://api.hyperliquid.xyz/info";
-  // OLD bot lists (manage-only since 29 Sep 2026) - only the hidden radar uses these.
-  var COINS_1D = ["BTC","ETH","BNB","SOL","XRP","ADA","DOGE","AVAX","ZEC","XLM","TRX","HBAR","kSHIB","ALGO","ICP","ATOM","LINK","NEAR","SUI","INJ","OP","AR","ENA"];
-  var COINS_1H = ["WLD","LINK","AVAX","SOL","VVV","BTC","ETH","ARB","BNB"]; // re-based 25 Sep 2026 on 4y data
-  var H1_LOOKBACK = 96; // hours
-  // mirrors shorts_1d / shorts_1h in the bot's config.json
-  var SHORTS = { "1D": true, "1H": false };
   var KEY = "hl-deck-addr";
   var SUBKEY = "hl-deck-subaddr";
-  // What the bot may size against. Mirrors live_pot_usd in the bot config.
 
   function hl(body) {
     return fetch(API, {
@@ -666,14 +1029,14 @@
   function stamp() {
     var d = new Date();
     document.getElementById("stamp").textContent =
-      "updated " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      "updated " + d.toLocaleTimeString([], { timeZone: "Australia/Sydney", hour: "numeric", minute: "2-digit" });
   }
 
   // ---------- account ----------
   var botTotal = 0, botNtl = 0;   // bot account value + exposure, for the leverage tile
   function botLine() {
     if (!botNtl) return "";
-    return " · bot " + money(botNtl, 0) + " (" + (botTotal > 0 ? (botNtl / botTotal).toFixed(2) : "0") + "×)";
+    return " · old bot " + money(botNtl, 0) + " (" + (botTotal > 0 ? (botNtl / botTotal).toFixed(2) : "0") + "×)";
   }
   function drawBot(b) {
     botTotal = b ? (b.total || 0) : 0;
@@ -768,7 +1131,7 @@
 
       var c = el("td");
       c.appendChild(el("span", "coin", p.coin));
-      if (p._bot) c.appendChild(el("span", "tag", p._strat ? "bot · " + p._strat : "bot"));
+      if (p._bot) c.appendChild(el("span", "tag", p._strat ? "old bot · " + p._strat : "old bot"));
       tr.appendChild(c);
 
       var s = el("td");
@@ -967,7 +1330,7 @@
     var svg = document.createElementNS(ns, "svg");
     svg.setAttribute("viewBox", "0 0 " + W + " " + H);
     svg.setAttribute("preserveAspectRatio", "none");
-    svg.setAttribute("aria-label", "Bot profit and loss since it started");
+    svg.setAttribute("aria-label", "Old bot profit and loss since it started");
     svg.style.cssText = "width:100%;height:160px;display:block";
     function line(d, color, width, dash) {
       var l = document.createElementNS(ns, "polyline");
@@ -994,7 +1357,7 @@
     head.appendChild(document.createTextNode("Realised " + signed(nowReal) + "   · open trades & funding " + signed(nowTot - nowReal)));
     box.appendChild(head);
     box.appendChild(svg);
-    var d = function (t) { return new Date(t).toLocaleDateString("en-AU", { day: "numeric", month: "short" }); };
+    var d = function (t) { return new Date(t).toLocaleDateString("en-AU", { timeZone: "Australia/Sydney", day: "numeric", month: "short" }); };
     var foot = el("div", "sub", d(t0) + " → now · high " + signed(hi) + " · low " + signed(lo)
       + " · dashed line = break-even");
     foot.style.marginTop = "4px";
@@ -1037,16 +1400,16 @@
     box.textContent = "";
     if (bot) {
       var bm = tally(bot, inMonth(thisMonth));
-      rpTile(box, "Bot · " + monthName(thisMonth), bm.net, [bm.n + " closed · " + wl(bm)]);
+      rpTile(box, "Old bot · " + monthName(thisMonth), bm.net, [bm.n + " closed · " + wl(bm)]);
       var first = bot.fills.length ? Math.min.apply(null, bot.fills.map(function (f) { return +f.time; })) : null;
-      rpTile(box, "Bot · all time", botAll.net, [
+      rpTile(box, "Old bot · all time", botAll.net, [
         (first ? "since " + new Date(first).toLocaleDateString("en-AU",
-          { day: "numeric", month: "short", year: "numeric" }) + " · " : "") + botAll.n + " closed",
+          { timeZone: "Australia/Sydney", day: "numeric", month: "short", year: "numeric" }) + " · " : "") + botAll.n + " closed",
         wl(botAll)]);
     }
     if (you) rpTile(box, "Your trades · all time", youAll.net, [youAll.n + " closed", wl(youAll)]);
     if (bot && you) rpTile(box, "Total · all time", botAll.net + youAll.net,
-                           ["Bot " + signed(botAll.net) + " · You " + signed(youAll.net)]);
+                           ["Old bot " + signed(botAll.net) + " · You " + signed(youAll.net)]);
 
     var wrap = document.getElementById("rp-wrap");
     wrap.textContent = "";
@@ -1058,7 +1421,7 @@
       var months = {};
       bot.fills.forEach(function (f) { months[sydMonth(+f.time)] = 1; });
       var sc = el("div", "scroller"), tb = el("table"), hd = el("thead"), hr = el("tr");
-      ["Bot by month", "Won", "Lost", "Net"].forEach(function (h) { hr.appendChild(el("th", null, h)); });
+      ["Old bot by month", "Won", "Lost", "Net"].forEach(function (h) { hr.appendChild(el("th", null, h)); });
       hd.appendChild(hr); tb.appendChild(hd);
       var body = el("tbody");
       Object.keys(months).sort().reverse().forEach(function (ym) {
@@ -1087,11 +1450,11 @@
         c.appendChild(el("span", "coin", r.coin));
         if (r.who === "bot") {
           var tag = r.cloid && r.cloid.length === 34 && RP_TAGS[r.cloid.slice(2, 4).toLowerCase()];
-          c.appendChild(el("span", "tag", tag ? "bot · " + tag : "bot"));
+          c.appendChild(el("span", "tag", tag ? "old bot · " + tag : "old bot"));
         }
         tr.appendChild(c);
         tr.appendChild(el("td", "num", new Date(r.time).toLocaleString([], {
-          day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })));
+          timeZone: "Australia/Sydney", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })));
         var csz = el("td", "num");
         csz.appendChild(el("strong", null, money(r.pxsz, 0)));
         csz.appendChild(el("span", "qty", px(r.sz) + " " + r.coin));
@@ -1111,9 +1474,9 @@
     }
     document.getElementById("rp-note").textContent =
       "Each total = money won on closed trades minus money lost, minus trading fees (opening fees included, which is why a total can sit slightly below won − lost). "
-      + "Months are Sydney calendar months. Open trades aren't counted — they're in the table above. "
+      + "Months are Sydney calendar months. Open trades aren't counted — they're in the positions table. "
       + "Funding, last " + FUND_DAYS + " days (not included above): "
-      + fund.map(function (x) { return (x.k === "bot" ? "Bot " : "You ") + signed(x.v); }).join(" · ") + ".";
+      + fund.map(function (x) { return (x.k === "bot" ? "Old bot " : "You ") + signed(x.v); }).join(" · ") + ".";
   }
 
   // ---------- GMX (Arbitrum) ----------
@@ -1271,134 +1634,13 @@
     tb.appendChild(body); sc.appendChild(tb); wrap.appendChild(sc);
   }
 
-  // ---------- signal radar ----------
-  function closedCloses(rows, ms) {
-    var now = Date.now();
-    var out = [];
-    for (var i = 0; i < rows.length; i++) {
-      if (Number(rows[i].t) + ms <= now) out.push(parseFloat(rows[i].c));
-    }
-    return out;
-  }
-  function mean(a) { var s = 0; for (var i = 0; i < a.length; i++) s += a[i]; return s / a.length; }
-
-  function candles(coin, interval, bars) {
-    var msPer = { "1h": 3600000, "1d": 86400000 }[interval];
-    var now = Date.now();
-    return hl({
-      type: "candleSnapshot",
-      req: { coin: coin, interval: interval, startTime: now - (bars + 2) * msPer, endTime: now }
-    }).then(function (rows) { return closedCloses(rows || [], msPer); });
-  }
-
-  function inBatches(items, size, worker) {
-    var out = [];
-    var i = 0;
-    function step() {
-      if (i >= items.length) return Promise.resolve(out);
-      var slice = items.slice(i, i + size);
-      i += size;
-      return Promise.all(slice.map(worker)).then(function (res) {
-        out = out.concat(res);
-        return step();
-      });
-    }
-    return step();
-  }
-
-  function radarRow(d) {
-    var row = el("div", "row" + (d.gate ? "" : " blocked") + (d.dist >= -1.5 && d.gate ? " hot" : ""));
-
-    var who = el("div", "who");
-    who.appendChild(el("span", "coin", d.coin === "kSHIB" ? "SHIB" : d.coin));
-    who.appendChild(el("span", "tf", d.tf));
-    if (d.side) who.appendChild(el("span", "side " + (d.side === "LONG" ? "l" : "s"), d.side));
-    row.appendChild(who);
-
-    var track = el("div", "track");
-    track.appendChild(el("span", "base"));
-    var fill = el("span", "fill");
-    // how far price has travelled toward the trigger, floored at 0
-    var reach = Math.max(0, Math.min(100, 100 + d.dist * 4));
-    fill.style.width = reach + "%";
-    track.appendChild(fill);
-    track.appendChild(el("span", "trig"));
-    row.appendChild(track);
-
-    var dv = el("div", "dist " + (d.dist >= 0 ? "up" : ""), pct(d.dist));
-    row.appendChild(dv);
-    return row;
-  }
-
-  function loadRadar(mids) {
-    // The radar is hidden (the "Will anything fire?" checklist replaced it) and its
-    // lists are the OLD bot's rules - don't spend Hyperliquid rate limit on it.
-    var rw = document.getElementById("radar-wrap");
-    if (!rw || document.getElementById("fr") || getComputedStyle(rw).display === "none") return;
-    var jobs = [];
-    COINS_1D.forEach(function (c) { jobs.push({ coin: c, tf: "1D" }); });
-    COINS_1H.forEach(function (c) { jobs.push({ coin: c, tf: "1H" }); });
-
-    return inBatches(jobs, 4, function (j) {
-      var daily = candles(j.coin, "1d", 260);
-      if (j.tf === "1D") {
-        return daily.then(function (cl) {
-          if (cl.length < 210) return null;
-          var price = parseFloat(mids[j.coin]);
-          if (!price) return null;
-          var sma200 = mean(cl.slice(-200));
-          var up = price > sma200;
-          if (up) {
-            var hi = Math.max.apply(null, cl.slice(-40));
-            return { coin: j.coin, tf: "1D", side: "LONG",
-                     dist: (price / hi - 1) * 100, gate: true };
-          }
-          // below the 200-day average the long is blocked; the short is armed
-          var lo = Math.min.apply(null, cl.slice(-40));
-          return { coin: j.coin, tf: "1D", side: SHORTS["1D"] ? "SHORT" : null,
-                   dist: (lo / price - 1) * 100, gate: SHORTS["1D"] };
-        }).catch(function () { return null; });
-      }
-      return Promise.all([daily, candles(j.coin, "1h", 600)]).then(function (r) {
-        var dcl = r[0], hcl = r[1];
-        if (dcl.length < 200 || hcl.length < H1_LOOKBACK + 1) return null;
-        var price = parseFloat(mids[j.coin]);
-        if (!price) return null;
-        var sma200 = mean(dcl.slice(-200));
-        // long gate = daily above 200-SMA OR hourly EMA50 > EMA200 with price above EMA200 (25 Sep 2026)
-        var emaUp = false;
-        if (hcl.length >= 201) { var ef = emaS(hcl, 50), es = emaS(hcl, 200); emaUp = ef[ef.length - 1] > es[es.length - 1] && price > es[es.length - 1]; }
-        var up = price > sma200 || emaUp;
-        var trigger = up ? Math.max.apply(null, hcl.slice(-H1_LOOKBACK))
-                         : Math.min.apply(null, hcl.slice(-H1_LOOKBACK));
-        if (!up && SHORTS["1H"]) {
-          return { coin: j.coin, tf: "1H", side: "SHORT",
-                   dist: (trigger / price - 1) * 100, gate: true };
-        }
-        var hi = Math.max.apply(null, hcl.slice(-H1_LOOKBACK));
-        return { coin: j.coin, tf: "1H", side: up ? "LONG" : null,
-                 dist: (price / hi - 1) * 100, gate: up };
-      }).catch(function () { return null; });
-    }).then(function (res) {
-      var rows = res.filter(Boolean).sort(function (a, b) { return b.dist - a.dist; });
-      var wrap = document.getElementById("radar-wrap");
-      wrap.textContent = "";
-      if (!rows.length) {
-        wrap.appendChild(el("div", "msg err", "Couldn't load candle data from Hyperliquid."));
-        return;
-      }
-      var box = el("div", "radar");
-      rows.forEach(function (d) { box.appendChild(radarRow(d)); });
-      wrap.appendChild(box);
-    });
-  }
-
   // ---------- boot ----------
   function refreshAll() {
     var btn = document.getElementById("refresh");
     btn.disabled = true;
     var addr = recall(KEY);
-    var tasks = [hl({ type: "allMids" }).then(loadRadar)];
+    // a light ping: if Hyperliquid can't be reached at all, say so once at the top
+    var tasks = [hl({ type: "allMids" })];
     if (addr) {
       tasks.push(loadAccount(addr).catch(function (e) {
         document.getElementById("acct-setup").hidden = false;
@@ -1411,13 +1653,6 @@
       // with no status - say what that actually means rather than leaking it raw.
       var blocked = (e instanceof TypeError) || /failed to fetch|networkerror/i.test(e.message || "");
       document.getElementById("blocked").hidden = !blocked;
-      var m = document.getElementById("radar-msg");
-      if (m) {
-        m.textContent = blocked
-          ? "Radar needs live candles, which this host won't allow."
-          : "Couldn't reach Hyperliquid: " + e.message;
-        m.className = "msg err";
-      }
     }).then(function () { btn.disabled = false; });
   }
 
@@ -1464,250 +1699,34 @@
 })();
 </script>
 
-
-<!-- Bots - added 29 Sep 2026 (two-bot rollout). Data: bot_board.json, written by
-     hl-scanner's daily report (bot2status.public_board, allow-list checked by
-     bot2status.check_public) and copied here by live.yml's Rotation board steps.
-     Status labels, run times and the public monthly coin LISTS only - never
-     balances, sizes, positions, P/L or addresses. Everything read from the file
-     is escaped before it is shown. -->
-<section id="bots" class="fr">
-<style>
-.bt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;padding:10px 12px}
-.bt-cell{min-width:0}
-.bt-cell small{display:block;color:var(--ink-3,#74858B);font-size:11.5px}
-.bt-cell .bt-st{display:block;font-size:16px;font-weight:700;margin:2px 0}
-.bt-stale{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;color:var(--warn,#A45B06);background:var(--warn-sf,#FBEEDC);border-radius:4px;padding:1px 6px;vertical-align:2px}
-.bt-list{padding:8px 12px;border-top:1px solid var(--line-soft,#E7EDEE);font-size:13px}
-.bt-list small{color:var(--ink-3,#74858B)}
-.bt-list .pills{margin-top:5px;min-width:0}
-.bt-txt{padding:8px 12px 10px;font-size:12.5px;color:var(--ink-2,#47565B);border-top:1px solid var(--line-soft,#E7EDEE)}
-.bt-old>summary{cursor:pointer;padding:8px 12px;font-size:12.5px;color:var(--ink-2,#47565B);border-top:1px solid var(--line-soft,#E7EDEE)}
-.bt-old .bt-list{border-top:0;padding-top:2px}
-.fr .sum.warn{border-left-color:#FF6D00}
-</style>
-<h2>Bots</h2>
-<p class="sub">Which bot does what. Status comes from each bot's own last run, published by hl-scanner's daily report. Coin lists are the public monthly rule, not holdings.</p>
-<div id="bots-sum" class="sum">Loading bot status&hellip;</div>
-<div id="bots-body"></div>
-<p class="note" id="bots-when"></p>
-</section>
-<script>
-(function(){
- // One shared read of bot_board.json for this section and "Will anything fire?".
- // Relative URL; cache "no-cache" makes the browser re-check GitHub Pages every time
- // (cheap 304 when unchanged) instead of showing an old copy. Never throws: on any
- // problem it resolves to {error: "..."} so both sections can fail soft.
- var memo=null,memoAt=0;
- window.hlBotBoard=function(){
-  if(memo&&Date.now()-memoAt<60000)return memo;
-  memoAt=Date.now();
-  memo=fetch("bot_board.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error(r.status===404?"not published yet":"HTTP "+r.status);return r.json()})
-   .then(function(b){if(!b||typeof b!=="object"||Array.isArray(b))throw new Error("unreadable");return b})
-   .catch(function(e){return {error:String((e&&e.message)||e||"unavailable")}});
-  return memo};
- function $(id){return document.getElementById(id)}
- function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
- // "2026-09-29T08:02Z" (no seconds) -> Date; older Safari wants the seconds
- function iso(s){if(!s)return null;s=String(s);if(/T\d\d:\d\dZ$/.test(s))s=s.replace("Z",":00Z");var d=new Date(s);return isNaN(d.getTime())?null:d}
- function local(d){return d.toLocaleString([],{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
- function ago(d){var h=(Date.now()-d.getTime())/36e5;if(h<0)return "just now";return h<1?Math.max(1,Math.round(h*60))+" min ago":h<48?Math.round(h)+"h ago":Math.round(h/24)+" days ago"}
- function ym(ms){var d=new Date(ms);return d.getUTCFullYear()+"-"+("0"+(d.getUTCMonth()+1)).slice(-2)}
- function nextYm(m){var a=m.split("-"),y=+a[0],mo=+a[1]+1;if(mo>12){mo=1;y++}return y+"-"+("0"+mo).slice(-2)}
- function monthName(m){var a=/^(\d{4})-(\d{2})$/.exec(m||"");return a?new Date(Date.UTC(+a[1],+a[2]-1,1)).toLocaleString([],{month:"long",year:"numeric",timeZone:"UTC"}):String(m||"?")}
- var LBL={"LIVE":"💵 LIVE","DRY RUN":"🧪 DRY RUN","VERIFICATION":"🔬 VERIFICATION","PAUSED":"⏸️ PAUSED","NO DATA":"NO DATA"};
- function lbl(st){return LBL[st]||(st?String(st):"NO DATA")}
- var OLDL={"manage-only":"🔒 manage-only","trading":"🟢 trading","archived":"📦 archived"};
- function pills(cs){return '<div class="pills">'+cs.map(function(c){return '<span class="p">'+esc(c)+"</span>"}).join("")+"</div>"}
- function coinsOf(L){return L&&Array.isArray(L.coins)?L.coins.filter(function(c){return typeof c==="string"}):[]}
- // Strategy tiles (bot2 1D / 1H pills at the top of Strategies)
- function setPills(b2){["1D","1H"].forEach(function(k){var p=$("st-b2-"+k);if(!p)return;var s=b2&&b2[k];
-  p.textContent=s?lbl(s.status)+(s.stale?" ⚠️ STALE":""):"status unavailable";p.className="pill "+(s&&s.status==="LIVE"&&!s.stale?"live":"idle")})}
- var OLD_FALLBACK='<div class="grp"><div class="gh"><b>Old bot (live.py)</b><span>🔒 manage-only</span></div><div class="bt-txt" style="border-top:0">Manage-only since 29 Sep 2026: opens nothing new, only manages the positions it already has.</div></div>';
- function listLine(L,m,fallbackWhy){
-  var cs=coinsOf(L),eff=L&&iso(L.effective);
-  var head="<b>"+esc(monthName(m))+" list</b>";
-  if(L&&L.status==="published"&&cs.length)
-   return '<div class="bt-list">'+head+" <small>· "+cs.length+" coins"+(eff?" · effective "+esc(local(eff))+" (your time)":"")+(L.source?" · "+esc(L.source):"")+"</small>"+pills(cs)+"</div>";
-  return '<div class="bt-list">'+head+" <small>· pending"+(eff?" · takes effect "+esc(local(eff))+" (your time)":"")+" · "+esc(L?"not published yet":fallbackWhy)+"</small></div>"}
- function render(B){
-  var sum=$("bots-sum"),body=$("bots-body"),when=$("bots-when");
-  if(!B||B.error){
-   sum.className="sum";sum.innerHTML="<b>Bot status unavailable</b> <small>(bot_board.json: "+esc(B?B.error:"missing")+")</small>";
-   body.innerHTML=OLD_FALLBACK;when.textContent="";setPills(null);return}
-  var b2=B.bot2&&typeof B.bot2==="object"?B.bot2:{},as=iso(B.as_of),old=B.old_bot&&typeof B.old_bot==="object"?B.old_bot:{};
-  var L=Array.isArray(B.bot2_lists)?B.bot2_lists.filter(function(x){return x&&typeof x==="object"}):[];
-  var cur=ym(Date.now()),nxt=nextYm(cur);
-  var Lc=L.filter(function(x){return x.month===cur})[0],Ln=L.filter(function(x){return x.month===nxt})[0];
-  var boardH=as?(Date.now()-as.getTime())/36e5:null,oldBoard=boardH==null||boardH>20;   // the daily report writes it 2x a day
-  setPills(b2);
-  function sleeve(k,name){var s=b2[k]||{},d=iso(s.last_run);
-   return '<div class="bt-cell"><small>'+name+'</small><span class="bt-st">'+esc(lbl(s.status))+(s.stale?'<span class="bt-stale">⚠️ STALE</span>':"")+"</span><small>"+(d?"last run "+esc(local(d))+" ("+ago(d)+")":"no run recorded")+"</small></div>"}
-  var ol=old.lists&&typeof old.lists==="object"&&!Array.isArray(old.lists)?Object.keys(old.lists):[];
-  var oldSt=OLDL[old.status]||(old.status?String(old.status):"🔒 manage-only");
-  body.innerHTML='<div class="grp"><div class="gh"><b>bot2 · 70% 1D breakout / 30% 1H breakout</b><span>70/30 is the INITIAL allocation (never rebalanced)</span></div>'
-   +'<div class="bt-grid">'+sleeve("1D","1D breakout · 70%")+sleeve("1H","1H breakout · 30%")+"</div>"
-   +listLine(Lc,cur,"not in the published status yet")+listLine(Ln,nxt,"published around the 1st")
-   +(B.note?'<div class="bt-txt">'+esc(B.note)+"</div>":"")+"</div>"
-   +'<div class="grp"><div class="gh"><b>Old bot (live.py)</b><span>'+esc(oldSt)+"</span></div>"
-   +(old.note?'<div class="bt-txt" style="border-top:0">'+esc(old.note)+"</div>":"")
-   +(ol.length?'<details class="bt-old"><summary>Old rules - reference only ('+ol.length+" list"+(ol.length===1?"":"s")+")</summary>"
-     +ol.map(function(k){var cs=Array.isArray(old.lists[k])?old.lists[k].filter(function(c){return typeof c==="string"}):[];
-      return '<div class="bt-list"><b>'+esc(k)+"</b> <small>· "+cs.length+" coins</small>"+pills(cs)+"</div>"}).join("")+"</details>":"")+"</div>";
-  var cs=coinsOf(Lc);
-  sum.className="sum"+(oldBoard?" warn":"");
-  sum.innerHTML=(oldBoard?"<b>⚠️ This status is "+(boardH==null?"of unknown age":Math.round(boardH)+"h old")+"</b> (the daily report normally refreshes it twice a day).<br>":"")
-   +"<b>bot2</b> 1D "+esc(lbl((b2["1D"]||{}).status))+((b2["1D"]||{}).stale?" ⚠️ STALE":"")
-   +" · 1H "+esc(lbl((b2["1H"]||{}).status))+((b2["1H"]||{}).stale?" ⚠️ STALE":"")
-   +" · "+esc(monthName(cur))+": "+(cs.length&&Lc.status==="published"?esc(cs.join(", ")):"list pending")
-   +" · <b>old bot</b> "+esc(oldSt);
-  when.textContent=as?"Status as of "+local(as)+" (your time, "+ago(as)+"). Refreshes every 10 minutes.":"";
- }
- function run(){window.hlBotBoard().then(render)}
- // top of the page, above Money rotation / Strategies
- var me=$("bots"),h=$("strat-tiles");while(h&&h.tagName!=="H2")h=h.previousElementSibling;
- if(me&&h&&h.parentNode)h.parentNode.insertBefore(me,h);
- run();setInterval(run,600000);
-})();
-</script>
-<!-- Will anything fire? - added 24 Sep 2026. Since 29 Sep 2026 it checks bot2's rules
-     (bot2/signals_1d.py 1D-R and bot2/signals_1h.py 1H-AL in hl-scanner) on bot2's
-     monthly top-10 list for the CURRENT UTC month, read from bot_board.json - there is no
-     hardcoded coin list here any more. The old bot is manage-only, so its rules (curated
-     1D / 9-coin 1H lists, Dip Buy, 1D shorts) no longer open trades and are not checked. -->
-<section id="fr" class="fr">
-<style>
-#radar-wrap,h2:has(+#radar-wrap),#radar-wrap+.note{display:none!important}
-.wrap>.fr{padding:0;margin:28px 0 0;max-width:none}
-.fr{max-width:820px;margin:28px auto 40px;padding:0 16px;font-family:inherit;font-size:14px;line-height:1.5;color:var(--ink,#e6edf3)}
-.fr h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3,#8b949e);margin:0 0 4px;font-weight:600}
-.fr .sub{color:var(--ink-2,#8b949e);font-size:12.5px;margin:0 0 10px;max-width:62ch}
-.fr .key{display:flex;gap:10px;font-size:12px;color:var(--ink-3,#8b949e);margin:0 0 12px;flex-wrap:wrap;align-items:center}
-.fr .sum{border:1px solid var(--line,#30363d);border-left:4px solid #2962FF;background:var(--surface,#0f1520);border-radius:8px;padding:12px 14px;font-size:15px;margin:0 0 16px}
-.fr .sum b{color:var(--ink,#fff)}
-.fr .grp{border:1px solid var(--line,#30363d);border-radius:8px;margin:0 0 14px;overflow:hidden}
-.fr .gh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;padding:9px 12px;background:var(--surface-2,#161b22);border-bottom:1px solid var(--line,#30363d)}
-.fr .gh b{font-size:14px}
-.fr .gh span{font-size:12px;color:var(--ink-3,#8b949e)}
-.fr .row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line-soft,#21262d);flex-wrap:wrap;background:var(--surface,transparent)}
-.fr .row:last-child{border-bottom:0}
-.fr .coin{width:64px;font-weight:600}
-.fr .dir{font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:4px;min-width:44px;text-align:center}
-.fr .L{background:rgba(41,98,255,.18);color:#7da2ff}
-.fr .S{background:rgba(255,109,0,.18);color:#ff9a4d}
-.fr .N{background:var(--surface-2,#21262d);color:var(--ink-3,#6e7681)}
-.fr .pills{display:flex;gap:5px;flex-wrap:wrap;flex:1;min-width:210px}
-.fr .p{font-size:11.5px;padding:2px 9px;border-radius:999px;border:1px solid var(--line,#30363d);color:var(--ink-3,#7d8590);white-space:nowrap}
-.fr .p.ok{background:#2962FF;border-color:#2962FF;color:#fff}
-.fr .st{font-size:12px;color:var(--ink-3,#8b949e);min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
-.fr .st.go{color:#fff;background:#2962FF;border-radius:5px;padding:2px 8px;font-weight:700;text-align:center}
-.fr .note{font-size:11.5px;color:var(--ink-3,#6e7681);margin:6px 0 0}
-</style>
-<h2>Will anything fire?</h2>
-<p class="sub">bot2's rules on this month's top-10 list. Each box is one rule; a coin only fires when <b>every box on its row is blue</b>. Checked on the last closed candle, the same way the bot does.</p>
-<div class="key"><span class="p ok">rule met</span><span class="p">not yet</span><span class="dir L">LONG</span></div>
-<div id="fr-sum" class="sum">Checking live prices&hellip;</div>
-<div id="fr-body"></div>
-<p class="note" id="fr-when"></p>
-</section>
-<script>
-(function(){
-// Old % radar is hidden; this section takes its place on the page.
-var rw=document.getElementById("radar-wrap");if(rw){var ph=rw.previousElementSibling,nt=rw.nextElementSibling;[ph,rw,nt].forEach(function(e){if(e&&(e===rw||e.tagName==="H2"||String(e.className).indexOf("note")>-1))e.style.display="none"});var me=document.getElementById("fr");if(me)rw.parentNode.insertBefore(me,rw)}
-var API="https://api.hyperliquid.xyz/info",DAY=864e5,HR=36e5,EXT=1.5;
-var OLD_NOTE="The old bot is manage-only, so its old rules (curated 1D and 9-coin 1H lists, Dip Buy, 1D shorts) no longer open trades and aren't checked here.";
-function $(id){return document.getElementById(id)}
-function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
-function post(b){return fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json()})}
-// closed candles only (the bot never looks at the candle still forming)
-function bars(coin,iv,days){var e=Date.now(),ms=iv==="1d"?DAY:HR;return post({type:"candleSnapshot",req:{coin:coin,interval:iv,startTime:e-days*DAY,endTime:e}}).then(function(j){if(!Array.isArray(j)||j.length<3)return null;var now=Date.now();return j.map(function(x){return{t:+x.t,c:+x.c}}).filter(function(x){return x.t+ms<=now})}).catch(function(){return null})}
-function smaAt(a,n,i){if(i+1<n)return null;var s=0;for(var k=i-n+1;k<=i;k++)s+=a[k];return s/n}
-function emaSeeded(a,n){var o=a.map(function(){return null});if(a.length<n)return o;var k=2/(n+1),e=0,i;for(i=0;i<n;i++)e+=a[i];e/=n;o[n-1]=e;for(i=n;i<a.length;i++){e=a[i]*k+e*(1-k);o[i]=e}return o}   // = bot2 common.ema_seeded
-function priorMax(a,n,i){return i<n?null:Math.max.apply(null,a.slice(i-n,i))}   // max of the PRIOR n closes
-function pct(a,b){return (a/b-1)*100}
-function f1(x){return Math.abs(x).toFixed(1)+"%"}
-function ym(ms){var d=new Date(ms);return d.getUTCFullYear()+"-"+("0"+(d.getUTCMonth()+1)).slice(-2)}
-function monthName(m){var a=/^(\d{4})-(\d{2})$/.exec(m||"");return a?new Date(Date.UTC(+a[1],+a[2]-1,1)).toLocaleString([],{month:"long",year:"numeric",timeZone:"UTC"}):String(m||"?")}
-function localHour(utcH){var d=new Date();d.setUTCHours(utcH,0,0,0);return d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}).replace(" ","").toLowerCase()}
-function row(coin,dir,rules,extra){return {coin:coin,dir:dir,rules:rules,met:rules.filter(function(r){return r.ok}).length,extra:extra||0}}
-function nodata(coin,why){return row(coin,"-",[{t:why,ok:false}],-999)}
-// entry check: the bot skips when price is more than 1.5% from the signal close
-function ext(rules,close,mid){if(!mid||rules.some(function(r){return !r.ok}))return;var x=Math.abs(pct(mid,close));rules.push({t:"price "+x.toFixed(1)+"% from the close"+(x<=EXT?"":" · too far, 1.5% max"),ok:x<=EXT})}
-// bot2 1D-R: last closed daily close > max(prior 40 closes) AND > 200-day average (202+ daily bars)
-function d1(coin,D,mid){if(!D)return nodata(coin,"no Hyperliquid candles");var c=D.map(function(x){return x.c}),i=c.length-1;
- if(c.length<202)return nodata(coin,"only "+c.length+" daily candles · needs 202");
- var last=c[i],m200=smaAt(c,200,i),hi=priorMax(c,40,i),up=last>m200,bo=last>hi;
- var rules=[{t:up?"above 200-day":"below 200-day \u00b7 "+f1(pct(m200,last))+" away",ok:up},{t:bo?"new 40-day high close":"40-day high \u00b7 "+f1(pct(hi,last))+" away",ok:bo}];
- ext(rules,last,mid);return row(coin,"L",rules,pct(last,hi))}
-// bot2 1H-AL: last closed hour; all four must hold (see bot2/signals_1h.py)
-function h1(coin,D,Hh,mid){if(!D||!Hh)return nodata(coin,"no Hyperliquid candles");
- var dc=D.map(function(x){return x.c}),j=dc.length-1,c=Hh.map(function(x){return x.c}),i=c.length-1;
- if(dc.length<200)return nodata(coin,"only "+dc.length+" daily candles · needs 200");
- if(c.length<97)return nodata(coin,"not enough hourly candles");
- var last=c[i],hi=priorMax(c,96,i),m200=smaAt(dc,200,j),m50=smaAt(dc,50,j),dUp=dc[j]>=m200;
- var e50=emaSeeded(c,50),e200=emaSeeded(c,200),eUp=e200[i]!=null&&e50[i]>e200[i]&&last>e200[i];
- // complete UTC 4-hour bars built from the closed hourly candles (as bot2/bars.bars_4h)
- var g={},ks=[];Hh.forEach(function(x){var k=Math.floor(x.t/(4*HR));if(!g[k]){g[k]={n:0,c:0};ks.push(k)}g[k].n++;g[k].c=x.c});
- var c4=ks.filter(function(k){return g[k].n===4}).map(function(k){return g[k].c}),q=c4.length-1,s4=smaAt(c4,50,q),ok4=s4!=null&&c4[q]>s4;
- var rules=[{t:dUp?"daily at/above 200-day":eUp?"hourly 50-EMA over 200-EMA (daily below 200)":"daily below 200-day \u00b7 hourly EMAs down",ok:dUp||eUp},
-  {t:dc[j]>m50?"daily above 50-day":"daily below 50-day \u00b7 "+f1(pct(m50,dc[j]))+" away",ok:dc[j]>m50},
-  {t:s4==null?"4H average not ready":ok4?"4H above its 50-bar average":"4H below its 50-bar average",ok:ok4},
-  {t:last>hi?"new 96-hour high close":"96-hour high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}];
- ext(rules,last,mid);return row(coin,"L",rules,pct(last,hi))}
-function card(title,when,rows){rows=rows.filter(Boolean).sort(function(a,b){var fa=a.met/a.rules.length,fb=b.met/b.rules.length;return fb-fa||b.extra-a.extra});
- var h='<div class="grp"><div class="gh"><b>'+esc(title)+"</b><span>"+esc(when)+"</span></div>";
- rows.forEach(function(r){var all=r.met===r.rules.length&&r.dir!=="-";h+='<div class="row"><span class="coin">'+esc(r.coin)+'</span><span class="dir '+(r.dir==="L"?"L":"N")+'">'+(r.dir==="L"?"LONG":"\u2014")+'</span><div class="pills">'+r.rules.map(function(x){return '<span class="p'+(x.ok?" ok":"")+'">'+esc(x.t)+"</span>"}).join("")+'</div><span class="st'+(all?" go":"")+'">'+(all?"READY":r.met+" of "+r.rules.length)+"</span></div>"});
- return {html:h+"</div>",rows:rows,title:title}}
-function batch(list,fn){var out={},i=0;function next(){var ch=list.slice(i,i+6);i+=6;if(!ch.length)return Promise.resolve(out);return Promise.all(ch.map(function(c){return fn(c).then(function(v){out[c]=v})})).then(next)}return next()}
-var LBL={"LIVE":"💵 LIVE","DRY RUN":"🧪 DRY RUN","VERIFICATION":"🔬 VERIFICATION","PAUSED":"⏸️ PAUSED","NO DATA":"NO DATA"};
-function lbl(s){s=s||{};return (LBL[s.status]||(s.status?String(s.status):"NO DATA"))+(s.stale?" \u26a0\ufe0f STALE":"")}
-function stop(msg){$("fr-sum").innerHTML=msg;$("fr-body").innerHTML="";$("fr-when").textContent=OLD_NOTE}
-function run(){
- var load=window.hlBotBoard?window.hlBotBoard():Promise.resolve({error:"loader missing"});
- load.then(function(B){
-  if(!B||B.error){stop("<b>Can't check right now:</b> bot2's coin list is unavailable (bot_board.json: "+esc(B?B.error:"missing")+").");return}
-  var m=ym(Date.now()),L=(Array.isArray(B.bot2_lists)?B.bot2_lists:[]).filter(function(x){return x&&x.month===m})[0];
-  // coin names go into API requests: keep only plain Hyperliquid tickers
-  var coins=L&&L.status==="published"&&Array.isArray(L.coins)?L.coins.filter(function(c){return typeof c==="string"&&/^[A-Za-z0-9]{1,20}$/.test(c)}):[];
-  if(!coins.length){stop("<b>bot2 has no "+esc(monthName(m))+" coin list yet</b> ("+(L?"pending":"not in the published status yet")+"), so it opens nothing new until the list is published.");return}
-  var b2=B.bot2||{},st1=b2["1D"]||{},st2=b2["1H"]||{};
-  return post({type:"allMids"}).catch(function(){return {}}).then(function(mids){
-   return batch(coins,function(c){return bars(c,"1d",420)}).then(function(D){return batch(coins,function(c){return bars(c,"1h",35)}).then(function(H1){
-    var r1=[],r2=[];coins.forEach(function(c){var mid=+(mids||{})[c]||null;r1.push(d1(c,D[c],mid));r2.push(h1(c,D[c],H1[c],mid))});
-    var cards=[card("bot2 \u00b7 1D breakout \u00b7 70%",lbl(st1)+" \u00b7 checks daily at "+localHour(0)+", retried hourly that day",r1),
-               card("bot2 \u00b7 1H breakout \u00b7 30%",lbl(st2)+" \u00b7 checks every hour, one try",r2)];
-    $("fr-body").innerHTML=cards.map(function(k){return k.html}).join("");
-    var ready=[],best=null,live={"1D":st1.status==="LIVE"&&!st1.stale,"1H":st2.status==="LIVE"&&!st2.stale};
-    cards.forEach(function(k,n){var tag=n?"1H":"1D";k.rows.forEach(function(r){if(r.dir==="-")return;var f=r.met/r.rules.length;if(r.met===r.rules.length)ready.push(esc(r.coin)+" ("+tag+")");else if(!best||f>best.f)best={f:f,r:r,tag:tag}})});
-    var anyLive=live["1D"]||live["1H"];
-    $("fr-sum").innerHTML=(ready.length?"<b>Ready to fire:</b> "+ready.join(", "):"<b>Nothing ready to fire.</b>")
-     +(ready.length&&!(live["1D"]&&live["1H"])?" <small>"+(anyLive?"Only a LIVE sleeve places real orders; the other one simulates.":"bot2 isn't LIVE, so this would be a simulated entry, no real order.")+"</small>":"")
-     +(best?" Closest: <b>"+esc(best.r.coin)+"</b> on the "+best.tag+" \u2014 "+best.r.met+" of "+best.r.rules.length+" rules met.":"");
-    $("fr-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". Refreshes every 10 minutes. Coins: bot2's "+monthName(m)+" top-10 list ("+coins.join(", ")+") from bot_board.json. bot2 also skips a coin it already holds; holdings aren't shown on this public page. "+OLD_NOTE;
-   })})});
- }).catch(function(e){$("fr-sum").textContent="Could not reach Hyperliquid. "+e})}
-run();setInterval(run,600000);
-})();
-</script>
-<!-- Live vs backtest - added 24 Sep 2026 -->
+<!-- 6. Old bot - reference only. The old bot (live.py) is manage-only since
+     29 Sep 2026. The trade check reads the old bot's sub-account saved under
+     "Your wallet" (this browser only). -->
+<details class="dk" data-key="ref">
+<summary><span class="t">📚 Old bot</span><span class="tg">old rules · reference</span><span class="s" id="dk-s-ref"></span><span class="a">▸</span></summary>
+<div class="dk-body">
+<section id="ref" class="fr">
+<p class="sub">The old bot (live.py) is <b>manage-only</b> since 29 Sep 2026: it opens nothing new and only looks after the positions it still has. Everything here is kept for reference.</p>
+<h3>Its remaining trades vs its rules</h3>
 <section id="lt" class="fr">
-<style>
-.fr .sum.warn{border-left-color:#FF6D00}
-.fr .tw{overflow-x:auto;border:1px solid var(--line,#30363d);border-radius:8px;margin:0 0 14px}
-.fr table{width:100%;border-collapse:collapse;font-size:13px}
-.fr th,.fr td{padding:7px 10px;border-bottom:1px solid var(--line-soft,#21262d);text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}
-.fr tbody tr:last-child td{border-bottom:0}
-.fr th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3,#8b949e);font-weight:600;background:var(--surface-2,#161b22)}
-.fr td small{color:var(--ink-3,#8b949e);font-size:11px}
-.fr td.good{color:#3b6cff;font-weight:600}
-.fr td.bad,.fr .bad{color:#FF6D00;font-weight:600}
-</style>
-<h2>Live vs backtest</h2>
-<p class="sub">The old bot's trades (the bot sub-account saved above; manage-only since 29 Sep 2026) checked against what its rules say should happen. Orange means something doesn't match. bot2 runs on its own sub-accounts and isn't shown here.</p>
-<div id="lt-sum" class="sum">Loading the bot's trades&hellip;</div>
+<p class="sub">Checks the old bot's trades (the old bot sub-account saved under <b>Your wallet</b>) against what its rules say should happen - most importantly that every open trade still has a stop. Orange means something doesn't match. bot2 isn't shown here.</p>
+<div id="lt-sum" class="sum">Loading the old bot's trades&hellip;</div>
 <div id="lt-body"></div>
 <p class="note" id="lt-when"></p>
 </section>
+<h3>Old rules (no bot opens trades on these any more)</h3>
+<ul class="old-rules">
+ <li><b>1D breakout longs</b> · 23 coins. Close above the 40-day high close and above the 200-day average. 3 ATR stop, 4 ATR trail. 1.5% risk (was 3% until 27 Sep 2026).</li>
+ <li><b>1H breakout longs</b> · 9 coins. Close above the 96-hour high close. Gate: daily above 200-day <em>or</em> hourly 50-EMA over 200-EMA. 3 ATR stop, 10 ATR trail. 1% risk.</li>
+ <li><b>Dip Buy</b> · 25 coins (1D list minus DOGE, plus LDO, LTC, STX). RSI(2) under 5 while above the 200-day. Fixed 5 ATR stop; out on a close above the 10-day average or after 30 days. 3% risk.</li>
+ <li><b>1D shorts</b> · 9 big coins (BTC ETH ZEC SOL NEAR XRP DOGE LINK SUI). Mirror of the 1D longs, only while BTC closes below its 200-day. Own 3 slots / 6% cap. 2% risk.</li>
+ <li><b>Limits</b> · 12 long slots / 36% open risk shared by 1D, 1H and Dip. Shorts separate: 3 slots / 6%. Max 3 new orders per run, no chasing past 1.5%, daily loss stop 15%.</li>
+</ul>
+<div id="old-lists"></div>
+</section>
+</div>
+</details>
+
 <script>
 (function(){
 // Live vs backtest. Uses the bot account address this dashboard already stores (hl-deck-subaddr).
@@ -1725,9 +1744,9 @@ function eqAt(pf,t){var m={};(pf||[]).forEach(function(x){m[x[0]]=x[1]});var ks=
 function before(coin,tf,t){return post({type:"candleSnapshot",req:{coin:coin,interval:tf.iv,startTime:t-90*tf.ms,endTime:t}}).then(function(j){return Array.isArray(j)?j.map(function(x){return{t:x.t,h:+x.h,l:+x.l,c:+x.c}}).filter(function(x){return x.t+tf.ms<=t}):[]})}
 function pct(x){return (x>=0?"+":"\u2212")+Math.abs(x).toFixed(1)+"%"}
 function rf(x){return (x>=0?"+":"\u2212")+Math.abs(x).toFixed(2)+"R"}
-function when(t){return new Date(t).toLocaleString([],{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
+function when(t){return new Date(t).toLocaleString([],{timeZone:"Australia/Sydney",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
 function run(){var sum=document.getElementById("lt-sum"),box=document.getElementById("lt-body"),a=null;try{a=localStorage.getItem("hl-deck-subaddr")}catch(e){}
- if(!a){sum.innerHTML="Add the bot account address at the top of the dashboard and this fills in.";return}
+ if(!a){sum.innerHTML="Save the old bot's sub-account under <b>Your wallet</b> and this fills in.";return}
  Promise.all([post({type:"userFills",user:a}),post({type:"frontendOpenOrders",user:a}),post({type:"portfolio",user:a}),post({type:"allMids"})]).then(function(res){
   var fills=(res[0]||[]).slice().sort(function(x,y){return x.time-y.time}),trades=[],by={};
     // A buy WITHOUT the bot's order tag on a coin the bot already holds (same side) is a hand top-up:
@@ -1766,220 +1785,44 @@ function run(){var sum=document.getElementById("lt-sum"),box=document.getElement
   var sh='<div class="tw"><table><thead><tr><th>Strategy</th><th>Closed trades</th><th>Wins</th><th>Avg result</th><th>Backtest expects</th></tr></thead><tbody>';
   ["1D","DIP","1H"].forEach(function(s){var c=score[s]||{n:0,w:0,r:0},bt=BT[s];sh+="<tr><td>"+NAME[s]+"</td><td>"+c.n+"</td><td>"+(c.n?Math.round(100*c.w/c.n)+"%":"\u2014")+"</td><td>"+(c.n?rf(c.r/c.n):"\u2014")+"</td><td>"+bt.w+"% wins \u00b7 "+rf(bt.r)+(c.n<20?" <small>compare after ~20 trades</small>":"")+"</td></tr>"});
   box.innerHTML='<div class="tw"><table><thead><tr><th>Trade</th><th>Strategy</th><th>Opened</th><th>Entry vs signal</th><th>Risk taken</th><th>Stop</th><th>Result</th></tr></thead><tbody>'+(rows||'<tr><td colspan="7">No bot trades yet.</td></tr>')+"</tbody></table></div>"+sh+"</tbody></table></div>";
-  document.getElementById("lt-when").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+". R = results in multiples of the risk taken: +1R means it made what it risked.";
- }).catch(function(e){document.getElementById("lt-sum").textContent="Could not load the bot's trades: "+e})}
-var me=document.getElementById("lt"),fr=document.getElementById("fr");if(me&&fr&&fr.parentNode)fr.parentNode.insertBefore(me,fr.nextSibling);
+  document.getElementById("lt-when").textContent="Checked "+new Date().toLocaleTimeString([],{timeZone:"Australia/Sydney",hour:"numeric",minute:"2-digit"})+". R = results in multiples of the risk taken: +1R means it made what it risked.";
+ }).catch(function(e){document.getElementById("lt-sum").textContent="Could not load the old bot's trades: "+e})}
 run();setInterval(run,600000);
 })();
 </script>
-<!-- Paper tests - added 26 Sep 2026. Data: paper_board.json, pushed here hourly by
-     hl-scanner's scan job (paperboard.py): coins, dates and results in R only. -->
-<section id="pt" class="fr">
-<style>
-.pt-bar{height:6px;background:var(--line-soft,#21262d);border-radius:3px;overflow:hidden;margin:0 12px 10px}
-.pt-bar i{display:block;height:100%;background:#2962FF}
-.pt-st{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;border:1px solid var(--line,#30363d);color:var(--ink-3,#8b949e);white-space:nowrap}
-.pt-st.passed{color:#3b6cff;border-color:#3b6cff}
-.pt-st.failed{color:#FF6D00;border-color:#FF6D00}
-.pt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;padding:10px 12px 6px}
-.pt-grid b{display:block;font-size:15px;font-variant-numeric:tabular-nums}
-.pt-grid small{display:block;color:var(--ink-3,#8b949e);font-size:11px}
-.pt-rule{padding:2px 12px 10px;font-size:12.5px;color:var(--ink-2,#8b949e)}
-.pt-grp .tw{margin:0 12px 12px}
-</style>
-<h2>Paper tests</h2>
-<p class="sub">Fake-money bots being tested before any real money goes near them. Each has a pass rule; until it has enough trades it's only collecting. R = result as a multiple of the risk taken on the trade.</p>
-<div id="pt-sum" class="sum">Loading paper results&hellip;</div>
-<div id="pt-body"></div>
-</section>
+
+  <footer>
+    Read-only: nothing on this page can place a trade. Prices and wallet data come straight from Hyperliquid's public API
+    (candles are reused in your browser until they close, to stay under its rate limit), market totals from CoinGecko,
+    and bot status, paper tests and money rotation from files hl-scanner publishes here. All times are Sydney time.
+  </footer>
+</div>
+
 <script>
+// One-line summaries on each collapsed card, and remember open/closed in this
+// browser only. Everything still works without this script (plain <details>).
 (function(){
- function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
- function r(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(2)+"R"}
- function cell(v,k){return "<div><b>"+v+"</b><small>"+k+"</small></div>"}
- function card(b){
-  var ref=b.kind==="reference",pct=ref||!b.target?0:Math.min(100,Math.round(100*b.n/b.target));
-  var st=b.status==="passed"?"Passed":b.status==="failed"?"Failed":ref?"Reference":"Collecting";
-  var g=cell(ref?b.n:b.n+" / "+b.target,"closed trades")+cell(r(b.avg),"average per trade")
-   +cell(b.lo==null?"after 10 trades":r(b.lo)+" to "+r(b.hi),"realistic range (95%)")
-   +cell(b.win==null?"—":b.win+"%","winners")+cell(b.open.length,"open now")
-   +(ref?"":cell(b.overlap==null?"—":b.overlap+"%","repeat a real-bot trade"))
-   +(ref?"":cell(b.backtest==null?"no backtest":r(b.backtest),"backtest expects"));
-  if(b.id==="CF")g+=cell(b.okx_agree_pct==null?"from ~2 Oct":b.okx_agree_pct+"%","OKX agrees with Binance");
-  (b.breakdown||[]).forEach(function(x){g+=cell(r(x.avg)+" <small>("+x.n+")</small>",esc(x.strat)+(x.expect==null?"":" · backtest "+r(x.expect)))});
-  if(b.id==="OB")g+=cell(b.live_breakouts_avg==null?"no closed trades yet":r(b.live_breakouts_avg),"real bot's breakouts (to beat by +0.05R)");
-  // exact times (UTC in the JSON) shown in the viewer's own time zone; date only when that's all we know
-  var when=function(at,day){if(at){var d=new Date(at);if(!isNaN(d.getTime()))return d.toLocaleString([],{day:"numeric",month:"short",year:d.getFullYear()!==new Date().getFullYear()?"numeric":undefined,hour:"numeric",minute:"2-digit"})}return day||"—"};
-  var rows=b.recent.slice().reverse().slice(0,10).map(function(t){return "<tr><td><b>"+esc(t.coin)+'</b> <span class="dir '+(t.side==="LONG"?"L":"S")+'">'+esc(t.side)+"</span></td><td>"+esc(when(t.opened_at,t.opened))+"</td><td>"+esc(when(t.closed_at,t.closed))+'</td><td class="'+(t.r>=0?"good":"bad")+'">'+r(t.r)+"</td></tr>"}).join("");
-  var open=b.open.map(function(t){return esc(t.coin)+" "+esc(t.side)+(t.opened_at?" <small>(since "+esc(when(t.opened_at))+")</small>":"")}).join(", ");
-  return '<div class="grp pt-grp"><div class="gh"><b>'+esc(b.name)+'</b><span class="pt-st '+esc(b.status)+'">'+st+" · "+esc(b.progress)+"</span></div>"
-   +'<div class="pt-grid">'+g+'</div>'+(ref?"":'<div class="pt-bar"><i style="width:'+pct+'%"></i></div>')
-   +'<div class="pt-rule"><b>Rule:</b> '+esc(b.rule)+"<br><b>Passes if:</b> "+esc(b.passes)+(open?"<br><b>Open:</b> "+open:"")+"</div>"
-   +(rows?'<div class="tw"><table><thead><tr><th>Trade</th><th>Opened <small>(your time)</small></th><th>Closed <small>(your time)</small></th><th>Result</th></tr></thead><tbody>'+rows+"</tbody></table></div>":"")+"</div>"}
- function pc(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(1)+"%"}
- function spark(c){if(!c||c.length<2)return "";var v=c.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),w=240,h=36,r=hi-lo||1;
-  var pts=v.map(function(y,i){return (i*w/(v.length-1)).toFixed(1)+","+(h-2-(y-lo)*(h-4)/r).toFixed(1)}).join(" ");
-  return '<svg viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'" style="margin:0 12px 8px;display:block" aria-label="equity curve"><polyline points="'+pts+'" fill="none" stroke="#2962FF" stroke-width="1.5"/></svg>'}
- function rcard(m){
-  var st=m.status==="passed"?"Passed":m.status==="failed"?"Failed":"Collecting";
-  var g=cell(pc(m.ret),"since "+esc(m.since||"start"))+cell(pc(m.btc),"BTC same period")+cell(pc(m.alt),"alt basket same period")
-   +cell(m.batches,"7-day batches done")+cell(pc(m.avg_batch),"average batch")+cell(pc(m.avg_excess),"batch vs alt basket")
-   +cell(m.beat_pct==null?"—":m.beat_pct+"%","batches beating basket")+cell(m.open,"batches open");
-  var now=(m.now_in&&m.now_in.length?"long "+m.now_in.join(", "):"")+(m.now_out&&m.now_out.length?" · short "+m.now_out.join(", "):"");
-  return '<div class="grp pt-grp"><div class="gh"><b>'+esc(m.name)+'</b><span class="pt-st '+esc(m.status)+'">'+st+" · "+esc(m.progress)+"</span></div>"
-   +'<div class="pt-grid">'+g+"</div>"+spark(m.curve)
-   +'<div class="pt-rule"><b>Rule:</b> '+esc(m.rule)+"<br><b>Passes if:</b> "+esc(m.passes)+"<br><b>Backtest:</b> "+esc(m.backtest)+(now?"<br><b>Latest batch:</b> "+esc(now):"")+"</div></div>"}
- function run(){
-  fetch("paper_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error("HTTP "+x.status);return x.json()}).then(function(B){
-   var T=B.bots.filter(function(b){return b.kind!=="reference"}),closed=0,open=0,judged=T.filter(function(b){return b.status==="passed"||b.status==="failed"});
-   T.forEach(function(b){closed+=b.n;open+=b.open.length});
-   document.getElementById("pt-sum").innerHTML="<b>"+(T.length+(B.rotation||[]).length)+" paper tests</b> · "+closed+" closed trade"+(closed===1?"":"s")+", "+open+" open · "
-    +(judged.length?judged.map(function(b){return esc(b.name)+" "+b.status}).join(", "):"none has enough trades to judge yet")
-    +(B.as_of?' <small style="color:var(--ink-3,#8b949e)">· latest '+esc(B.as_of)+"</small>":"");
-   var tests=B.bots.filter(function(b){return b.kind!=="reference"}),refs=B.bots.filter(function(b){return b.kind==="reference"});
-   var sh=B.shadow,shc=sh?'<div class="grp pt-grp"><div class="gh"><b>ChatGPT votes (shadow mode)</b><span class="pt-st">Reference · '+sh.scored+" of ~"+sh.judge_at+" scored</span></div>"
-     +'<div class="pt-grid">'+cell(sh.votes,"votes cast")+cell(sh.scored,"matched to real trades")
-     +cell(sh.take.avg==null?"—":r(sh.take.avg)+" <small>("+sh.take.n+")</small>","trades ChatGPT said TAKE")
-     +cell(sh.skip.avg==null?"—":r(sh.skip.avg)+" <small>("+sh.skip.n+")</small>","trades ChatGPT said SKIP")+"</div>"
-     +'<div class="pt-rule">ChatGPT votes TAKE or SKIP on every live signal; nothing acts on it. Useful only if SKIP trades end up clearly worse than TAKE trades.</div></div>':"";
-   document.getElementById("pt-body").innerHTML='<p class="sub"><b>Being tested</b> (fake money, each with a pass rule)</p>'
-    +tests.map(card).join("")+'<p class="sub">'+esc(B.note)+"</p>"
-    +(B.rotation&&B.rotation.length?B.rotation.map(rcard).join("")+'<p class="sub">'+esc(B.rotation_note||"")+"</p>":"")
-    +(refs.length||shc?'<p class="sub"><b>Reference</b> (not tests: checks on the live rules)</p>'+refs.map(card).join("")+shc:"");
-  }).catch(function(e){document.getElementById("pt-sum").textContent="Paper results not published yet ("+e.message+")."})}
- run();setInterval(run,600000);
-})();
-</script>
-<!-- Money rotation - added 26 Sep 2026. Data: rotation_board.json, pushed here by
-     hl-scanner's live job each time the Discord rotation alert runs (7am, 10am,
-     2pm, 6pm Sydney). Market data only. -->
-<section id="rot" class="fr">
-<style>
-.rot-flow{font-weight:700}
-.rot-flow.in{color:#3b6cff}
-.rot-flow.out{color:#FF6D00}
-</style>
-<h2>Money rotation</h2>
-<p class="sub">Which crypto sectors money is moving into or out of: price vs BTC today and this week, and each sector's share of trading volume now vs its 7-day average. Same numbers as the Discord alert. Info only, not a trade signal.</p>
-<div id="rot-sum" class="sum">Loading the latest rotation&hellip;</div>
-<div id="rot-body"></div>
-</section>
-<script>
-(function(){
- function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
- function p(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(1)+"%"}
- function cls(x){return x==null?"":x>=0?"good":"bad"}
- function when(iso){var d=new Date(iso.replace("Z",":00Z"));return isNaN(d)?iso:d.toLocaleString([],{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
- function run(){
-  fetch("rotation_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error("HTTP "+x.status);return x.json()}).then(function(B){
-   var ins=B.money_in.length?B.money_in.join(", "):"nothing clear",outs=B.money_out.length?B.money_out.join(", "):"nothing clear";
-   document.getElementById("rot-sum").innerHTML='<span class="rot-flow in">▲ In:</span> <b>'+esc(ins)+'</b> · <span class="rot-flow out">▼ Out:</span> <b>'+esc(outs)+"</b>"
-    +' <small style="color:var(--ink-3,#8b949e)">· '+esc(when(B.as_of))+"</small>";
-   var rows=B.sectors.map(function(s){var f=s.flow==="in"?'<span class="rot-flow in">▲ in</span>':s.flow==="out"?'<span class="rot-flow out">▼ out</span>':"";
-    return "<tr><td><b>"+esc(s.name)+"</b></td><td class=\""+cls(s.rel24)+"\">"+p(s.rel24)+"</td><td class=\""+cls(s.rel7)+"\">"+p(s.rel7)+"</td><td>"
-     +(s.share_avg==null?"—":s.share_avg.toFixed(1)+"% → "+s.share_now.toFixed(1)+"%")+"</td><td>"+f+"</td><td>"+esc(s.top)+" <small>"+p(s.top_r24)+"</small></td></tr>"}).join("");
-   var btc=B.btc?"BTC "+p(B.btc.r24)+" today, "+p(B.btc.r7)+" this week":"";
-   var maj=B.majors?" · BTC+ETH "+B.majors.share_now.toFixed(0)+"% of volume (avg "+B.majors.share_avg.toFixed(0)+"%) → "+esc(B.majors.verdict):"";
-   document.getElementById("rot-body").innerHTML='<p class="sub">'+btc+maj+"</p>"
-    +'<div class="tw"><table><thead><tr><th>Sector</th><th>Today vs BTC</th><th>7 days vs BTC</th><th>Volume share (avg → now)</th><th>Flow</th><th>Leader today</th></tr></thead><tbody>'+rows+"</tbody></table></div>";
-  }).catch(function(e){document.getElementById("rot-sum").textContent="No rotation published yet ("+e.message+"). It updates at 7am, 10am, 2pm and 6pm Sydney."})}
- var me=document.getElementById("rot"),h=document.getElementById("strat-tiles");while(h&&h.tagName!=="H2")h=h.previousElementSibling;
- if(me&&h&&h.parentNode)h.parentNode.insertBefore(me,h);   // top of the page, above Strategies
- run();setInterval(run,600000);
-})();
-</script>
-<script>
-(function(){
-// Market gauge: OTHERS dominance (= 100 - top-10 dominance, i.e. TradingView OTHERS.D),
-// BTC dominance and total cap, from CoinGecko's public /global endpoint.
-var SELL_AT=13.0, WARN_AT=11.0, METER_MAX=17.0;
-// CoinGecko's figure runs a little above TradingView's OTHERS.D (different total / top-10 basket).
-// Offset calibrated 25 Sep 2026: CoinGecko 8.93 vs TradingView 8.43. Re-check monthly.
-var TV_OFFSET=-0.50;
-function $(id){return document.getElementById(id)}
-function fmtT(n){return n>=1e12?"$"+(n/1e12).toFixed(2)+"T":"$"+(n/1e9).toFixed(0)+"B"}
-function run(){
- fetch("https://api.coingecko.com/api/v3/global").then(function(r){return r.json()}).then(function(j){
-  var d=j.data,p=d.market_cap_percentage||{},top10=0,keys=Object.keys(p);
-  keys.forEach(function(k){top10+=p[k]});
-  if(keys.length<10||!top10)throw new Error("top-10 data missing");
-  var raw=100-top10,others=raw+TV_OFFSET,btcd=p.btc||0,total=d.total_market_cap&&d.total_market_cap.usd,chg=d.market_cap_change_percentage_24h_usd;
-  var gap=SELL_AT-others;
-  $("t-others").textContent=others.toFixed(2)+"%";
-  $("t-others").style.color=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--up)";
-  $("t-others-sub").textContent=(others>=SELL_AT?"AT/ABOVE the 13% sell line":others>=WARN_AT?"close to the 13% sell line":"below the 13% sell line")+" · raw CoinGecko "+raw.toFixed(2)+"%";
-  var m=$("t-others-meter");m.className="meter"+(others>=WARN_AT?" over":"");m.firstElementChild.style.width=Math.min(100,others/METER_MAX*100).toFixed(1)+"%";
-  $("t-btcd").textContent=btcd.toFixed(1)+"%";
-  $("t-btcd-sub").textContent="ETH "+(p.eth||0).toFixed(1)+"% · stables "+(((p.usdt||0)+(p.usdc||0))).toFixed(1)+"%";
-  $("t-total").textContent=total?fmtT(total):"—";
-  $("t-total-sub").textContent=chg==null?"":(chg>=0?"+":"")+chg.toFixed(1)+"% in 24h";
-  $("t-total-sub").style.color=chg>=0?"var(--up)":"var(--down)";
-  $("t-others-gap").textContent=(gap>=0?"":"+")+(-gap).toFixed(2)+" pts";
-  $("t-others-gap").style.color=gap<=0?"var(--down)":gap<=1?"var(--warn)":"var(--ink)";
-  $("t-others-gap-sub").textContent=gap>0?"below 13% · alts still on":"past 13% · sell-alts zone";
-  $("t-others-tile").style.borderColor=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--line)";
- }).catch(function(e){$("t-others-sub").textContent="CoinGecko unreachable ("+e.message+")"});
-}
-run();setInterval(run,600000);
-})();
-</script>
-<!-- Tidy layout (26 Sep 2026): every section collapses to ONE summary line;
-     tap it to open the details. Nothing is removed. Open/closed is remembered
-     in this browser only. -->
-<style>
-details.dk{border:1px solid var(--line,#D8E0E2);border-radius:10px;margin:10px 0;background:var(--surface,transparent)}
-details.dk>summary{list-style:none;cursor:pointer;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;padding:12px 14px;min-height:24px}
-details.dk>summary::-webkit-details-marker{display:none}
-details.dk>summary .t{font-weight:700;white-space:nowrap}
-details.dk>summary .s{flex:1 1 220px;min-width:0;color:var(--ink-2,#47565B);font-size:13px;overflow-wrap:anywhere}
-details.dk>summary .a{margin-left:auto;color:var(--ink-3,#74858B);transition:transform .15s}
-details.dk[open]>summary .a{transform:rotate(90deg)}
-details.dk .dk-body{padding:0 14px 14px}
-details.dk .dk-body>h2,details.dk .dk-body>section>h2{display:none}
-details.dk .dk-body>section.fr,details.dk .dk-body>section{margin:0!important;padding:0!important}
-</style>
-<script>
-(function(){
-var KEY="deck-open-v1";
+var KEY="deck-open-v2";
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
 function save(o){try{localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
 var state=load();
 function $(id){return document.getElementById(id)}
 function txt(id,max){var e=$(id);if(!e)return "";var c=e.cloneNode(true);c.querySelectorAll("br,div,p,li,tr").forEach(function(b){b.before(" \u00b7 ")});
  var t=c.textContent.replace(/\s+/g," ").replace(/^( ?\u00b7 ?)+/,"").replace(/( \u00b7)+/g," \u00b7").trim();if(max&&t.length>max)t=t.slice(0,max-1)+"\u2026";return t}
-function tiles(id,n){var box=$(id);if(!box)return "";return Array.prototype.slice.call(box.querySelectorAll(".tile"),0,n).map(function(t){var k=t.querySelector(".k"),v=t.querySelector(".v");return (k?k.textContent.trim():"")+" "+(v?v.textContent.trim():"")}).join(" · ")}
-var S=[
- {key:"bots",section:"bots",icon:"🤖",title:"Bots",openIf:function(){return true},sum:function(){return txt("bots-sum",140)}},
- {key:"rot",section:"rot",icon:"🔄",title:"Money rotation",openIf:function(){return true},sum:function(){return txt("rot-sum",140)}},
- {key:"strat",anchor:"strat-tiles",icon:"🧠",title:"Strategies",with:["pt"],sum:function(){var p=txt("pt-sum",70);return "bot2 1D "+txt("st-b2-1D")+" · 1H "+txt("st-b2-1H")+" · old rules for reference"+(p?" · paper tests: "+p.replace(/^\d+ paper (bots|models|tests) · /,""):"")}},
- {key:"mkt",anchor:"mkt-tiles",icon:"🌍",title:"Market",sum:function(){var o=txt("t-others");return o&&o!=="—"?"Others "+o+" ("+txt("t-others-gap-sub")+") · BTC.D "+txt("t-btcd")+" · total "+txt("t-total"):"loading…"}},
- {key:"acct",anchor:"acct-setup",icon:"💰",title:"Your account",openIf:function(){var a=$("acct");return !a||a.hidden},
-  sum:function(){var a=$("acct");if(!a||a.hidden)return "tap to load your wallet";return "Bot "+txt("t-bot")+" · You "+txt("t-value")+" · open P/L "+txt("t-pnl")}},
- {key:"rp",anchor:"rp",icon:"🧾",title:"Realised P/L",hideWith:"rp",sum:function(){return tiles("rp-tiles",2)||"loading…"}},
- {key:"gmx",anchor:"gmx",icon:"🔵",title:"GMX",hideWith:"gmx",sum:function(){return txt("gmx-sum",110)||"loading…"}},
- {key:"fr",section:"fr",icon:"🎯",title:"Will anything fire?",sum:function(){return txt("fr-sum",140)}},
- {key:"lt",section:"lt",icon:"📐",title:"Live vs backtest (old bot)",sum:function(){return txt("lt-sum",140)}}
-];
-function stop(n){return !n||n.tagName==="H2"||n.tagName==="SECTION"||n.tagName==="FOOTER"||n.tagName==="DETAILS"||n.tagName==="SCRIPT"}
-function build(){
- S.forEach(function(x){
-  var nodes=[];
-  if(x.section){var sec=$(x.section);if(!sec)return;nodes=[sec]}
-  else{var a=$(x.anchor);if(!a)return;var h=a.previousElementSibling;while(h&&h.tagName!=="H2")h=h.previousElementSibling;if(!h)return;
-   nodes=[h];var n=h.nextElementSibling;while(!stop(n)){nodes.push(n);n=n.nextElementSibling}}
-  (x.with||[]).forEach(function(id){var e=$(id);if(e)nodes.push(e)});   // e.g. paper tests live inside Strategies
-  var d=document.createElement("details");d.className="dk";d.dataset.key=x.key;
-  d.innerHTML='<summary><span class="t">'+x.icon+" "+x.title+'</span><span class="s"></span><span class="a">▸</span></summary><div class="dk-body"></div>';
-  nodes[0].parentNode.insertBefore(d,nodes[0]);
-  var body=d.querySelector(".dk-body");nodes.forEach(function(e){body.appendChild(e)});
-  d.open=x.key in state?!!state[x.key]:!!(x.openIf&&x.openIf());
-  d.addEventListener("toggle",function(){state[x.key]=d.open;save(state)});
-  x.el=d});
- update();setInterval(update,2000)}
-function update(){S.forEach(function(x){if(!x.el)return;
- if(x.hideWith){var w=$(x.hideWith);x.el.hidden=!w||w.hidden}
- try{x.el.querySelector(".s").textContent=x.sum()||""}catch(e){}})}
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){setTimeout(build,0)});else setTimeout(build,0);
+var S={
+ bots:function(){return txt("bots-sum",160)},
+ fr:function(){return txt("fr-sum",160)},
+ pt:function(){return txt("pt-sum",140)},
+ mkt:function(){var o=txt("t-others"),r=txt("rot-sum",90);return (o&&o!=="—"?"Others "+o+" (sell line 13%) · BTC.D "+txt("t-btcd")+" · ":"")+r},
+ wallet:function(){var a=$("acct");if(!a||a.hidden)return "Tap to load your own wallet - it stays in this browser.";return "Old bot "+txt("t-bot")+" · You "+txt("t-value")+" · open P/L "+txt("t-pnl")},
+ ref:function(){return "🔒 manage-only · trade check: "+txt("lt-sum",120)}
+};
+Array.prototype.forEach.call(document.querySelectorAll("details.dk[data-key]"),function(d){
+ var k=d.dataset.key;
+ if(k in state)d.open=!!state[k];
+ d.addEventListener("toggle",function(){state[k]=d.open;save(state)})});
+function update(){Object.keys(S).forEach(function(k){var e=$("dk-s-"+k);if(!e)return;try{e.textContent=S[k]()||""}catch(x){}})}
+update();setInterval(update,2000);
 })();
 </script>
 </body>
