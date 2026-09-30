@@ -266,6 +266,16 @@
   .rot-flow.in{color:#3b6cff}
   .rot-flow.out{color:#FF6D00}
 
+  /* your wallet: saved addresses + totals */
+  .addr-box>summary{cursor:pointer;padding:10px 12px;font-size:13px;font-weight:600}
+  .addr-box>summary small{font-weight:400;color:var(--ink-3)}
+  .addr-in{padding:0 12px 12px}
+  .addr-in input[type="text"]{display:block;width:100%;margin:0 0 12px}
+  .addr-in .saved{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+  .fr .tw th.r,.fr .tw td.r{text-align:right}
+  .fr .tw td.mono{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+  .fr .tw tr.tot td{font-weight:700;border-top:2px solid var(--line)}
+
   /* old bot rules */
   .old-rules{margin:0 0 12px;padding:0;list-style:none;border:1px solid var(--line);border-radius:8px;overflow:hidden}
   .old-rules li{padding:8px 12px;font-size:12.5px;color:var(--ink-2);border-top:1px solid var(--line-soft)}
@@ -875,21 +885,31 @@ run();setInterval(run,600000);
 <summary><span class="t">💰 Your wallet</span><span class="tg priv">this browser only</span><span class="s" id="dk-s-wallet"></span><span class="a">▸</span></summary>
 <div class="dk-body">
 <section id="wallet" class="fr">
-  <div id="acct-setup" class="panel">
-    <label class="fld" for="addr">Public wallet address — read-only. It cannot sign or move anything.</label>
-    <div class="addr-row">
-      <input type="text" id="addr" placeholder="0x… your main account" spellcheck="false" autocomplete="off">
-      <button id="save" type="button">Load account</button>
+  <h3>Account totals</h3>
+  <div id="tot-wrap"><div class="msg">No addresses saved in this browser yet - add them below.</div></div>
+  <p class="note" id="tot-when"></p>
+
+  <details class="grp addr-box" id="acct-setup">
+    <summary>Addresses <small>· saved in this browser only, never published</small></summary>
+    <div class="addr-in">
+      <label class="fld" for="addr">Main account <span class="saved" id="m-main"></span></label>
+      <input type="text" id="addr" placeholder="0x… paste to set or change" spellcheck="false" autocomplete="off">
+      <label class="fld" for="subaddr">Old bot <span class="saved" id="m-old"></span></label>
+      <input type="text" id="subaddr" placeholder="0x… paste to set or change" spellcheck="false" autocomplete="off">
+      <label class="fld" for="addr-b2d">bot2 1D <span class="saved" id="m-b2d"></span></label>
+      <input type="text" id="addr-b2d" placeholder="0x… paste to set or change" spellcheck="false" autocomplete="off">
+      <label class="fld" for="addr-b2h">bot2 1H <span class="saved" id="m-b2h"></span></label>
+      <input type="text" id="addr-b2h" placeholder="0x… paste to set or change" spellcheck="false" autocomplete="off">
+      <div class="addr-row">
+        <button id="save" type="button">Save</button>
+        <button id="forget" class="ghost" type="button">Forget addresses</button>
+      </div>
+      <div class="note" id="addr-msg">Public, read-only addresses: they can't sign or move anything. Kept in this browser only - never published on this page or in the repo; only sent to Hyperliquid's and GMX's public APIs to read them. Leave a box empty to keep what's already saved.</div>
     </div>
-    <label class="fld" for="subaddr" style="margin-top:10px">Old bot's sub-account — optional, shown separately.</label>
-    <div class="addr-row">
-      <input type="text" id="subaddr" placeholder="0x… old bot sub-account" spellcheck="false" autocomplete="off">
-      <button id="savesub" type="button">Save</button>
-    </div>
-    <div class="note" id="addr-msg">Both stored in this browser only - never published on this page. Only sent to Hyperliquid's and GMX's public APIs to read them.</div>
-  </div>
+  </details>
 
   <div id="acct" hidden>
+    <h3>Main account and old bot - detail</h3>
     <div class="tiles">
       <div class="tile bot">
         <div class="k">Old bot sub-account</div>
@@ -1174,7 +1194,6 @@ run();setInterval(run,600000);
       });
       var mine = r[0];
       if (!mine.reachable) throw new Error("Hyperliquid did not answer for that address");
-      document.getElementById("acct-setup").hidden = true;
       document.getElementById("acct").hidden = false;
       drawBot(r[1]);
       drawAccount(mine.state, mine.total, r[1] && r[1].state, botStrat);
@@ -1634,16 +1653,115 @@ run();setInterval(run,600000);
     tb.appendChild(body); sc.appendChild(tb); wrap.appendChild(sc);
   }
 
+  // ---------- account totals (four addresses, this browser only) ----------
+  // The owner saves up to four PUBLIC addresses in this browser (localStorage).
+  // They are never published: not in this page, not in the repo, only sent to
+  // Hyperliquid's public info API to read them. On screen they are masked.
+  // The first two keys are the ones this page always used (main + old bot).
+  var ACCTS = [
+    { k: KEY,              name: "Main account", inp: "addr",     m: "m-main" },
+    { k: SUBKEY,           name: "Old bot",      inp: "subaddr",  m: "m-old" },
+    { k: "hl-deck-b2-1d",  name: "bot2 1D",      inp: "addr-b2d", m: "m-b2d" },
+    { k: "hl-deck-b2-1h",  name: "bot2 1H",      inp: "addr-b2h", m: "m-b2h" }
+  ];
+  function isAddr(a) { return /^0x[a-fA-F0-9]{40}$/.test(a || ""); }
+  function mask(a) { return a ? a.slice(0, 6) + "…" + a.slice(-4) : ""; }
+  function forget(k) { try { localStorage.removeItem(k); } catch (e) {} }
+
+  // Account value in the account's own mode (userAbstraction). Unified or
+  // portfolio-margin accounts: the spot USDC total IS the account - the perp
+  // accountValue is only the margin slice of that same money, so the two are
+  // NEVER added. Any other mode: the perp accountValue.
+  function acctValue(addr) {
+    return Promise.all([
+      hl({ type: "userAbstraction", user: addr }).catch(function () { return null; }),
+      hl({ type: "clearinghouseState", user: addr }),
+      hl({ type: "spotClearinghouseState", user: addr }).catch(function () { return null; })
+    ]).then(function (r) {
+      var mode = typeof r[0] === "string" ? r[0] : "";
+      var unified = /unified|portfolio/i.test(mode);
+      var perp = parseFloat(((r[1] || {}).marginSummary || {}).accountValue || 0);
+      var usdc = 0;
+      ((r[2] || {}).balances || []).forEach(function (b) {
+        if (b.coin === "USDC") usdc += parseFloat(b.total || 0);
+      });
+      var open = ((r[1] || {}).assetPositions || []).filter(function (ap) {
+        return ap.position && parseFloat(ap.position.szi || 0) !== 0; }).length;
+      if (unified && !r[2]) throw new Error("spot balance unavailable");
+      return { value: unified ? usdc : perp, unified: unified, open: open };
+    });
+  }
+
+  var totalsRun = 0;
+  function drawTotals() {
+    var run = ++totalsRun;
+    var wrap = document.getElementById("tot-wrap"), when = document.getElementById("tot-when");
+    ACCTS.forEach(function (a) {
+      var v = recall(a.k), m = document.getElementById(a.m);
+      if (m) m.textContent = isAddr(v) ? "· saved " + mask(v) : "· not set";
+    });
+    var list = ACCTS.map(function (a) { return { a: a, addr: recall(a.k) }; })
+                    .filter(function (x) { return isAddr(x.addr); });
+    if (!list.length) {
+      window.hlWalletLine = "";
+      wrap.textContent = "";
+      wrap.appendChild(el("div", "msg", "No addresses saved in this browser yet - add them below."));
+      when.textContent = "";
+      document.getElementById("acct-setup").open = true;
+      return Promise.resolve();
+    }
+    return Promise.all(list.map(function (x) {
+      return acctValue(x.addr).catch(function () { return null; });
+    })).then(function (res) {
+      if (run !== totalsRun) return;                  // a newer refresh is already drawing
+      var total = 0, open = 0, read = 0;
+      var sc = el("div", "tw"), tb = el("table"), hd = el("thead"), hr = el("tr");
+      ["Account", "Address", "Value", "Open positions"].forEach(function (h, i) {
+        hr.appendChild(el("th", i >= 2 ? "r" : null, h)); });
+      hd.appendChild(hr); tb.appendChild(hd);
+      var body = el("tbody");
+      list.forEach(function (x, i) {
+        var r = res[i], tr = el("tr");
+        tr.appendChild(el("td", null, x.a.name));
+        tr.appendChild(el("td", "mono", mask(x.addr)));
+        var v = el("td", "r");
+        if (r) {
+          v.appendChild(document.createTextNode(money(r.value)));
+          v.appendChild(el("small", null, r.unified ? " unified" : " perps"));
+          total += r.value; open += r.open; read++;
+        } else {
+          v.appendChild(el("span", "bad", "couldn't read"));
+        }
+        tr.appendChild(v);
+        tr.appendChild(el("td", "r", r ? String(r.open) : "—"));
+        body.appendChild(tr);
+      });
+      var tt = el("tr", "tot");
+      tt.appendChild(el("td", null, "Total"));
+      tt.appendChild(el("td", null, read + " of " + list.length + " account" + (list.length === 1 ? "" : "s")));
+      tt.appendChild(el("td", "r", money(total)));
+      tt.appendChild(el("td", "r", String(open)));
+      body.appendChild(tt);
+      tb.appendChild(body); sc.appendChild(tb);
+      wrap.textContent = ""; wrap.appendChild(sc);
+      var hhmm = new Date().toLocaleTimeString([], { timeZone: "Australia/Sydney", hour: "numeric", minute: "2-digit" });
+      when.textContent = "Updated " + hhmm + " Sydney. Unified accounts are valued at their spot USDC; others at their perp account value."
+        + (read < list.length ? " Accounts that couldn't be read are left out of the total." : "");
+      window.hlWalletLine = "Total " + money(total) + " across " + read + " account" + (read === 1 ? "" : "s")
+        + " · " + open + " open position" + (open === 1 ? "" : "s") + " · updated " + hhmm;
+    });
+  }
+
   // ---------- boot ----------
   function refreshAll() {
     var btn = document.getElementById("refresh");
     btn.disabled = true;
     var addr = recall(KEY);
     // a light ping: if Hyperliquid can't be reached at all, say so once at the top
-    var tasks = [hl({ type: "allMids" })];
+    var tasks = [hl({ type: "allMids" }), drawTotals()];
     if (addr) {
       tasks.push(loadAccount(addr).catch(function (e) {
-        document.getElementById("acct-setup").hidden = false;
+        document.getElementById("acct-setup").open = true;
         document.getElementById("addr-msg").textContent = "Couldn't load that account: " + e.message;
         document.getElementById("addr-msg").className = "note err";
       }));
@@ -1656,45 +1774,47 @@ run();setInterval(run,600000);
     }).then(function () { btn.disabled = false; });
   }
 
+  function hideDetail() {
+    ["acct", "rp", "rp-h", "gmx", "gmx-h"].forEach(function (id) { document.getElementById(id).hidden = true; });
+  }
   document.getElementById("save").addEventListener("click", function () {
-    var v = document.getElementById("addr").value.trim();
-    if (!/^0x[a-fA-F0-9]{40}$/.test(v)) {
-      var m = document.getElementById("addr-msg");
-      m.textContent = "That doesn't look like a wallet address — it should be 0x followed by 40 characters.";
-      m.className = "note err";
-      return;
-    }
-    store(KEY, v);
-    loadAccount(v).then(stamp).catch(function (e) {
-      var m = document.getElementById("addr-msg");
-      m.textContent = "Couldn't load that account: " + e.message;
+    var m = document.getElementById("addr-msg"), bad = [], saved = [];
+    ACCTS.forEach(function (a) {
+      var inp = document.getElementById(a.inp), v = inp.value.trim();
+      if (!v) return;                                  // empty box: keep what's saved
+      if (!isAddr(v)) { bad.push(a.name); return; }
+      store(a.k, v); inp.value = ""; saved.push(a.name);
+    });
+    m.textContent = (saved.length ? "Saved: " + saved.join(", ") + ". " : "")
+      + (bad.length ? "Not saved - " + bad.join(", ") + ": a wallet address is 0x followed by 40 characters." : "")
+      + (!saved.length && !bad.length ? "Nothing to save - paste an address into a box first." : "");
+    m.className = "note" + (bad.length ? " err" : "");
+    drawTotals();
+    var main = recall(KEY);
+    if (main) loadAccount(main).then(stamp).catch(function (e) {
+      m.textContent += " Couldn't load the main account: " + e.message;
       m.className = "note err";
     });
   });
-  document.getElementById("savesub").addEventListener("click", function () {
-    var v = document.getElementById("subaddr").value.trim();
+  document.getElementById("forget").addEventListener("click", function () {
+    ACCTS.forEach(function (a) { forget(a.k); document.getElementById(a.inp).value = ""; });
+    hideDetail();
+    var ls = document.getElementById("lt-sum"), lb = document.getElementById("lt-body");
+    if (ls) { ls.className = "sum"; ls.innerHTML = "Save the old bot's sub-account under <b>Your wallet</b> and this fills in."; }
+    if (lb) lb.textContent = "";
+    drawTotals();
     var m = document.getElementById("addr-msg");
-    if (v && !/^0x[a-fA-F0-9]{40}$/.test(v)) {
-      m.textContent = "That sub-account doesn't look like a wallet address.";
-      m.className = "note err";
-      return;
-    }
-    store(SUBKEY, v);
-    m.textContent = v ? "Bot sub-account saved." : "Bot sub-account cleared.";
+    m.textContent = "All four addresses forgotten in this browser.";
     m.className = "note";
-    var main = recall(KEY);
-    if (main) loadAccount(main).then(stamp).catch(function () {});
   });
-
-  document.getElementById("addr").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") document.getElementById("save").click();
+  ACCTS.forEach(function (a) {
+    document.getElementById(a.inp).addEventListener("keydown", function (e) {
+      if (e.key === "Enter") document.getElementById("save").click();
+    });
   });
   document.getElementById("refresh").addEventListener("click", refreshAll);
 
-  var saved = recall(KEY);
-  if (saved) document.getElementById("addr").value = saved;
-  var savedSub = recall(SUBKEY);
-  if (savedSub) document.getElementById("subaddr").value = savedSub;
+  // input boxes start empty; saved addresses only ever show masked
   refreshAll();
 })();
 </script>
@@ -1814,7 +1934,7 @@ var S={
  fr:function(){return txt("fr-sum",160)},
  pt:function(){return txt("pt-sum",140)},
  mkt:function(){var o=txt("t-others"),r=txt("rot-sum",90);return (o&&o!=="—"?"Others "+o+" (sell line 13%) · BTC.D "+txt("t-btcd")+" · ":"")+r},
- wallet:function(){var a=$("acct");if(!a||a.hidden)return "Tap to load your own wallet - it stays in this browser.";return "Old bot "+txt("t-bot")+" · You "+txt("t-value")+" · open P/L "+txt("t-pnl")},
+ wallet:function(){return window.hlWalletLine||"Tap to add your addresses - they stay in this browser."},
  ref:function(){return "🔒 manage-only · trade check: "+txt("lt-sum",120)}
 };
 Array.prototype.forEach.call(document.querySelectorAll("details.dk[data-key]"),function(d){
