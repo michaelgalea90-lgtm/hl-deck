@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="robots" content="noindex, nofollow">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>HL Scanner Deck</title>
 <meta name="description" content="Public status page for the HL Scanner bots: bot status, live signal checks, paper tests.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <style>
+  /* ---------- tokens (light) ---------- */
   :root {
     --bg:        #F4F6F7;
     --surface:   #FFFFFF;
@@ -20,7 +20,7 @@
     --line-soft: #E7EDEE;
     --ink:       #12191C;
     --ink-2:     #47565B;
-    --ink-3:     #74858B;
+    --ink-3:     #6B7C82;
     --accent:    #0E7C86;
     --accent-sf: #E2F2F3;
     --up:        #15803D;
@@ -29,21 +29,27 @@
     --down-sf:   #FBE8E6;
     --warn:      #A45B06;
     --warn-sf:   #FBEEDC;
-    --radius: 10px;
+    /* bot / paper colours (blue = rule met / good, orange = not / bad) */
+    --blue:      #2155E0;
+    --blue-sf:   #E6ECFD;
+    --orange:    #C2510A;
+    --orange-sf: #FDEEE3;
+    --radius: 12px;
+    --head-h: 96px;
     --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     --sans: "IBM Plex Sans", system-ui, -apple-system, Segoe UI, sans-serif;
   }
+  /* ---------- tokens (dark: system setting, unless forced light) ---------- */
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg:        #0D1214;
       --surface:   #141C1F;
       --surface-2: #1B2528;
-      --line:      #27343800;
       --line:      #273438;
       --line-soft: #1F2B2E;
       --ink:       #EAF1F2;
       --ink-2:     #A3B3B7;
-      --ink-3:     #7A8A8F;
+      --ink-3:     #7F9095;
       --accent:    #5CCFD6;
       --accent-sf: #123134;
       --up:        #4ADE80;
@@ -52,6 +58,10 @@
       --down-sf:   #341716;
       --warn:      #FBBF24;
       --warn-sf:   #332614;
+      --blue:      #7DA2FF;
+      --blue-sf:   #16234A;
+      --orange:    #FF9A4D;
+      --orange-sf: #3A2212;
     }
   }
   :root[data-theme="dark"] {
@@ -62,7 +72,7 @@
     --line-soft: #1F2B2E;
     --ink:       #EAF1F2;
     --ink-2:     #A3B3B7;
-    --ink-3:     #7A8A8F;
+    --ink-3:     #7F9095;
     --accent:    #5CCFD6;
     --accent-sf: #123134;
     --up:        #4ADE80;
@@ -71,249 +81,370 @@
     --down-sf:   #341716;
     --warn:      #FBBF24;
     --warn-sf:   #332614;
+    --blue:      #7DA2FF;
+    --blue-sf:   #16234A;
+    --orange:    #FF9A4D;
+    --orange-sf: #3A2212;
   }
 
+  /* ---------- base ---------- */
   * { box-sizing: border-box; }
+  html { scroll-padding-top: calc(var(--head-h) + 8px); }
   body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--sans);
-    font-size: 15px;
-    line-height: 1.45;
-    -webkit-font-smoothing: antialiased;
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; line-height: 1.45;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  .wrap { max-width: 900px; margin: 0 auto; padding-inline: 16px; padding-block: 0 48px; }
-
-  header.top {
-    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
-    background: color-mix(in srgb, var(--bg) 92%, transparent);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--line-soft);
-    margin-inline: -16px; padding: 12px 16px;
-    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
-  }
-  .brand { font-weight: 700; letter-spacing: -0.02em; font-size: 17px; }
-  .brand span { color: var(--accent); }
-  .stamp { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin-left: auto; }
-
-  h2 {
-    font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.09em;
-    color: var(--ink-3); font-weight: 600; margin: 32px 0 10px;
-  }
-  h2 .qual { text-transform: none; letter-spacing: 0; color: var(--ink-3); font-weight: 400; }
-
-  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-  @media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
-  .tile.bot { border-color: var(--accent); }
-  @media (max-width: 620px) { .tiles { grid-template-columns: 1fr; } }
-  .tile {
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 14px 16px;
-  }
-  .tile .k { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-3); font-weight: 600; }
-  .tile .v {
-    font-family: var(--mono); font-size: 26px; font-weight: 500;
-    letter-spacing: -0.02em; margin-top: 4px; font-variant-numeric: tabular-nums;
-  }
-  td .qty { display: block; font-size: 12px; color: var(--ink-3); font-weight: 400; }
-  .tile .sub { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; font-variant-numeric: tabular-nums; }
-
-  .meter { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 10px; }
-  .meter > i { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
-  .meter.over > i { background: var(--warn); }
-
-  .rp-list > summary { cursor: pointer; font-size: 13px; color: var(--ink-2); padding: 8px 2px; list-style: revert; }
-  .rp-list[open] > summary { margin-bottom: 6px; }
-  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-  .tag { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; background: var(--accent); color: var(--bg, #fff); vertical-align: 1px; }
-  .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-  th, td { text-align: right; padding: 9px 12px; white-space: nowrap; font-size: 13.5px; }
-  th {
-    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em;
-    color: var(--ink-3); font-weight: 600; border-bottom: 1px solid var(--line);
-  }
-  th:first-child, td:first-child { text-align: left; }
-  tbody tr + tr td { border-top: 1px solid var(--line-soft); }
-  td.num { font-family: var(--mono); }
-  .coin { font-weight: 600; letter-spacing: -0.01em; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 920px; margin: 0 auto; padding-inline: 16px; padding-block: 0 40px; }
+  a { color: var(--accent); }
+  small { font-size: 12px; }
+  .muted { color: var(--ink-3); }
   .up { color: var(--up); }
   .down { color: var(--down); }
+  .good { color: var(--blue); font-weight: 600; }
+  .bad  { color: var(--orange); font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
-  .pill {
-    display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em;
-    padding: 2px 7px; border-radius: 999px; text-transform: uppercase;
+  /* ---------- sticky header: name, time, refresh + the status strip ---------- */
+  header.top {
+    position: sticky; top: 0; z-index: 20;
+    padding-top: env(safe-area-inset-top, 0px);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line-soft);
+    margin-inline: -16px;
   }
-  .pill.long  { background: var(--up-sf);   color: var(--up); }
-  .pill.short { background: var(--down-sf); color: var(--down); }
-  .pill.tag   { background: var(--surface-2); color: var(--ink-2); }
-  .pill.live  { background: var(--accent-sf); color: var(--accent); }
-
-  .note { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; }
-  .note code { font-family: var(--mono); font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
-
-  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
-  label.fld { display: block; font-size: 12.5px; color: var(--ink-2); margin-bottom: 6px; }
-  .addr-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  input[type="text"] {
-    flex: 1 1 260px; min-width: 0; font-family: var(--mono); font-size: 13px;
-    padding: 9px 11px; border-radius: 8px; border: 1px solid var(--line);
-    background: var(--bg); color: var(--ink);
+  .hrow { display: flex; align-items: center; gap: 10px; padding: 10px 16px 6px; }
+  .brand { font-weight: 700; letter-spacing: -0.02em; font-size: 17px; white-space: nowrap; }
+  .brand span { color: var(--accent); }
+  .stamp { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); margin-left: auto; white-space: nowrap; }
+  button.icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; padding: 0; border-radius: 10px;
+    background: var(--surface); border: 1px solid var(--line); color: var(--ink-2);
   }
-  input[type="text"]:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  button {
-    font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer;
-    padding: 9px 14px; border-radius: 8px; border: 1px solid var(--accent);
-    background: var(--accent); color: var(--surface);
-  }
-  button.ghost { background: transparent; color: var(--accent); }
-  button:disabled { opacity: 0.5; cursor: default; }
+  button.icon svg { width: 17px; height: 17px; }
+  button.icon:disabled svg { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .msg { font-size: 13px; color: var(--ink-2); padding: 14px 2px; }
-  .msg.err { color: var(--down); }
+  .strip { display: flex; gap: 6px; overflow-x: auto; padding: 0 16px 10px; scrollbar-width: none; }
+  .strip::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12.5px; font-weight: 600; white-space: nowrap; text-decoration: none;
+    padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink-2);
+  }
+  .chip small { font-weight: 500; color: var(--ink-3); font-size: 11.5px; }
+  .chip.live  { border-color: var(--up);     color: var(--up);     background: var(--up-sf); }
+  .chip.ver   { border-color: var(--accent); color: var(--accent); background: var(--accent-sf); }
+  .chip.dry   { border-color: var(--blue);   color: var(--blue);   background: var(--blue-sf); }
+  .chip.warn  { border-color: var(--warn);   color: var(--warn);   background: var(--warn-sf); }
+  .chip.go    { border-color: var(--blue);   color: #fff;          background: var(--blue); }
+  .chip.go small { color: #fff; }
+
+  /* ---------- countdown row ---------- */
+  .evlabel { display: flex; justify-content: space-between; align-items: baseline; margin: 14px 0 6px; font-size: 11.5px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+  .evlabel span { text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .nb { display: flex; gap: 8px; overflow-x: auto; padding: 0 0 6px; scrollbar-width: thin; }
+  .nb .ev {
+    flex: 0 0 auto; display: flex; flex-direction: column; gap: 1px;
+    min-width: 108px; padding: 7px 10px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--surface);
+  }
+  .nb .ev .n { font-size: 11.5px; color: var(--ink-2); white-space: nowrap; }
+  .nb .ev b { font-family: var(--mono); font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .nb .ev small { font-size: 11px; color: var(--ink-3); white-space: nowrap; }
+  .nb .ev.big .n { font-weight: 600; color: var(--ink); }
+  .nb .ev.soon { border-color: var(--orange); }
+  .nb .ev.soon b { color: var(--orange); }
+  .nb .ev.now { background: var(--orange); border-color: var(--orange); }
+  .nb .ev.now .n, .nb .ev.now b, .nb .ev.now small { color: #fff; }
+
   .banner {
-    margin-top: 16px; padding: 12px 14px; border-radius: var(--radius);
+    margin-top: 12px; padding: 10px 12px; border-radius: var(--radius);
     background: var(--warn-sf); border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent);
-    color: var(--ink); font-size: 13px; line-height: 1.5;
+    font-size: 13px;
   }
   .banner strong { color: var(--warn); }
-  footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 12px; color: var(--ink-3); }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
-  .lede { font-size: 12.5px; color: var(--ink-3); margin: 10px 0 12px; line-height: 1.45; }
 
-  /* Every area is one collapsible card: a title, a label, and a one-line summary.
-     Open/closed is remembered in this browser only. */
-  details.dk{border:1px solid var(--line);border-radius:var(--radius);margin:10px 0;background:var(--surface)}
-  details.dk>summary{list-style:none;cursor:pointer;display:flex;gap:6px 10px;align-items:baseline;flex-wrap:wrap;padding:12px 14px;min-height:24px}
-  details.dk>summary::-webkit-details-marker{display:none}
-  details.dk>summary .t{font-weight:700;white-space:nowrap}
-  details.dk>summary .s{flex:1 1 100%;min-width:0;color:var(--ink-2);font-size:13px;overflow-wrap:anywhere;order:3}
-  details.dk>summary .a{margin-left:auto;color:var(--ink-3);transition:transform .15s}
-  details.dk[open]>summary .a{transform:rotate(90deg)}
-  details.dk[open]>summary .s{display:none}   /* open: the card shows the full summary itself */
-  details.dk .dk-body{padding:0 14px 14px}
-  .tg{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--ink-3);white-space:nowrap}
-  .tg.now{color:var(--accent);border-color:var(--accent)}
-  .tg.paper{border-style:dashed;color:var(--ink-2)}
-  .tg.priv{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
+  /* ---------- cards: one collapsible <details> per area ---------- */
+  details.dk { border: 1px solid var(--line); border-radius: var(--radius); margin: 12px 0; background: var(--surface); }
+  details.dk > summary {
+    list-style: none; cursor: pointer; display: flex; gap: 4px 8px; align-items: center; flex-wrap: wrap;
+    padding: 12px 14px; min-height: 48px;
+  }
+  details.dk > summary::-webkit-details-marker { display: none; }
+  details.dk > summary .t { font-weight: 700; font-size: 16px; white-space: nowrap; }
+  details.dk > summary .s { flex: 1 1 100%; min-width: 0; color: var(--ink-2); font-size: 13px; overflow-wrap: anywhere; order: 3; }
+  details.dk > summary .a { margin-left: auto; color: var(--ink-3); transition: transform .15s; }
+  details.dk[open] > summary .a { transform: rotate(90deg); }
+  details.dk[open] > summary .s { display: none; }
+  details.dk .dk-body { padding: 0 14px 14px; }
+  .tg { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-3); white-space: nowrap; }
+  .tg.now { color: var(--accent); border-color: var(--accent); }
+  .tg.paper { border-style: dashed; color: var(--ink-2); }
+  .tg.priv { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
 
-  /* shared section styles (were repeated inside each section) */
-  .fr{font-size:14px;line-height:1.5;color:var(--ink)}
-  .fr h3{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:22px 0 6px;font-weight:600}
-  .fr h3:first-child{margin-top:4px}
-  .fr p.sub{color:var(--ink-2);font-size:12.5px;margin:0 0 10px;max-width:68ch}
-  .fr .key{display:flex;gap:10px;font-size:12px;color:var(--ink-3);margin:0 0 12px;flex-wrap:wrap;align-items:center}
-  .fr .sum{border:1px solid var(--line);border-left:4px solid #2962FF;background:var(--surface);border-radius:8px;padding:12px 14px;font-size:15px;margin:0 0 16px}
-  .fr .sum.warn{border-left-color:#FF6D00}
-  .fr .sum b{color:var(--ink)}
-  .fr .grp{border:1px solid var(--line);border-radius:8px;margin:0 0 14px;overflow:hidden}
-  .fr .gh{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;padding:9px 12px;background:var(--surface-2);border-bottom:1px solid var(--line)}
-  .fr .gh b{font-size:14px}
-  .fr .gh span{font-size:12px;color:var(--ink-3)}
-  .fr .row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap;background:var(--surface)}
-  .fr .row:last-child{border-bottom:0}
-  .fr .coin{width:64px;font-weight:600}
-  .fr .dir{font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:4px;min-width:44px;text-align:center}
-  .fr .L{background:rgba(41,98,255,.18);color:#7da2ff}
-  .fr .S{background:rgba(255,109,0,.18);color:#ff9a4d}
-  .fr .N{background:var(--surface-2);color:var(--ink-3)}
-  .fr .pills{display:flex;gap:5px;flex-wrap:wrap;flex:1;min-width:210px}
-  .fr .p{font-size:11.5px;padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--ink-3);white-space:nowrap}
-  .fr .p.ok{background:#2962FF;border-color:#2962FF;color:#fff}
-  .fr .st{font-size:12px;color:var(--ink-3);min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
-  .fr .st.go{color:#fff;background:#2962FF;border-radius:5px;padding:2px 8px;font-weight:700;text-align:center}
-  .fr .note{font-size:11.5px;color:var(--ink-3);margin:6px 0 0}
-  .fr .tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;margin:0 0 14px}
-  .fr .tw table{width:100%;border-collapse:collapse;font-size:13px}
-  .fr .tw th,.fr .tw td{padding:7px 10px;border-bottom:1px solid var(--line-soft);text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}
-  .fr .tw tbody tr:last-child td{border-bottom:0}
-  .fr .tw th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);font-weight:600;background:var(--surface-2)}
-  .fr .tw td small{color:var(--ink-3);font-size:11px}
-  .fr .tw td.good{color:#3b6cff;font-weight:600}
-  .fr .tw td.bad,.fr .bad{color:#FF6D00;font-weight:600}
+  /* small sub-heading inside a card */
+  .h3 { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin: 18px 0 8px; font-weight: 600; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .h3:first-child { margin-top: 2px; }
+  .h3 span { text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .foot { font-size: 11.5px; color: var(--ink-3); margin: 10px 0 0; }
 
-  /* bots */
-  .bt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line-soft)}
-  .bt-cell{min-width:0;padding:10px 12px;background:var(--surface)}
-  .bt-cell small{display:block;color:var(--ink-3);font-size:11.5px}
-  .bt-cell .bt-st{display:block;font-size:16px;font-weight:700;margin:2px 0}
-  .bt-cell .bt-st.on{color:var(--up)}
-  .bt-cell .bt-rule{font-size:12.5px;color:var(--ink-2);margin:6px 0 0;line-height:1.4}
-  .bt-stale{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;color:var(--warn);background:var(--warn-sf);border-radius:4px;padding:1px 6px;vertical-align:2px}
-  .bt-list{padding:8px 12px;border-top:1px solid var(--line-soft);font-size:13px}
-  .bt-list small{color:var(--ink-3)}
-  .bt-list .pills{margin-top:5px;min-width:0}
-  .bt-txt{padding:8px 12px 10px;font-size:12.5px;color:var(--ink-2)}
-  .bt-old>summary{cursor:pointer;padding:8px 12px;font-size:12.5px;color:var(--ink-2)}
-  .bt-old .bt-list{border-top:0;padding-top:2px}
+  /* "What is this?" - the longer explanations, closed by default */
+  details.why { margin: 10px 0 0; font-size: 13px; color: var(--ink-2); }
+  details.why > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 5px; color: var(--accent); font-size: 12.5px; font-weight: 600; padding: 4px 0; }
+  details.why > summary::-webkit-details-marker { display: none; }
+  details.why > summary::before { content: "i"; display: inline-grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid currentColor; font-size: 10px; font-weight: 700; font-style: italic; font-family: Georgia, serif; }
+  details.why[open] > summary { margin-bottom: 4px; }
+  details.why .wb { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; line-height: 1.5; }
+  details.why .wb p { margin: 0 0 8px; }
+  details.why .wb p:last-child { margin: 0; }
+  details.why ul { margin: 0; padding-left: 18px; }
+  details.why li { margin: 0 0 6px; }
 
-  /* paper tests: one line per test, tap for the detail */
-  .pt-grp>summary{cursor:pointer;list-style:none}
-  .pt-grp>summary::-webkit-details-marker{display:none}
-  .pt-grp:not([open])>summary{border-bottom:0}
-  .pt-bar{height:6px;background:var(--line-soft);border-radius:3px;overflow:hidden;margin:0 12px 10px}
-  .pt-bar i{display:block;height:100%;background:#2962FF}
-  .pt-st{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;border:1px solid var(--line);color:var(--ink-3);white-space:nowrap}
-  .pt-st.passed{color:#3b6cff;border-color:#3b6cff}
-  .pt-st.failed{color:#FF6D00;border-color:#FF6D00}
-  .pt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;padding:10px 12px 6px}
-  .pt-grid b{display:block;font-size:15px;font-variant-numeric:tabular-nums}
-  .pt-grid small{display:block;color:var(--ink-3);font-size:11px}
-  .pt-rule{padding:2px 12px 10px;font-size:12.5px;color:var(--ink-2)}
-  .pt-grp .tw{margin:0 12px 12px}
+  .alert { border-radius: 10px; padding: 9px 12px; font-size: 13px; margin: 0 0 12px; background: var(--warn-sf); border: 1px solid color-mix(in srgb, var(--warn) 40%, transparent); }
+  .alert b { color: var(--warn); }
 
-  /* money rotation */
-  .rot-flow{font-weight:700}
-  .rot-flow.in{color:#3b6cff}
-  .rot-flow.out{color:#FF6D00}
+  /* coin chips */
+  .cps { display: flex; flex-wrap: wrap; gap: 5px; }
+  .cp { font-family: var(--mono); font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 6px; background: var(--surface-2); color: var(--ink); }
 
-  /* your wallet: saved addresses + totals */
-  .addr-box>summary{cursor:pointer;padding:10px 12px;font-size:13px;font-weight:600}
-  .addr-box>summary small{font-weight:400;color:var(--ink-3)}
-  .addr-in{padding:0 12px 12px}
-  .addr-in input[type="text"]{display:block;width:100%;margin:0 0 12px}
-  .addr-in .saved{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
-  .fr .tw th.r,.fr .tw td.r{text-align:right}
-  .fr .tw td.mono{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
-  .fr .tw tr.tot td{font-weight:700;border-top:2px solid var(--line)}
+  /* status badge */
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; padding: 3px 9px; border-radius: 8px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
+  .badge.live { background: var(--up-sf); color: var(--up); }
+  .badge.ver  { background: var(--accent-sf); color: var(--accent); }
+  .badge.dry  { background: var(--blue-sf); color: var(--blue); }
+  .badge.warn { background: var(--warn-sf); color: var(--warn); }
+  .badge.sm { font-size: 11px; padding: 1px 7px; border-radius: 6px; }
 
-  /* old bot rules */
-  .old-rules{margin:0 0 12px;padding:0;list-style:none;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-  .old-rules li{padding:8px 12px;font-size:12.5px;color:var(--ink-2);border-top:1px solid var(--line-soft)}
-  .old-rules li:first-child{border-top:0}
-  .old-rules li b{color:var(--ink)}
+  /* ---------- 1. bots ---------- */
+  .sleeves { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .slv { min-width: 0; border: 1px solid var(--line); border-radius: 10px; padding: 10px 11px; display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+  .slv-h { display: flex; justify-content: space-between; width: 100%; gap: 6px; font-size: 13.5px; }
+  .slv-h span { font-family: var(--mono); color: var(--ink-3); font-size: 12px; }
+  .slv small { color: var(--ink-3); font-size: 11.5px; line-height: 1.35; }
+  .slv .cap { color: var(--ink-2); }
+  .coins { margin-top: 12px; display: grid; gap: 8px; }
+  .coins .lh { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; margin-bottom: 5px; }
+  .coins .lh small { color: var(--ink-3); text-align: right; }
+  .oldrow { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 9px 11px; border-radius: 10px; background: var(--surface-2); font-size: 13px; }
+  .oldrow small { color: var(--ink-3); flex: 1 1 180px; }
+  .key { display: grid; gap: 5px; margin-top: 8px; }
+  .key div { display: flex; gap: 8px; align-items: center; }
+
+  /* ---------- 2. will anything fire ---------- */
+  .fire-sum { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); margin: 0 0 10px; }
+  .fire-sum .ic { font-size: 22px; line-height: 1; }
+  .fire-sum b { display: block; font-size: 15px; }
+  .fire-sum small { color: var(--ink-2); display: block; }
+  .fire-sum.go { background: var(--blue-sf); }
+  .fire-sum.go b { color: var(--blue); }
+  .fx-h, .fx > summary { display: grid; grid-template-columns: 58px minmax(0,1fr) minmax(0,1fr); gap: 8px; align-items: center; }
+  .fx-h { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 600; padding: 0 10px 6px; }
+  .fx-h span:nth-child(n+2) { line-height: 1.2; }
+  .fx-list { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .fx + .fx { border-top: 1px solid var(--line-soft); }
+  .fx > summary { list-style: none; cursor: pointer; padding: 8px 10px; }
+  .fx > summary::-webkit-details-marker { display: none; }
+  .fx[open] > summary { background: var(--surface-2); }
+  .fx .c { font-weight: 700; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; }
+  .fx .cell { display: flex; align-items: center; gap: 7px; min-width: 0; }
+  .fx .cell small { color: var(--ink-3); font-size: 11.5px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dots { display: inline-flex; gap: 3px; flex: 0 0 auto; }
+  .dots i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--ink-3); opacity: .7; }
+  .dots i.on { background: var(--blue); border-color: var(--blue); opacity: 1; }
+  .rdy { font-size: 11px; font-weight: 700; color: #fff; background: var(--blue); padding: 1px 7px; border-radius: 5px; }
+  .fx-d { padding: 4px 10px 10px; display: grid; gap: 6px; background: var(--surface-2); }
+  .fx-d > div { display: flex; gap: 6px; flex-wrap: wrap; align-items: baseline; font-size: 12px; }
+  .fx-d b { font-size: 11.5px; min-width: 22px; }
+  .rp { font-size: 11.5px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-2); background: var(--surface); }
+  .rp.ok { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  /* ---------- 3. paper tests ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; margin: 0 0 12px; }
+  .kpi { background: var(--surface-2); border-radius: 10px; padding: 8px 10px; min-width: 0; }
+  .kpi b { display: block; font-family: var(--mono); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .kpi small { display: block; color: var(--ink-3); font-size: 11px; line-height: 1.25; }
+  .pt-list { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .pt + .pt { border-top: 1px solid var(--line-soft); }
+  .pt > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 3px 10px; padding: 9px 12px; align-items: center; }
+  .pt > summary::-webkit-details-marker { display: none; }
+  .pt[open] > summary { background: var(--surface-2); }
+  .pt-n { font-weight: 600; font-size: 13.5px; min-width: 0; }
+  .pt-v { font-family: var(--mono); font-size: 13.5px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pt-v.na { color: var(--ink-3); font-weight: 400; font-family: var(--sans); font-size: 12px; }
+  .pt-m { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--ink-3); min-width: 0; }
+  .pt-m .bar { flex: 1 1 auto; height: 5px; border-radius: 3px; background: var(--line-soft); overflow: hidden; min-width: 40px; }
+  .pt-m .bar i { display: block; height: 100%; background: var(--blue); border-radius: 3px; min-width: 2px; }
+  .pt-m .txt { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pt-st { font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 5px; text-transform: uppercase; letter-spacing: .03em; }
+  .pt-st.passed { color: #fff; background: var(--blue); }
+  .pt-st.failed { color: #fff; background: var(--orange); }
+  .pt-d { padding: 4px 12px 12px; background: var(--surface-2); }
+  .pt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; margin: 4px 0 10px; }
+  .pt-grid > div { background: var(--surface); border-radius: 8px; padding: 6px 8px; min-width: 0; }
+  .pt-grid b { display: block; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  small.blk { display: block; }
+  .pt-grid small { display: block; color: var(--ink-3); font-size: 11px; line-height: 1.25; }
+  .pt-rule { font-size: 12.5px; color: var(--ink-2); display: grid; gap: 4px; }
+  .pt-rule b { color: var(--ink); }
+  .spark { display: block; width: 100%; height: 34px; margin: 0 0 8px; }
+  .spark-mini { width: 56px; height: 16px; vertical-align: middle; }
+
+  /* ---------- tables ---------- */
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); margin: 8px 0 0; }
+  .tw table { font-size: 12.5px; }
+  .tw th, .tw td { padding: 7px 9px; border-bottom: 1px solid var(--line-soft); text-align: left; white-space: nowrap; }
+  .tw tbody tr:last-child td { border-bottom: 0; }
+  .tw th { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 600; background: var(--surface-2); }
+  .tw td small { color: var(--ink-3); font-size: 11px; }
+  .tw th.r, .tw td.r { text-align: right; }
+  .tw td.mono { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+  .tw tr.tot td { font-weight: 700; border-top: 2px solid var(--line); }
+  .dir { font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 4px; }
+  .dir.L { background: var(--blue-sf); color: var(--blue); }
+  .dir.S { background: var(--orange-sf); color: var(--orange); }
+
+  /* ---------- 4. market ---------- */
+  .gauge { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .g-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .g-top span { font-size: 13px; font-weight: 600; }
+  .g-top b { font-family: var(--mono); font-size: 22px; font-weight: 600; }
+  .g-bar { position: relative; height: 10px; border-radius: 5px; margin: 8px 0 4px;
+    background: linear-gradient(90deg, var(--up-sf) 0 64.7%, var(--warn-sf) 64.7% 76.5%, var(--down-sf) 76.5% 100%); }
+  .g-bar > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; background: var(--up); width: 0; }
+  .g-bar.over > i { background: var(--warn); }
+  .g-bar.sell > i { background: var(--down); }
+  .g-bar .mk { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--down); left: 76.5%; }
+  .g-scale { position: relative; height: 14px; font-size: 10.5px; color: var(--ink-3); font-family: var(--mono); }
+  .g-scale span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+  .g-sub { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .stat { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-width: 0; }
+  .stat small { display: block; color: var(--ink-3); font-size: 11.5px; }
+  .stat b { display: block; font-family: var(--mono); font-size: 18px; font-weight: 600; }
+  .flow { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin: 0 0 6px; font-size: 12.5px; }
+  .flow .lbl { font-weight: 700; margin-right: 2px; }
+  .flow .lbl.in, .fin { color: var(--blue); }
+  .flow .lbl.out, .fout { color: var(--orange); }
+  .fchip { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; }
+  .fchip.in { background: var(--blue-sf); color: var(--blue); }
+  .fchip.out { background: var(--orange-sf); color: var(--orange); }
+  .sec td:first-child { max-width: 130px; white-space: normal; }
+  .sec td:first-child small { display: block; }
+  .vbar { display: inline-block; width: 36px; height: 5px; border-radius: 3px; background: var(--line-soft); vertical-align: middle; margin-left: 6px; position: relative; overflow: hidden; }
+  .vbar i { position: absolute; top: 0; bottom: 0; }
+  .sw { font-size: 12.5px; color: var(--ink-2); margin: 10px 0 0; padding: 8px 10px; border-radius: 10px; background: var(--surface-2); }
+  .dl { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px; font-weight: 600; margin-top: 8px; }
+
+  /* ---------- 5. wallet (unchanged behaviour; restyled) ---------- */
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  @media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
+  .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+  .tile.bot { border-color: var(--accent); }
+  .tile .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); font-weight: 600; }
+  .tile .v { font-family: var(--mono); font-size: clamp(15px, 4.4vw, 20px); font-weight: 500; letter-spacing: -0.02em; margin-top: 2px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .sub { font-size: 12px; color: var(--ink-2); }
+  .tile .sub { font-size: 12px; color: var(--ink-2); margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .meter { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 8px; }
+  .meter > i { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
+  .meter.over > i { background: var(--warn); }
+  .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .scroller th, .scroller td { text-align: right; padding: 8px 10px; white-space: nowrap; font-size: 13px; }
+  .scroller th { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-3); font-weight: 600; border-bottom: 1px solid var(--line); }
+  .scroller th:first-child, .scroller td:first-child { text-align: left; }
+  .scroller tbody tr + tr td { border-top: 1px solid var(--line-soft); }
+  td.num { font-family: var(--mono); }
+  td .qty { display: block; font-size: 12px; color: var(--ink-3); font-weight: 400; }
+  .coin { font-weight: 600; letter-spacing: -0.01em; }
+  .tag { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 4px; font-size: 10.5px; font-weight: 600; text-transform: uppercase; background: var(--accent); color: var(--bg); vertical-align: 1px; }
+  .pill { display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; }
+  .pill.long  { background: var(--up-sf);   color: var(--up); }
+  .pill.short { background: var(--down-sf); color: var(--down); }
+  .note { font-size: 12px; color: var(--ink-2); margin-top: 8px; }
+  .note.err, .msg.err { color: var(--down); }
+  .msg { font-size: 13px; color: var(--ink-2); padding: 10px 2px; }
+  .rp-list > summary { cursor: pointer; font-size: 13px; color: var(--accent); font-weight: 600; padding: 8px 2px; }
+  .addr-box { border: 1px solid var(--line); border-radius: 10px; margin-top: 10px; }
+  .addr-box > summary { cursor: pointer; padding: 10px 12px; font-size: 13px; font-weight: 600; }
+  .addr-box > summary small { font-weight: 400; color: var(--ink-3); }
+  .addr-in { padding: 0 12px 12px; }
+  label.fld { display: block; font-size: 12.5px; color: var(--ink-2); margin-bottom: 4px; }
+  .saved { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); }
+  input[type="text"] {
+    display: block; width: 100%; margin: 0 0 10px; min-width: 0; font-family: var(--mono); font-size: 13px;
+    padding: 9px 11px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  }
+  input[type="text"]:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .addr-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  button { font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: var(--surface); }
+  button.ghost { background: transparent; color: var(--accent); }
+  button:disabled { opacity: 0.6; cursor: default; }
+
+  /* ---------- 6. old bot ---------- */
+  .fr .sum { border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 8px; padding: 10px 12px; font-size: 13.5px; margin: 0 0 10px; }
+  .fr .sum.warn { border-left-color: var(--orange); }
+  .old-rules { margin: 0; padding: 0; list-style: none; }
+  .old-rules li { padding: 7px 0; font-size: 12.5px; color: var(--ink-2); border-top: 1px solid var(--line); }
+  .old-rules li:first-child { border-top: 0; }
+  .old-rules li b { color: var(--ink); }
+  .oldl { margin-top: 10px; display: grid; gap: 8px; }
+  .oldl .lh { font-size: 12.5px; margin-bottom: 4px; }
+
+  footer { margin-top: 28px; padding-top: 12px; border-top: 1px solid var(--line-soft); font-size: 11.5px; color: var(--ink-3); }
+
+  @media (min-width: 720px) {
+    .kpis { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .mkt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+    .fx-h, .fx > summary { grid-template-columns: 90px minmax(0,240px) minmax(0,240px); }
+    .strip { flex-wrap: wrap; }
+    :root { --head-h: 124px; }
+  }
+  @media (max-width: 370px) {
+    .kpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .fx-h, .fx > summary { grid-template-columns: 48px minmax(0,1fr) minmax(0,1fr); }
+  }
 </style>
-
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand">HL Scanner <span>Deck</span></div>
-    <button class="ghost" id="refresh" type="button">Refresh</button>
-    <div class="stamp" id="stamp">—</div>
+    <div class="hrow">
+      <div class="brand">HL Scanner <span>Deck</span></div>
+      <div class="stamp" id="stamp">Sydney time</div>
+      <button class="icon" id="refresh" type="button" aria-label="Refresh everything" title="Refresh everything">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+      </button>
+    </div>
+    <!-- 5-second view: tap a chip to jump to its card -->
+    <nav class="strip" aria-label="Status at a glance">
+      <a class="chip" href="#sec-bots" id="c-1d">1D <small>…</small></a>
+      <a class="chip" href="#sec-bots" id="c-1h">1H <small>…</small></a>
+      <a class="chip" href="#sec-fr" id="c-fire">🎯 <small>checking…</small></a>
+      <a class="chip" href="#sec-pt" id="c-pt">🧪 <small>paper…</small></a>
+      <a class="chip" href="#sec-mkt" id="c-mkt">🌍 <small>market…</small></a>
+      <a class="chip" href="#sec-ref" id="c-old">Old bot <small>…</small></a>
+    </nav>
   </header>
-  <p class="lede">Public status page: what the bots are doing, whether anything is about to fire, and the fake-money tests. Read-only - nothing here can trade, and no balances, positions or wallet addresses are published. All times are <b>Sydney time</b>.</p>
 
   <div class="banner" id="blocked" hidden>
     <strong>Live data is blocked here.</strong>
-    This browser couldn't reach Hyperliquid's API — usually a dropped connection,
-    a VPN, or a blocker. Everything below is layout only until it connects.
+    This browser couldn't reach Hyperliquid (dropped connection, VPN or a blocker). Live numbers stay empty until it connects.
   </div>
 
-  <!-- Countdown bar - added 26 Sep 2026. Candle closes, options expiries and US
+  <!-- Countdown row - added 26 Sep 2026. Candle closes, options expiries and US
        macro releases, all computed in the browser (no API calls). Macro dates:
        federalreserve.gov FOMC calendar, bls.gov CPI + Employment Situation
        schedules - extend the lists below each year. -->
+  <div class="evlabel">Coming up <span>Sydney time · swipe for more</span></div>
   <div id="newsbar" class="nb" aria-label="Upcoming market events"></div>
-  <style>
-    .nb{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;margin:0 0 6px;scrollbar-width:thin}
-    .nb .ev{flex:0 0 auto;border:1px solid var(--line,#D8E0E2);border-radius:999px;padding:4px 11px;font-size:12px;white-space:nowrap;background:var(--surface,#fff);color:var(--ink-2,#47565B)}
-    .nb .ev b{color:var(--ink,#0B1A1F);font-variant-numeric:tabular-nums;margin-left:4px}
-    .nb .ev.soon{border-color:#FF6D00}
-    .nb .ev.soon b{color:#FF6D00}
-    .nb .ev.now{background:#FF6D00;border-color:#FF6D00;color:#fff}
-    .nb .ev.now b{color:#fff}
-    .nb .ev.big{font-weight:600}
-  </style>
   <script>
   (function(){
     // US macro (ET release times). Extend each year from the official schedules.
@@ -339,14 +470,14 @@
       out.push({n:"Yearly close",t:Date.UTC(y+1,0,1)});
       // crypto options (Deribit): every Friday 08:00 UTC; last Friday = monthly; Mar/Jun/Sep/Dec = quarterly
       for(var k=0;k<4;k++){var mm=m+k,yy=y+Math.floor(mm/12);mm%=12;var lf=lastFriday(yy,mm);
-        out.push({n:(mm%3===2?"Quarterly":"Monthly")+" options expiry (Deribit)",t:Date.UTC(yy,mm,lf,8),big:mm%3===2});
+        out.push({n:(mm%3===2?"Quarterly":"Monthly")+" options expiry",t:Date.UTC(yy,mm,lf,8),big:mm%3===2});
         // CME bitcoin futures + options: last Friday, 4pm London
         out.push({n:"CME BTC expiry",t:zoned(yy,mm,lf,16,0,"Europe/London")});
         // US stock options: 3rd Friday 4pm New York; quarterly months = quad witching
         var tf=nthFriday(yy,mm,3);out.push({n:mm%3===2?"Quad witching (US)":"US options expiry",t:zoned(yy,mm,tf,16,0,"America/New_York"),big:mm%3===2})}
       var dFri=(5-dow+7)%7,fri=Date.UTC(y,m,t.getUTCDate()+dFri,8);if(fri<=now)fri+=7*DAY;
-      if(new Date(fri).getUTCDate()!==lastFriday(new Date(fri).getUTCFullYear(),new Date(fri).getUTCMonth()))out.push({n:"Weekly options expiry (Deribit)",t:fri});
-      FOMC.forEach(function(s){var a=ymd(s);out.push({n:"Fed rate decision (FOMC)",t:zoned(a[0],a[1],a[2],14,0,"America/New_York"),big:1})});
+      if(new Date(fri).getUTCDate()!==lastFriday(new Date(fri).getUTCFullYear(),new Date(fri).getUTCMonth()))out.push({n:"Weekly options expiry",t:fri});
+      FOMC.forEach(function(s){var a=ymd(s);out.push({n:"Fed rate decision",t:zoned(a[0],a[1],a[2],14,0,"America/New_York"),big:1})});
       CPI.forEach(function(s){var a=ymd(s);out.push({n:"US inflation (CPI)",t:zoned(a[0],a[1],a[2],8,30,"America/New_York"),big:1})});
       NFP.forEach(function(s){var a=ymd(s);out.push({n:"US jobs report",t:zoned(a[0],a[1],a[2],8,30,"America/New_York")})});
       var seen={};
@@ -357,9 +488,12 @@
       return d?d+"d "+h+"h":h?h+"h "+mi+"m":mi+"m"}
     function draw(){
       var now=Date.now(),box=document.getElementById("newsbar");if(!box)return;
-      box.innerHTML=events(now).slice(0,14).map(function(e){var dt=e.t-now,cls="ev"+(dt<=0?" now":dt<DAY?" soon":"")+(e.big?" big":"");
-        var when=new Date(e.t).toLocaleString([],{timeZone:"Australia/Sydney",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
-        return '<span class="'+cls+'" title="'+when+' Sydney time">'+e.n+"<b>"+left(dt)+"</b></span>"}).join("");
+      var ev=[];events(now).forEach(function(e){var p=ev[ev.length-1];
+        if(p&&p.t===e.t){p.n=/ close$/.test(p.n)&&/ close$/.test(e.n)?p.n.replace(/ close$/,"")+" + "+e.n.charAt(0).toLowerCase()+e.n.slice(1):p.n+" + "+e.n;p.big=p.big||e.big}
+        else ev.push({n:e.n,t:e.t,big:e.big})});
+      box.innerHTML=ev.slice(0,12).map(function(e){var dt=e.t-now,cls="ev"+(dt<=0?" now":dt<DAY?" soon":"")+(e.big?" big":"");
+        var when=new Date(e.t).toLocaleString("en-AU",{timeZone:"Australia/Sydney",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
+        return '<span class="'+cls+'" title="'+e.n+" - "+when+' Sydney time"><span class="n">'+e.n+"</span><b>"+left(dt)+"</b><small>"+when+"</small></span>"}).join("");
     }
     draw();setInterval(draw,30000);
   })();
@@ -502,91 +636,110 @@
 })();
 </script>
 
+<script>
+// Small shared helpers for the cards below (each card still fails soft on its own).
+window.HLD = (function(){
+ function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+ // "2026-09-29T08:02Z" (no seconds) -> Date; older Safari wants the seconds
+ function iso(s){if(!s)return null;s=String(s);if(/T\d\d:\d\dZ$/.test(s))s=s.replace("Z",":00Z");var d=new Date(s);return isNaN(d.getTime())?null:d}
+ function syd(d,o){return d.toLocaleString("en-AU",Object.assign({timeZone:"Australia/Sydney"},o||{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}))}
+ function sydTime(d){return d.toLocaleTimeString("en-AU",{timeZone:"Australia/Sydney",hour:"numeric",minute:"2-digit"})}
+ function ago(d){var h=(Date.now()-d.getTime())/36e5;if(h<0)return "just now";return h<1?Math.max(1,Math.round(h*60))+" min ago":h<48?Math.round(h)+"h ago":Math.round(h/24)+" days ago"}
+ function chip(id,html,cls){var e=document.getElementById(id);if(!e)return;e.innerHTML=html;e.className="chip"+(cls?" "+cls:"")}
+ // bot status label -> [emoji + text, colour class]
+ var ST={"LIVE":["💵 LIVE","live"],"DRY RUN":["🧪 DRY RUN","dry"],"VERIFICATION":["🔬 VERIFICATION","ver"],"PAUSED":["⏸️ PAUSED","warn"],"STALE":["⚠️ STALE","warn"],"NO DATA":["NO DATA",""]};
+ function st(s){return ST[s]||[s?String(s):"NO DATA",""]}
+ return {esc:esc,iso:iso,syd:syd,sydTime:sydTime,ago:ago,chip:chip,st:st};
+})();
+// The refresh button re-runs every card; each card adds its own run() here.
+window.hlRefreshers = [];
+</script>
+
 <!-- 1. Bots - data: bot_board.json, written by hl-scanner's daily report
      (bot2status.public_board, allow-list checked by bot2status.check_public).
      Status labels, run times and the public monthly coin LISTS only - never
      balances, sizes, positions, P/L or addresses. Everything read from the file
      is escaped before it is shown. -->
-<details class="dk" data-key="bots" open>
+<details class="dk" data-key="bots" id="sec-bots" open>
 <summary><span class="t">🤖 Bots</span><span class="tg now">status now</span><span class="s" id="dk-s-bots"></span><span class="a">▸</span></summary>
-<div class="dk-body">
-<section id="bots" class="fr">
-<p class="sub">Which bot is trading, and what state it is in. Each bot reports its own last run; hl-scanner's daily report publishes that twice a day.</p>
-<div id="bots-sum" class="sum">Loading bot status&hellip;</div>
-<div class="grp">
- <div class="gh"><b>bot2 · trades this month's top-10 coins</b><span>money split 70% / 30%, set once at launch (not rebalanced)</span></div>
- <div class="bt-grid">
-  <div class="bt-cell">
-   <small>1D breakout · 70%</small>
-   <span class="bt-st" id="b2-1D-st">…</span>
+<div class="dk-body" id="bots">
+ <div class="alert" id="bots-warn" hidden></div>
+ <div class="sleeves">
+  <div class="slv">
+   <div class="slv-h"><b>bot2 · 1D</b><span>70%</span></div>
+   <span class="badge" id="b2-1D-st">…</span>
    <small id="b2-1D-run">&nbsp;</small>
-   <p class="bt-rule">Buys when a coin's <b>daily close</b> beats its previous 40-day high close while above its 200-day average. Stop 3 ATR, trailing stop 4 ATR on daily closes. Retries hourly that day; skips if price is more than 1.5% from the signal close. <b>Up to 4 open at once</b> (launch cap).</p>
+   <small class="cap">daily breakout · max 4 open</small>
   </div>
-  <div class="bt-cell">
-   <small>1H breakout · 30%</small>
-   <span class="bt-st" id="b2-1H-st">…</span>
+  <div class="slv">
+   <div class="slv-h"><b>bot2 · 1H</b><span>30%</span></div>
+   <span class="badge" id="b2-1H-st">…</span>
    <small id="b2-1H-run">&nbsp;</small>
-   <p class="bt-rule">Buys when the <b>hourly close</b> beats the previous 96-hour high close, with every trend check on: daily at/above its 200-day (or hourly 50-EMA over 200-EMA), daily above its 50-day, last 4-hour close above its 50-bar average. Stop 6 ATR, trailing 12 ATR. One try, next hour. <b>Up to 2 open at once</b> (launch cap).</p>
+   <small class="cap">hourly breakout · max 2 open</small>
   </div>
  </div>
- <div id="b2-lists"></div>
-</div>
-<div class="grp">
- <div class="gh"><b>Old bot (live.py)</b><span id="old-st">🔒 manage-only</span></div>
- <div class="bt-txt">Opens nothing new since 29 Sep 2026; it only looks after the positions it already has. Its old rules and coin lists are in <b>Old bot</b> at the bottom - reference only.</div>
-</div>
-<p class="note"><b>Status key:</b> 💵 LIVE = real orders · 🧪 DRY RUN = simulates, no real orders · 🔬 VERIFICATION = live setup being checked, not trading yet · ⏸️ PAUSED = stopped · ⚠️ STALE = hasn't reported on time.</p>
-<p class="note" id="bots-when"></p>
-</section>
+ <div class="coins" id="b2-lists"></div>
+ <div class="oldrow"><b>Old bot</b><span class="badge sm" id="old-st">🔒 manage-only</span><small>opens nothing new · only looks after what it holds</small></div>
+ <details class="why"><summary>Rules and status labels</summary><div class="wb">
+  <p><b>1D (70%)</b> buys when a coin's <b>daily close</b> beats its previous 40-day high close while above its 200-day average. Stop 3 ATR, trailing stop 4 ATR on daily closes. Retries hourly that day; skips if price is more than 1.5% from the signal close. Up to 4 open at once (launch cap).</p>
+  <p><b>1H (30%)</b> buys when the <b>hourly close</b> beats the previous 96-hour high close, with every trend check on: daily at/above its 200-day (or hourly 50-EMA over 200-EMA), daily above its 50-day, last 4-hour close above its 50-bar average. Stop 6 ATR, trailing 12 ATR. One try, next hour. Up to 2 open at once (launch cap).</p>
+  <p>The 70/30 money split is set once at launch and never rebalanced. Coins: this month's top-10 list. The old bot's rules are in <b>Old bot</b> at the bottom.</p>
+  <div class="key">
+   <div><span class="badge sm live">💵 LIVE</span> real orders</div>
+   <div><span class="badge sm dry">🧪 DRY RUN</span> simulates, no real orders</div>
+   <div><span class="badge sm ver">🔬 VERIFICATION</span> live setup being checked, not trading yet</div>
+   <div><span class="badge sm warn">⏸️ PAUSED</span> stopped</div>
+   <div><span class="badge sm warn">⚠️ STALE</span> hasn't reported on time</div>
+  </div>
+ </div></details>
+ <p class="foot" id="bots-when"></p>
 </div>
 </details>
 <script>
 (function(){
- // One shared read of bot_board.json for this section, "Will anything fire?" and
+ // One shared read of bot_board.json for this card, "Will anything fire?" and
  // the old bot's lists. cache "no-cache" makes the browser re-check GitHub Pages
  // every time (cheap 304 when unchanged). Never throws: on any problem it resolves
- // to {error: "..."} so every section can fail soft.
+ // to {error: "..."} so every card can fail soft.
  var memo=null,memoAt=0;
- window.hlBotBoard=function(){
-  if(memo&&Date.now()-memoAt<60000)return memo;
+ window.hlBotBoard=function(force){
+  if(memo&&!force&&Date.now()-memoAt<60000)return memo;
   memoAt=Date.now();
   memo=fetch("bot_board.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw new Error(r.status===404?"not published yet":"HTTP "+r.status);return r.json()})
    .then(function(b){if(!b||typeof b!=="object"||Array.isArray(b))throw new Error("unreadable");return b})
    .catch(function(e){return {error:String((e&&e.message)||e||"unavailable")}});
   return memo};
+ var H=window.HLD,esc=H.esc,iso=H.iso;
  function $(id){return document.getElementById(id)}
- function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
- // "2026-09-29T08:02Z" (no seconds) -> Date; older Safari wants the seconds
- function iso(s){if(!s)return null;s=String(s);if(/T\d\d:\d\dZ$/.test(s))s=s.replace("Z",":00Z");var d=new Date(s);return isNaN(d.getTime())?null:d}
- function local(d){return d.toLocaleString([],{timeZone:"Australia/Sydney",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
- function ago(d){var h=(Date.now()-d.getTime())/36e5;if(h<0)return "just now";return h<1?Math.max(1,Math.round(h*60))+" min ago":h<48?Math.round(h)+"h ago":Math.round(h/24)+" days ago"}
  function ym(ms){var d=new Date(ms);return d.getUTCFullYear()+"-"+("0"+(d.getUTCMonth()+1)).slice(-2)}
  function nextYm(m){var a=m.split("-"),y=+a[0],mo=+a[1]+1;if(mo>12){mo=1;y++}return y+"-"+("0"+mo).slice(-2)}
- function monthName(m){var a=/^(\d{4})-(\d{2})$/.exec(m||"");return a?new Date(Date.UTC(+a[1],+a[2]-1,1)).toLocaleString([],{month:"long",year:"numeric",timeZone:"UTC"}):String(m||"?")}
- var LBL={"LIVE":"💵 LIVE","DRY RUN":"🧪 DRY RUN","VERIFICATION":"🔬 VERIFICATION","PAUSED":"⏸️ PAUSED","STALE":"⚠️ STALE","NO DATA":"NO DATA"};
- function lbl(st){return LBL[st]||(st?String(st):"NO DATA")}
+ function monthName(m){var a=/^(\d{4})-(\d{2})$/.exec(m||"");return a?new Date(Date.UTC(+a[1],+a[2]-1,1)).toLocaleString("en-AU",{month:"long",timeZone:"UTC"}):String(m||"?")}
  function stale(s){return !!(s&&s.stale&&s.status!=="STALE")}
  var OLDL={"manage-only":"🔒 manage-only","trading":"🟢 trading","archived":"📦 archived"};
- function pills(cs){return '<div class="pills">'+cs.map(function(c){return '<span class="p">'+esc(c)+"</span>"}).join("")+"</div>"}
+ function cps(cs){return '<div class="cps">'+cs.map(function(c){return '<span class="cp">'+esc(c)+"</span>"}).join("")+"</div>"}
  function coinsOf(L){return L&&Array.isArray(L.coins)?L.coins.filter(function(c){return typeof c==="string"}):[]}
  function listLine(L,m,fallbackWhy){
   var cs=coinsOf(L),eff=L&&iso(L.effective);
-  var head="<b>"+esc(monthName(m))+" list</b>";
   if(L&&L.status==="published"&&cs.length)
-   return '<div class="bt-list">'+head+" <small>· "+cs.length+" coins"+(eff?" · from "+esc(local(eff)):"")+"</small>"+pills(cs)+"</div>";
-  return '<div class="bt-list">'+head+" <small>· pending"+(eff?" · takes effect "+esc(local(eff)):"")+" · "+esc(L?"not published yet":fallbackWhy)+"</small></div>"}
+   return '<div><div class="lh"><b>'+esc(monthName(m))+" coins</b><small>"+cs.length+" coins"+(eff?" · from "+esc(H.syd(eff,{day:"numeric",month:"short"})):"")+"</small></div>"+cps(cs)+"</div>";
+  return '<div><div class="lh"><b>'+esc(monthName(m))+' coins</b><small>⏳ pending'+(eff?" · from "+esc(H.syd(eff)):"")+"</small></div>"
+   +'<small class="muted">'+esc(L?"Not published yet.":fallbackWhy)+"</small></div>"}
  function sleeve(k,s){
   var st=$("b2-"+k+"-st"),rn=$("b2-"+k+"-run");if(!st||!rn)return;
-  if(!s){st.textContent="status unavailable";st.className="bt-st";rn.textContent="";return}
-  var d=iso(s.last_run);
-  st.innerHTML=esc(lbl(s.status))+(stale(s)?'<span class="bt-stale">⚠️ STALE</span>':"");
-  st.className="bt-st"+(s.status==="LIVE"&&!s.stale?" on":"");
-  rn.textContent=d?"last run "+local(d)+" ("+ago(d)+")":"no run recorded"}
+  if(!s){st.textContent="status unavailable";st.className="badge";rn.textContent="";H.chip("c-"+k.toLowerCase(),k+" <small>unavailable</small>","warn");return}
+  var d=iso(s.last_run),L=H.st(s.status),sl=stale(s);
+  st.innerHTML=esc(L[0]);st.className="badge "+L[1];
+  if(sl)st.insertAdjacentHTML("afterend",'<span class="badge sm warn" data-stale>⚠️ STALE</span>');
+  rn.textContent=d?"last run "+H.syd(d,{weekday:"short",hour:"numeric",minute:"2-digit"})+" · "+H.ago(d):"no run recorded";
+  H.chip("c-"+k.toLowerCase(),k+" "+esc(L[0])+(sl?" ⚠️":""),sl?"warn":L[1])}
  function render(B){
-  var sum=$("bots-sum"),lists=$("b2-lists"),when=$("bots-when"),oldBox=$("old-lists");
+  var warn=$("bots-warn"),lists=$("b2-lists"),when=$("bots-when"),oldBox=$("old-lists");
+  Array.prototype.forEach.call(document.querySelectorAll("#bots [data-stale]"),function(e){e.remove()});
+  warn.hidden=true;
   if(!B||B.error){
-   sum.className="sum warn";sum.innerHTML="<b>Bot status unavailable</b> <small>(bot_board.json: "+esc(B?B.error:"missing")+")</small>";
+   warn.hidden=false;warn.innerHTML="<b>Bot status unavailable</b> <small>(bot_board.json: "+esc(B?B.error:"missing")+")</small>";
    sleeve("1D",null);sleeve("1H",null);lists.innerHTML="";when.textContent="";
+   H.chip("c-old","Old bot <small>🔒 manage-only</small>","");
    if(oldBox)oldBox.innerHTML="";return}
   var b2=B.bot2&&typeof B.bot2==="object"?B.bot2:{},as=iso(B.as_of),old=B.old_bot&&typeof B.old_bot==="object"?B.old_bot:{};
   var L=Array.isArray(B.bot2_lists)?B.bot2_lists.filter(function(x){return x&&typeof x==="object"}):[];
@@ -594,54 +747,49 @@
   var Lc=L.filter(function(x){return x.month===cur})[0],Ln=L.filter(function(x){return x.month===nxt})[0];
   var boardH=as?(Date.now()-as.getTime())/36e5:null,oldBoard=boardH==null||boardH>20;   // the daily report writes it 2x a day
   sleeve("1D",b2["1D"]||{});sleeve("1H",b2["1H"]||{});
-  lists.innerHTML=listLine(Lc,cur,"not in the published status yet")+listLine(Ln,nxt,"published around the 1st");
+  lists.innerHTML=listLine(Lc,cur,"Not in the published status yet.")+listLine(Ln,nxt,"Published around the 1st.");
   var oldSt=OLDL[old.status]||(old.status?String(old.status):"🔒 manage-only");
   $("old-st").textContent=oldSt;
+  H.chip("c-old","Old bot <small>"+esc(oldSt)+"</small>","");
+  if(oldBoard){warn.hidden=false;warn.innerHTML="<b>⚠️ This status is "+(boardH==null?"of unknown age":Math.round(boardH)+"h old")+"</b> - normally refreshed twice a day.";
+   ["c-1d","c-1h"].forEach(function(id){var e=$(id);if(e)e.className="chip warn"})}
   // old bot's lists go to the "Old bot" card at the bottom (reference only)
   var ol=old.lists&&typeof old.lists==="object"&&!Array.isArray(old.lists)?Object.keys(old.lists):[];
-  if(oldBox)oldBox.innerHTML=ol.length?'<details class="grp bt-old"><summary>Old coin lists - reference only, no bot trades them ('+ol.length+" list"+(ol.length===1?"":"s")+")</summary>"
+  if(oldBox)oldBox.innerHTML=ol.length?'<details class="why"><summary>Old coin lists ('+ol.length+") - no bot trades them</summary><div class=\"wb oldl\">"
      +ol.map(function(k){var cs=Array.isArray(old.lists[k])?old.lists[k].filter(function(c){return typeof c==="string"}):[];
-      return '<div class="bt-list"><b>'+esc(k)+"</b> <small>· "+cs.length+" coins</small>"+pills(cs)+"</div>"}).join("")+"</details>":"";
-  var cs=coinsOf(Lc);
-  function one(k){var s=b2[k]||{};return k+" "+esc(lbl(s.status))+(stale(s)?" ⚠️ STALE":"")}
-  sum.className="sum"+(oldBoard?" warn":"");
-  sum.innerHTML=(oldBoard?"<b>⚠️ This status is "+(boardH==null?"of unknown age":Math.round(boardH)+"h old")+"</b> (normally refreshed twice a day).<br>":"")
-   +"<b>bot2</b> "+one("1D")+" · "+one("1H")
-   +"<br><b>"+esc(monthName(cur))+" coins:</b> "+(cs.length&&Lc.status==="published"?esc(cs.join(", ")):"list pending")
-   +"<br><b>Old bot</b> "+esc(oldSt);
-  when.textContent=as?"Status as of "+local(as)+" ("+ago(as)+"). The page re-checks every 10 minutes.":"";
+      return '<div><div class="lh"><b>'+esc(k)+"</b> <small class=\"muted\">· "+cs.length+" coins</small></div>"+cps(cs)+"</div>"}).join("")+"</div></details>":"";
+  when.textContent=as?"Status as of "+H.syd(as)+" Sydney ("+H.ago(as)+") · re-checks every 10 min":"";
  }
- function run(){window.hlBotBoard().then(render)}
+ function run(force){return window.hlBotBoard(force).then(render)}
+ window.hlRefreshers.push(function(){return run(true)});
  // the old bot's list box is further down the page: wait for the whole page
- if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run);else run();
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",function(){run()});else run();
  setInterval(run,600000);
 })();
 </script>
-
 
 <!-- 2. Will anything fire? - checks bot2's rules (bot2/signals_1d.py 1D-R and
      bot2/signals_1h.py 1H-AL in hl-scanner) on bot2's monthly top-10 list for the
      CURRENT UTC month, read from bot_board.json - no hardcoded coin list. The old
      bot is manage-only, so its rules are not checked. -->
-<details class="dk" data-key="fr">
-<summary><span class="t">🎯 Will anything fire?</span><span class="tg now">bot2 rules, live prices</span><span class="s" id="dk-s-fr"></span><span class="a">▸</span></summary>
-<div class="dk-body">
-<section id="fr" class="fr">
-<p class="sub">bot2's entry rules checked on this month's top-10 coins. Each box is one rule; a coin only fires when <b>every box on its row is blue</b>. Uses the last closed candle, the same way the bot does.</p>
-<div class="key"><span class="p ok">rule met</span><span class="p">not yet</span><span class="dir L">LONG</span></div>
-<div id="fr-sum" class="sum">Checking live prices&hellip;</div>
-<div id="fr-body"></div>
-<p class="note" id="fr-when"></p>
-</section>
+<details class="dk" data-key="fr" id="sec-fr" open>
+<summary><span class="t">🎯 Will anything fire?</span><span class="tg now">live prices</span><span class="s" id="dk-s-fr"></span><span class="a">▸</span></summary>
+<div class="dk-body" id="fr">
+ <div id="fr-sum" class="fire-sum"><span class="ic">⏳</span><div><b>Checking live prices…</b></div></div>
+ <div id="fr-body"></div>
+ <details class="why"><summary>How to read this</summary><div class="wb">
+  <p>bot2's entry rules checked on this month's top-10 coins, using the last <b>closed</b> candle, the same way the bot does. Each dot is one rule: <span class="dots"><i class="on"></i></span> met, <span class="dots"><i></i></span> not yet. A coin only fires when every dot on its side is filled.</p>
+  <p><b>Gap</b> = how far the price still is below the breakout level (40-day high close for 1D, 96-hour high close for 1H). Tap a coin for each rule in words. 1D checks once a day at the daily close (10 am Sydney, 11 am during daylight saving) and retries hourly that day; 1H checks every hour, one try.</p>
+  <p>Once every other rule is met, a last check appears: the bot skips if price is more than 1.5% from the signal close. bot2 also skips a coin it already holds (holdings aren't shown on this public page). The old bot is manage-only, so its old rules aren't checked here.</p>
+ </div></details>
+ <p class="foot" id="fr-when"></p>
 </div>
 </details>
 
 <script>
 (function(){
-var API="https://api.hyperliquid.xyz/info",DAY=864e5,HR=36e5,EXT=1.5;
-var OLD_NOTE="The old bot is manage-only, so its old rules aren't checked here.";
+var API="https://api.hyperliquid.xyz/info",DAY=864e5,HR=36e5,EXT=1.5,H=window.HLD,esc=H.esc;
 function $(id){return document.getElementById(id)}
-function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function post(b){return fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json()})}
 // closed candles only (the bot never looks at the candle still forming)
 function bars(coin,iv,days){var e=Date.now(),ms=iv==="1d"?DAY:HR;return post({type:"candleSnapshot",req:{coin:coin,interval:iv,startTime:e-days*DAY,endTime:e}}).then(function(j){if(!Array.isArray(j)||j.length<3)return null;var now=Date.now();return j.map(function(x){return{t:+x.t,c:+x.c}}).filter(function(x){return x.t+ms<=now})}).catch(function(){return null})}
@@ -651,8 +799,8 @@ function priorMax(a,n,i){return i<n?null:Math.max.apply(null,a.slice(i-n,i))}   
 function pct(a,b){return (a/b-1)*100}
 function f1(x){return Math.abs(x).toFixed(1)+"%"}
 function ym(ms){var d=new Date(ms);return d.getUTCFullYear()+"-"+("0"+(d.getUTCMonth()+1)).slice(-2)}
-function monthName(m){var a=/^(\d{4})-(\d{2})$/.exec(m||"");return a?new Date(Date.UTC(+a[1],+a[2]-1,1)).toLocaleString([],{month:"long",year:"numeric",timeZone:"UTC"}):String(m||"?")}
-function localHour(utcH){var d=new Date();d.setUTCHours(utcH,0,0,0);return d.toLocaleTimeString([],{timeZone:"Australia/Sydney",hour:"numeric",minute:"2-digit"}).replace(" ","").toLowerCase()}
+function monthName(m){var a=/^(\d{4})-(\d{2})$/.exec(m||"");return a?new Date(Date.UTC(+a[1],+a[2]-1,1)).toLocaleString("en-AU",{month:"long",year:"numeric",timeZone:"UTC"}):String(m||"?")}
+function localHour(utcH){var d=new Date();d.setUTCHours(utcH,0,0,0);return d.toLocaleTimeString("en-AU",{timeZone:"Australia/Sydney",hour:"numeric",minute:"2-digit"}).replace(" ","").toLowerCase()}
 function row(coin,dir,rules,extra){return {coin:coin,dir:dir,rules:rules,met:rules.filter(function(r){return r.ok}).length,extra:extra||0}}
 function nodata(coin,why){return row(coin,"-",[{t:why,ok:false}],-999)}
 // entry check: the bot skips when price is more than 1.5% from the signal close
@@ -661,7 +809,7 @@ function ext(rules,close,mid){if(!mid||rules.some(function(r){return !r.ok}))ret
 function d1(coin,D,mid){if(!D)return nodata(coin,"no Hyperliquid candles");var c=D.map(function(x){return x.c}),i=c.length-1;
  if(c.length<202)return nodata(coin,"only "+c.length+" daily candles · needs 202");
  var last=c[i],m200=smaAt(c,200,i),hi=priorMax(c,40,i),up=last>m200,bo=last>hi;
- var rules=[{t:up?"above 200-day":"below 200-day \u00b7 "+f1(pct(m200,last))+" away",ok:up},{t:bo?"new 40-day high close":"40-day high \u00b7 "+f1(pct(hi,last))+" away",ok:bo}];
+ var rules=[{t:up?"above 200-day":"below 200-day · "+f1(pct(m200,last))+" away",ok:up},{t:bo?"new 40-day high close":"40-day high · "+f1(pct(hi,last))+" away",ok:bo}];
  ext(rules,last,mid);return row(coin,"L",rules,pct(last,hi))}
 // bot2 1H-AL: last closed hour; all four must hold (see bot2/signals_1h.py)
 function h1(coin,D,Hh,mid){if(!D||!Hh)return nodata(coin,"no Hyperliquid candles");
@@ -673,176 +821,245 @@ function h1(coin,D,Hh,mid){if(!D||!Hh)return nodata(coin,"no Hyperliquid candles
  // complete UTC 4-hour bars built from the closed hourly candles (as bot2/bars.bars_4h)
  var g={},ks=[];Hh.forEach(function(x){var k=Math.floor(x.t/(4*HR));if(!g[k]){g[k]={n:0,c:0};ks.push(k)}g[k].n++;g[k].c=x.c});
  var c4=ks.filter(function(k){return g[k].n===4}).map(function(k){return g[k].c}),q=c4.length-1,s4=smaAt(c4,50,q),ok4=s4!=null&&c4[q]>s4;
- var rules=[{t:dUp?"daily at/above 200-day":eUp?"hourly 50-EMA over 200-EMA (daily below 200)":"daily below 200-day \u00b7 hourly EMAs down",ok:dUp||eUp},
-  {t:dc[j]>m50?"daily above 50-day":"daily below 50-day \u00b7 "+f1(pct(m50,dc[j]))+" away",ok:dc[j]>m50},
+ var rules=[{t:dUp?"daily at/above 200-day":eUp?"hourly 50-EMA over 200-EMA (daily below 200)":"daily below 200-day · hourly EMAs down",ok:dUp||eUp},
+  {t:dc[j]>m50?"daily above 50-day":"daily below 50-day · "+f1(pct(m50,dc[j]))+" away",ok:dc[j]>m50},
   {t:s4==null?"4H average not ready":ok4?"4H above its 50-bar average":"4H below its 50-bar average",ok:ok4},
-  {t:last>hi?"new 96-hour high close":"96-hour high \u00b7 "+f1(pct(hi,last))+" away",ok:last>hi}];
+  {t:last>hi?"new 96-hour high close":"96-hour high · "+f1(pct(hi,last))+" away",ok:last>hi}];
  ext(rules,last,mid);return row(coin,"L",rules,pct(last,hi))}
-function card(title,when,rows){rows=rows.filter(Boolean).sort(function(a,b){var fa=a.met/a.rules.length,fb=b.met/b.rules.length;return fb-fa||b.extra-a.extra});
- var h='<div class="grp"><div class="gh"><b>'+esc(title)+"</b><span>"+esc(when)+"</span></div>";
- rows.forEach(function(r){var all=r.met===r.rules.length&&r.dir!=="-";h+='<div class="row"><span class="coin">'+esc(r.coin)+'</span><span class="dir '+(r.dir==="L"?"L":"N")+'">'+(r.dir==="L"?"LONG":"\u2014")+'</span><div class="pills">'+r.rules.map(function(x){return '<span class="p'+(x.ok?" ok":"")+'">'+esc(x.t)+"</span>"}).join("")+'</div><span class="st'+(all?" go":"")+'">'+(all?"READY":r.met+" of "+r.rules.length)+"</span></div>"});
- return {html:h+"</div>",rows:rows,title:title}}
 function batch(list,fn){var out={},i=0;function next(){var ch=list.slice(i,i+6);i+=6;if(!ch.length)return Promise.resolve(out);return Promise.all(ch.map(function(c){return fn(c).then(function(v){out[c]=v})})).then(next)}return next()}
-var LBL={"LIVE":"💵 LIVE","DRY RUN":"🧪 DRY RUN","VERIFICATION":"🔬 VERIFICATION","PAUSED":"⏸️ PAUSED","NO DATA":"NO DATA"};
-function lbl(s){s=s||{};return (LBL[s.status]||(s.status?String(s.status):"NO DATA"))+(s.stale?" \u26a0\ufe0f STALE":"")}
-function stop(msg){$("fr-sum").innerHTML=msg;$("fr-body").innerHTML="";$("fr-when").textContent=OLD_NOTE}
+function ready(r){return r.dir!=="-"&&r.met===r.rules.length}
+function frac(r){return r.dir==="-"?-1:r.met/r.rules.length}
+// one half of a coin's row: rule dots + how far below the breakout level
+function cell(r){
+ if(r.dir==="-")return '<span class="cell"><small>no data</small></span>';
+ var d='<span class="dots" aria-label="'+r.met+" of "+r.rules.length+' rules met">'+r.rules.map(function(x){return '<i'+(x.ok?' class="on"':"")+"></i>"}).join("")+"</span>";
+ if(ready(r))return '<span class="cell">'+d+'<span class="rdy">READY</span></span>';
+ return '<span class="cell">'+d+"<small>"+(r.extra>=0?"at high":r.extra>-0.1?"<0.1%":Math.abs(r.extra).toFixed(1)+"%")+"</small></span>"}
+function words(r){return r.rules.map(function(x){return '<span class="rp'+(x.ok?" ok":"")+'">'+esc(x.t)+"</span>"}).join("")}
+function stop(icon,msg,sub){$("fr-sum").className="fire-sum";$("fr-sum").innerHTML='<span class="ic">'+icon+"</span><div><b>"+msg+"</b>"+(sub?"<small>"+sub+"</small>":"")+"</div>";$("fr-body").innerHTML="";$("fr-when").textContent="";
+ H.chip("c-fire","🎯 <small>"+esc(msg.replace(/<[^>]+>/g,""))+"</small>","")}
 function run(){
  var load=window.hlBotBoard?window.hlBotBoard():Promise.resolve({error:"loader missing"});
- load.then(function(B){
-  if(!B||B.error){stop("<b>Can't check right now:</b> bot2's coin list is unavailable (bot_board.json: "+esc(B?B.error:"missing")+").");return}
+ return load.then(function(B){
+  if(!B||B.error){stop("⚠️","Can't check right now","bot2's coin list is unavailable (bot_board.json: "+esc(B?B.error:"missing")+").");return}
   var m=ym(Date.now()),L=(Array.isArray(B.bot2_lists)?B.bot2_lists:[]).filter(function(x){return x&&x.month===m})[0];
   // coin names go into API requests: keep only plain Hyperliquid tickers
   var coins=L&&L.status==="published"&&Array.isArray(L.coins)?L.coins.filter(function(c){return typeof c==="string"&&/^[A-Za-z0-9]{1,20}$/.test(c)}):[];
-  if(!coins.length){stop("<b>bot2 has no "+esc(monthName(m))+" coin list yet</b> ("+(L?"pending":"not in the published status yet")+"), so it opens nothing new until the list is published.");return}
+  if(!coins.length){stop("⏳","No "+esc(monthName(m))+" coin list yet","bot2 opens nothing new until the list is published ("+(L?"pending":"not in the published status yet")+").");return}
   var b2=B.bot2||{},st1=b2["1D"]||{},st2=b2["1H"]||{};
   return post({type:"allMids"}).catch(function(){return {}}).then(function(mids){
    return batch(coins,function(c){return bars(c,"1d",420)}).then(function(D){return batch(coins,function(c){return bars(c,"1h",35)}).then(function(H1){
-    var r1=[],r2=[];coins.forEach(function(c){var mid=+(mids||{})[c]||null;r1.push(d1(c,D[c],mid));r2.push(h1(c,D[c],H1[c],mid))});
-    var cards=[card("bot2 \u00b7 1D breakout \u00b7 70%",lbl(st1)+" \u00b7 checks daily at "+localHour(0)+", retries hourly that day",r1),
-               card("bot2 \u00b7 1H breakout \u00b7 30%",lbl(st2)+" \u00b7 checks every hour, one try",r2)];
-    $("fr-body").innerHTML=cards.map(function(k){return k.html}).join("");
-    var ready=[],best=null,live={"1D":st1.status==="LIVE"&&!st1.stale,"1H":st2.status==="LIVE"&&!st2.stale};
-    cards.forEach(function(k,n){var tag=n?"1H":"1D";k.rows.forEach(function(r){if(r.dir==="-")return;var f=r.met/r.rules.length;if(r.met===r.rules.length)ready.push(esc(r.coin)+" ("+tag+")");else if(!best||f>best.f)best={f:f,r:r,tag:tag}})});
-    var anyLive=live["1D"]||live["1H"];
-    $("fr-sum").innerHTML=(ready.length?"<b>Ready to fire:</b> "+ready.join(", "):"<b>Nothing ready to fire.</b>")
-     +(ready.length&&!(live["1D"]&&live["1H"])?" <small>"+(anyLive?"Only a LIVE sleeve places real orders; the other one simulates.":"bot2 isn't LIVE, so this would be a simulated entry, no real order.")+"</small>":"")
-     +(best?" Closest: <b>"+esc(best.r.coin)+"</b> on the "+best.tag+" \u2014 "+best.r.met+" of "+best.r.rules.length+" rules met.":"");
-    $("fr-when").textContent="Checked "+new Date().toLocaleTimeString([],{timeZone:"Australia/Sydney",hour:"numeric",minute:"2-digit"})+". Re-checks every 10 minutes. Coins: bot2's "+monthName(m)+" top-10 list. bot2 also skips a coin it already holds (holdings aren't shown on this public page). "+OLD_NOTE;
+    var rows=coins.map(function(c){var mid=+(mids||{})[c]||null;return {coin:c,a:d1(c,D[c],mid),b:h1(c,D[c],H1[c],mid)}});
+    rows.sort(function(x,y){var fx=Math.max(frac(x.a),frac(x.b)),fy=Math.max(frac(y.a),frac(y.b));return fy-fx||Math.max(y.a.extra,y.b.extra)-Math.max(x.a.extra,x.b.extra)});
+    var l1=H.st(st1.status)[0]+(st1.stale?" ⚠️":""),l2=H.st(st2.status)[0]+(st2.stale?" ⚠️":"");
+    $("fr-body").innerHTML='<div class="fx-h"><span>Coin</span><span>1D daily<br><small>rules · gap</small></span><span>1H hourly<br><small>rules · gap</small></span></div>'
+     +'<div class="fx-list">'+rows.map(function(r){
+      return '<details class="fx"><summary><span class="c">'+esc(r.coin)+"</span>"+cell(r.a)+cell(r.b)+"</summary>"
+       +'<div class="fx-d"><div><b>1D</b>'+words(r.a)+'</div><div><b>1H</b>'+words(r.b)+"</div></div></details>"}).join("")+"</div>";
+    var rd=[],best=null,live={"1D":st1.status==="LIVE"&&!st1.stale,"1H":st2.status==="LIVE"&&!st2.stale};
+    rows.forEach(function(x){[["1D",x.a],["1H",x.b]].forEach(function(p){var r=p[1];if(r.dir==="-")return;if(ready(r))rd.push(esc(r.coin)+" ("+p[0]+")");else if(!best||frac(r)>best.f)best={f:frac(r),r:r,tag:p[0]}})});
+    var anyLive=live["1D"]||live["1H"],sum=$("fr-sum");
+    var close=best?"Closest: "+esc(best.r.coin)+" on the "+best.tag+" · "+best.r.met+" of "+best.r.rules.length+" rules met":"";
+    if(rd.length){
+     sum.className="fire-sum go";
+     sum.innerHTML='<span class="ic">🎯</span><div><b>Ready to fire: '+rd.join(", ")+"</b><small>"
+      +(live["1D"]&&live["1H"]?"Both sleeves are LIVE.":anyLive?"Only a LIVE sleeve places real orders; the other one simulates.":"bot2 isn't LIVE, so this would be a simulated entry, no real order.")+"</small></div>";
+     H.chip("c-fire","🎯 Ready <small>"+rd.join(", ")+"</small>","go");
+    }else{
+     sum.className="fire-sum";
+     sum.innerHTML='<span class="ic">😴</span><div><b>Nothing ready to fire</b>'+(close?"<small>"+close+"</small>":"")+"</div>";
+     H.chip("c-fire","🎯 Nothing ready"+(best?" <small>closest "+esc(best.r.coin)+" "+best.tag+"</small>":""),"");
+    }
+    $("fr-when").textContent="Checked "+H.sydTime(new Date())+" Sydney · re-checks every 10 min · 1D checks daily at "+localHour(0)+" · "+monthName(m)+" top-10 · 1D "+l1+" · 1H "+l2;
    })})});
- }).catch(function(e){$("fr-sum").textContent="Could not reach Hyperliquid. "+e})}
+ }).catch(function(e){stop("⚠️","Could not reach Hyperliquid",esc(String(e)))})}
+window.hlRefreshers.push(run);
 run();setInterval(run,600000);
 })();
 </script>
 
 <!-- 3. Paper tests - data: paper_board.json, pushed hourly by hl-scanner's scan
      job (paperboard.py): coins, dates and results in R only. -->
-<details class="dk" data-key="pt">
-<summary><span class="t">🧪 Paper tests</span><span class="tg paper">paper · fake money</span><span class="s" id="dk-s-pt"></span><span class="a">▸</span></summary>
-<div class="dk-body">
-<section id="pt" class="fr">
-<p class="sub">Fake-money bots tested before any real money goes near them. Each has a pass rule; until it has enough trades it's only collecting. Tap a test for the detail. R = result as a multiple of the risk taken on the trade.</p>
-<div id="pt-sum" class="sum">Loading paper results&hellip;</div>
-<div id="pt-body"></div>
-</section>
+<details class="dk" data-key="pt" id="sec-pt" open>
+<summary><span class="t">🧪 Paper tests</span><span class="tg paper">fake money</span><span class="s" id="dk-s-pt"></span><span class="a">▸</span></summary>
+<div class="dk-body" id="pt">
+ <div id="pt-sum"><p class="foot">Loading paper results…</p></div>
+ <div id="pt-body"></div>
+ <details class="why"><summary>What is this?</summary><div class="wb">
+  <p>Fake-money bots tested before any real money goes near them. Each has a pass rule; until it has enough trades it's only collecting. The bar shows how far each test is towards its trade target.</p>
+  <p><b>R</b> = result as a multiple of the risk taken on the trade: +1R made what it risked, −1R lost it. Tap a test for its numbers, rule and latest trades.</p>
+ </div></details>
 </div>
 </details>
 
 <script>
 (function(){
- function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+ var H=window.HLD,esc=H.esc;
  function r(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(2)+"R"}
- function cell(v,k){return "<div><b>"+v+"</b><small>"+k+"</small></div>"}
- function card(b){
-  var ref=b.kind==="reference",pct=ref||!b.target?0:Math.min(100,Math.round(100*b.n/b.target));
-  var st=b.status==="passed"?"Passed":b.status==="failed"?"Failed":ref?"Reference":"Collecting";
-  var g=cell(ref?b.n:b.n+" / "+b.target,"closed trades")+cell(r(b.avg),"average per trade")
-   +cell(b.lo==null?"after 10 trades":r(b.lo)+" to "+r(b.hi),"realistic range (95%)")
-   +cell(b.win==null?"—":b.win+"%","winners")+cell(b.open.length,"open now")
-   +(ref?"":cell(b.overlap==null?"—":b.overlap+"%","repeat a real-bot trade"))
-   +(ref?"":cell(b.backtest==null?"no backtest":r(b.backtest),"backtest expects"));
-  if(b.id==="CF")g+=cell(b.okx_agree_pct==null?"from ~2 Oct":b.okx_agree_pct+"%","OKX agrees with Binance");
-  (b.breakdown||[]).forEach(function(x){g+=cell(r(x.avg)+" <small>("+x.n+")</small>",esc(x.strat)+(x.expect==null?"":" · backtest "+r(x.expect)))});
-  if(b.id==="OB")g+=cell(b.live_breakouts_avg==null?"no closed trades yet":r(b.live_breakouts_avg),"real bot's breakouts (to beat by +0.05R)");
-  // exact times (UTC in the JSON) shown in the viewer's own time zone; date only when that's all we know
-  var when=function(at,day){if(at){var d=new Date(at);if(!isNaN(d.getTime()))return d.toLocaleString([],{timeZone:"Australia/Sydney",day:"numeric",month:"short",year:d.getFullYear()!==new Date().getFullYear()?"numeric":undefined,hour:"numeric",minute:"2-digit"})}return day||"—"};
-  var rows=b.recent.slice().reverse().slice(0,10).map(function(t){return "<tr><td><b>"+esc(t.coin)+'</b> <span class="dir '+(t.side==="LONG"?"L":"S")+'">'+esc(t.side)+"</span></td><td>"+esc(when(t.opened_at,t.opened))+"</td><td>"+esc(when(t.closed_at,t.closed))+'</td><td class="'+(t.r>=0?"good":"bad")+'">'+r(t.r)+"</td></tr>"}).join("");
-  var open=b.open.map(function(t){return esc(t.coin)+" "+esc(t.side)+(t.opened_at?" <small>(since "+esc(when(t.opened_at))+")</small>":"")}).join(", ");
-  return '<details class="grp pt-grp"><summary class="gh"><b>'+esc(b.name)+'</b><span><span class="pt-st '+esc(b.status)+'">'+st+"</span> "+esc(b.progress)+(b.n?" · avg "+r(b.avg):"")+"</span></summary>"
-   +(ref?"":'<div class="pt-bar" style="margin-top:10px"><i style="width:'+pct+'%"></i></div>')+'<div class="pt-grid">'+g+'</div>'
-   +'<div class="pt-rule"><b>Rule:</b> '+esc(b.rule)+"<br><b>Passes if:</b> "+esc(b.passes)+(open?"<br><b>Open:</b> "+open:"")+"</div>"
-   +(rows?'<div class="tw"><table><thead><tr><th>Trade</th><th>Opened</th><th>Closed</th><th>Result</th></tr></thead><tbody>'+rows+"</tbody></table></div>":"")+"</details>"}
- function asOf(s){var d=/T/.test(s)?new Date(String(s).replace(/T(\d\d:\d\d)Z$/,"T$1:00Z")):null;return d&&!isNaN(d.getTime())?d.toLocaleString([],{timeZone:"Australia/Sydney",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}):String(s)}
+ function rc(x){return x==null?"":x>=0?"good":"bad"}
  function pc(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(1)+"%"}
- function spark(c){if(!c||c.length<2)return "";var v=c.map(function(p){return p[1]}),lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),w=240,h=36,r=hi-lo||1;
-  var pts=v.map(function(y,i){return (i*w/(v.length-1)).toFixed(1)+","+(h-2-(y-lo)*(h-4)/r).toFixed(1)}).join(" ");
-  return '<svg viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'" style="margin:0 12px 8px;display:block" aria-label="equity curve"><polyline points="'+pts+'" fill="none" stroke="#2962FF" stroke-width="1.5"/></svg>'}
+ function cell(v,k){return "<div><b>"+v+"</b><small>"+k+"</small></div>"}
+ function num(x){return typeof x==="number"&&isFinite(x)?x:0}
+ function arr(x){return Array.isArray(x)?x:[]}
+ // exact times (UTC in the JSON) shown in Sydney time; date only when that's all we know
+ function when(at,day){if(at){var d=H.iso(at);if(d)return H.syd(d,{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}return day||"—"}
+ function bar(p){return '<span class="bar"><i style="width:'+Math.max(0,Math.min(100,p)).toFixed(1)+'%"></i></span>'}
+ function stChip(s){return s==="passed"?'<span class="pt-st passed">Passed</span>':s==="failed"?'<span class="pt-st failed">Failed</span>':""}
+ function card(b){
+  var ref=b.kind==="reference",n=num(b.n),open=arr(b.open),pct=ref||!b.target?0:100*n/b.target;
+  var g=cell(ref?n:n+" / "+esc(b.target),"closed trades")+cell('<span class="'+rc(b.avg)+'">'+r(b.avg)+"</span>","average per trade")
+   +cell(b.lo==null?"after 10 trades":r(b.lo)+" to "+r(b.hi),"realistic range (95%)")
+   +cell(b.win==null?"—":esc(b.win)+"%","winners")+cell(open.length,"open now")
+   +(ref?"":cell(b.overlap==null?"—":esc(b.overlap)+"%","repeat a real-bot trade"))
+   +(ref?"":cell(b.backtest==null?"no backtest":r(b.backtest),"backtest expects"));
+  if(b.id==="CF")g+=cell(b.okx_agree_pct==null?"—":esc(b.okx_agree_pct)+"%","OKX agrees with Binance (info)");
+  if(b.id==="OB")g+=cell(b.live_breakouts_avg==null?"no closed trades yet":r(b.live_breakouts_avg),"real bot's breakouts (to beat by +0.05R)");
+  if(b.id==="QB"){g+=cell(b.month_lo==null?"after 10 trades":r(b.month_lo),"month-block range low (95%)")+cell(b.hedged_avg==null?"—":r(b.hedged_avg),"BTC-hedged average")}
+  arr(b.breakdown).forEach(function(x){g+=cell(r(x.avg)+" <small>("+esc(x.n)+")</small>",esc(x.strat)+(x.expect==null?"":" · backtest "+r(x.expect)))});
+  var rows=arr(b.recent).slice().reverse().slice(0,10).map(function(t){return "<tr><td><b>"+esc(t.coin)+'</b> <span class="dir '+(t.side==="LONG"?"L":"S")+'">'+esc(t.side)+"</span></td><td>"+esc(when(t.closed_at,t.closed))+"<small class=\"blk\">opened "+esc(when(t.opened_at,t.opened))+'</small></td><td class="r '+rc(t.r)+'">'+r(t.r)+"</td></tr>"}).join("");
+  var op=open.map(function(t){return esc(t.coin)+" "+esc(t.side)+(t.opened_at?" <small>(since "+esc(when(t.opened_at))+")</small>":"")}).join(", ");
+  var meta=ref?'<span class="txt">'+esc(b.progress||(n+" closed"))+(b.win!=null?" · "+esc(b.win)+"% winners":"")+" · "+open.length+" open</span>"
+   :bar(pct)+'<span class="txt">'+n+"/"+esc(b.target)+" · "+open.length+" open</span>";
+  return '<details class="pt"><summary><span class="pt-n">'+esc(b.name)+" "+stChip(b.status)+'</span><span class="pt-v '+(b.avg==null?"na":rc(b.avg))+'">'+(b.avg==null?"no trades":r(b.avg))+'</span><span class="pt-m">'+meta+"</span></summary>"
+   +'<div class="pt-d"><div class="pt-grid">'+g+'</div><div class="pt-rule"><div><b>Rule:</b> '+esc(b.rule)+"</div><div><b>Passes if:</b> "+esc(b.passes)+"</div>"+(op?"<div><b>Open:</b> "+op+"</div>":"")+"</div>"
+   +(rows?'<div class="tw"><table><thead><tr><th>Trade</th><th>Closed <small>(Sydney)</small></th><th class="r">Result</th></tr></thead><tbody>'+rows+"</tbody></table></div>":"")+"</div></details>"}
+ function spark(c,cls,w,h){c=arr(c);if(c.length<2)return "";var v=c.map(function(p){return +p[1]}).filter(isFinite);if(v.length<2)return "";var lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),rg=hi-lo||1;
+  var pts=v.map(function(y,i){return (i*w/(v.length-1)).toFixed(1)+","+(h-2-(y-lo)*(h-4)/rg).toFixed(1)}).join(" ");
+  return '<svg class="'+cls+'" viewBox="0 0 '+w+" "+h+'" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+pts+'" fill="none" stroke="var(--blue)" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>'}
  function rcard(m){
-  var st=m.status==="passed"?"Passed":m.status==="failed"?"Failed":"Collecting";
-  var g=cell(pc(m.ret),"since "+esc(m.since||"start"))+cell(pc(m.btc),"BTC same period")+cell(pc(m.alt),"alt basket same period")
-   +cell(m.batches,"7-day batches done")+cell(pc(m.avg_batch),"average batch")+cell(pc(m.avg_excess),"batch vs alt basket")
-   +cell(m.beat_pct==null?"—":m.beat_pct+"%","batches beating basket")+cell(m.open,"batches open");
-  var now=(m.now_in&&m.now_in.length?"long "+m.now_in.join(", "):"")+(m.now_out&&m.now_out.length?" · short "+m.now_out.join(", "):"");
-  return '<details class="grp pt-grp"><summary class="gh"><b>'+esc(m.name)+'</b><span><span class="pt-st '+esc(m.status)+'">'+st+"</span> "+esc(m.progress)+" · "+pc(m.ret)+"</span></summary>"
-   +'<div class="pt-grid">'+g+"</div>"+spark(m.curve)
-   +'<div class="pt-rule"><b>Rule:</b> '+esc(m.rule)+"<br><b>Passes if:</b> "+esc(m.passes)+"<br><b>Backtest:</b> "+esc(m.backtest)+(now?"<br><b>Latest batch:</b> "+esc(now):"")+"</div></details>"}
+  var g=cell('<span class="'+rc(m.ret)+'">'+pc(m.ret)+"</span>","since "+esc(m.since||"start"))+cell(pc(m.btc),"BTC same period")+cell(pc(m.alt),"alt basket same period")
+   +cell(esc(m.batches),"7-day batches done")+cell(pc(m.avg_batch),"average batch")+cell(pc(m.avg_excess),"batch vs alt basket")
+   +cell(m.beat_pct==null?"—":esc(m.beat_pct)+"%","batches beating basket")+cell(esc(m.open),"batches open");
+  var now=(arr(m.now_in).length?"long "+m.now_in.join(", "):"")+(arr(m.now_out).length?" · short "+m.now_out.join(", "):"");
+  var d=/day (\d+) of (\d+)/.exec(m.progress||""),p=d?100*d[1]/d[2]:0;
+  return '<details class="pt"><summary><span class="pt-n">'+esc(m.name)+" "+stChip(m.status)+'</span><span class="pt-v '+rc(m.ret)+'">'+spark(m.curve,"spark-mini",56,16)+" "+pc(m.ret)+'</span><span class="pt-m">'+bar(p)+'<span class="txt">'+esc(m.progress)+" · BTC "+pc(m.btc)+"</span></span></summary>"
+   +'<div class="pt-d"><div class="pt-grid">'+g+"</div>"+spark(m.curve,"spark",240,34)
+   +'<div class="pt-rule"><div><b>Rule:</b> '+esc(m.rule)+"</div><div><b>Passes if:</b> "+esc(m.passes)+"</div><div><b>Backtest:</b> "+esc(m.backtest)+"</div>"+(now?"<div><b>Latest batch:</b> "+esc(now)+"</div>":"")+"</div></div></details>"}
+ function shadow(sh){
+  var t=sh.take||{},s=sh.skip||{};
+  return '<details class="pt"><summary><span class="pt-n">ChatGPT votes (shadow mode)</span><span class="pt-v na">'+esc(sh.votes)+' votes</span><span class="pt-m"><span class="txt">'+esc(sh.scored)+" of ~"+esc(sh.judge_at)+" scored</span></span></summary>"
+   +'<div class="pt-d"><div class="pt-grid">'+cell(esc(sh.votes),"votes cast")+cell(esc(sh.scored),"matched to real trades")
+   +cell(t.avg==null?"—":r(t.avg)+" <small>("+esc(t.n)+")</small>","trades ChatGPT said TAKE")
+   +cell(s.avg==null?"—":r(s.avg)+" <small>("+esc(s.n)+")</small>","trades ChatGPT said SKIP")+"</div>"
+   +'<div class="pt-rule">ChatGPT votes TAKE or SKIP on every live signal; nothing acts on it. Useful only if SKIP trades end up clearly worse than TAKE trades.</div></div></details>'}
+ function asOf(s){s=String(s||"");var d=/T/.test(s)?H.iso(s):null;if(d)return H.syd(d,{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})+" Sydney";
+  var a=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s);return a?new Date(Date.UTC(+a[1],+a[2]-1,+a[3])).toLocaleDateString("en-AU",{day:"numeric",month:"short",timeZone:"UTC"}):s}
  function run(){
-  fetch("paper_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error("HTTP "+x.status);return x.json()}).then(function(B){
-   var T=B.bots.filter(function(b){return b.kind!=="reference"}),closed=0,open=0,judged=T.filter(function(b){return b.status==="passed"||b.status==="failed"});
-   T.forEach(function(b){closed+=b.n;open+=b.open.length});
-   document.getElementById("pt-sum").innerHTML="<b>"+(T.length+(B.rotation||[]).length)+" paper tests</b> · "+closed+" closed trade"+(closed===1?"":"s")+", "+open+" open · "
-    +(judged.length?judged.map(function(b){return esc(b.name)+" "+b.status}).join(", "):"none has enough trades to judge yet")
-    +(B.as_of?' <small style="color:var(--ink-3)">· data from '+esc(asOf(B.as_of))+"</small>":"");
-   var tests=B.bots.filter(function(b){return b.kind!=="reference"}),refs=B.bots.filter(function(b){return b.kind==="reference"});
-   var sh=B.shadow,shc=sh?'<details class="grp pt-grp"><summary class="gh"><b>ChatGPT votes (shadow mode)</b><span><span class="pt-st">Reference</span> '+sh.scored+" of ~"+sh.judge_at+" scored</span></summary>"
-     +'<div class="pt-grid">'+cell(sh.votes,"votes cast")+cell(sh.scored,"matched to real trades")
-     +cell(sh.take.avg==null?"—":r(sh.take.avg)+" <small>("+sh.take.n+")</small>","trades ChatGPT said TAKE")
-     +cell(sh.skip.avg==null?"—":r(sh.skip.avg)+" <small>("+sh.skip.n+")</small>","trades ChatGPT said SKIP")+"</div>"
-     +'<div class="pt-rule">ChatGPT votes TAKE or SKIP on every live signal; nothing acts on it. Useful only if SKIP trades end up clearly worse than TAKE trades.</div></details>':"";
-   document.getElementById("pt-body").innerHTML='<h3>Being tested</h3>'
-    +tests.map(card).join("")+'<p class="sub">'+esc(B.note)+"</p>"
-    +(B.rotation&&B.rotation.length?B.rotation.map(rcard).join("")+'<p class="sub">'+esc(B.rotation_note||"")+"</p>":"")
-    +(refs.length||shc?'<h3>Reference (not tests)</h3>'+refs.map(card).join("")+shc:"");
-  }).catch(function(e){document.getElementById("pt-sum").textContent="Paper results unavailable ("+e.message+")."})}
+  return fetch("paper_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error(x.status===404?"not published yet":"HTTP "+x.status);return x.json()}).then(function(B){
+   var bots=arr(B.bots),rot=arr(B.rotation);
+   var T=bots.filter(function(b){return b.kind!=="reference"}),refs=bots.filter(function(b){return b.kind==="reference"}),closed=0,open=0;
+   var judged=T.concat(rot).filter(function(b){return b.status==="passed"||b.status==="failed"});
+   T.forEach(function(b){closed+=num(b.n);open+=arr(b.open).length});
+   var nT=T.length+rot.length;
+   document.getElementById("pt-sum").innerHTML='<div class="kpis">'
+    +'<div class="kpi"><b>'+nT+"</b><small>tests running</small></div>"
+    +'<div class="kpi"><b>'+closed+"</b><small>closed trades</small></div>"
+    +'<div class="kpi"><b>'+open+"</b><small>open now</small></div>"
+    +'<div class="kpi"><b>'+judged.length+"</b><small>judged yet</small></div></div>"
+    +(judged.length?'<p class="foot" style="margin:-4px 0 10px">'+judged.map(function(b){return esc(b.name)+" "+esc(b.status)}).join(" · ")+"</p>":"");
+   H.chip("c-pt","🧪 "+nT+" tests <small>"+(judged.length?judged.length+" judged":"none judged yet")+"</small>","");
+   window.hlPaperLine=nT+" tests · "+closed+" closed trades, "+open+" open · "+(judged.length?judged.length+" judged":"none has enough trades to judge yet");
+   var sh=B.shadow&&typeof B.shadow==="object"?shadow(B.shadow):"";
+   document.getElementById("pt-body").innerHTML='<div class="h3">Being tested <span>average per trade</span></div>'
+    +'<div class="pt-list">'+T.map(card).join("")+rot.map(rcard).join("")+"</div>"
+    +(rot.length&&B.rotation_note?'<p class="foot">'+esc(B.rotation_note)+"</p>":"")
+    +(refs.length||sh?'<div class="h3">Reference <span>not tests</span></div><div class="pt-list">'+refs.map(card).join("")+sh+"</div>":"")
+    +'<p class="foot">'+esc(B.note||"Fake money.")+(B.as_of?" · data from "+esc(asOf(B.as_of)):"")+"</p>";
+  }).catch(function(e){
+   document.getElementById("pt-sum").innerHTML='<div class="alert"><b>Paper results unavailable</b> <small>('+esc(e.message)+")</small></div>";
+   document.getElementById("pt-body").innerHTML="";window.hlPaperLine="Paper results unavailable";
+   H.chip("c-pt","🧪 <small>unavailable</small>","")})}
+ window.hlRefreshers.push(run);
  run();setInterval(run,600000);
 })();
 </script>
 
-<!-- 4. Market - alt-season gauge (CoinGecko, in the browser) and money rotation
+<!-- 4. Market - alt-season gauge (CoinGecko, in the browser), money rotation
      (rotation_board.json, pushed by hl-scanner's live job after each rotation run:
-     7am, 10am, 2pm, 6pm Sydney). Market data only. -->
-<details class="dk" data-key="mkt">
+     7am, 10am, 2pm, 6pm Sydney), the sector-watch regime line
+     (sector_rotation_board.json, scan job) and the TradingView catch-up list
+     (tradingview_catchup.txt). Market data only; every file is optional. -->
+<details class="dk" data-key="mkt" id="sec-mkt">
 <summary><span class="t">🌍 Market</span><span class="tg">info only</span><span class="s" id="dk-s-mkt"></span><span class="a">▸</span></summary>
-<div class="dk-body">
-<section id="mkt" class="fr">
-<h3>Alt-season gauge</h3>
-<div class="tiles" id="mkt-tiles">
-  <div class="tile" id="t-others-tile">
-    <div class="k">Others dominance</div>
-    <div class="v" id="t-others">—</div>
-    <div class="sub" id="t-others-sub">loading…</div>
-    <div class="meter" id="t-others-meter"><i style="width:0%"></i></div>
+<div class="dk-body" id="mkt">
+<div class="mkt-grid">
+ <div>
+  <div class="h3">Alt-season gauge <span>CoinGecko</span></div>
+  <div class="gauge" id="t-others-tile">
+   <div class="g-top"><span>Others dominance</span><b id="t-others">—</b></div>
+   <div class="g-bar" id="t-others-meter"><i></i><span class="mk" title="13% sell line"></span></div>
+   <div class="g-scale"><span style="left:0;transform:none">0%</span><span style="left:64.7%">11</span><span style="left:76.5%">13 sell</span><span style="left:100%;transform:translateX(-100%)">17%</span></div>
+   <div class="g-sub" id="t-others-sub">loading…</div>
   </div>
-  <div class="tile">
-    <div class="k">BTC dominance</div>
-    <div class="v" id="t-btcd">—</div>
-    <div class="sub" id="t-btcd-sub">&nbsp;</div>
+  <div class="stats">
+   <div class="stat"><small>BTC dominance</small><b id="t-btcd">—</b><small id="t-btcd-sub">&nbsp;</small></div>
+   <div class="stat"><small>Total crypto market</small><b id="t-total">—</b><small id="t-total-sub">&nbsp;</small></div>
   </div>
-  <div class="tile">
-    <div class="k">Total crypto market</div>
-    <div class="v" id="t-total">—</div>
-    <div class="sub" id="t-total-sub">&nbsp;</div>
-  </div>
+  <details class="why"><summary>What is Others dominance?</summary><div class="wb">
+   <p>Every coin outside the top 10, as a share of the whole crypto market (TradingView's OTHERS.D, worked out from CoinGecko, adjusted −0.5 pt to match TradingView; calibrated 25 Sep 2026).</p>
+   <p>Mike's rule: <b>at 13% it's time to sell out of alts</b>. Past cycle tops: ~13% in 2018 and 2024, ~14% May 2021, ~17% Jan 2022.</p>
+  </div></details>
+ </div>
+ <div>
+  <div class="h3">Money rotation <span id="rot-when"></span></div>
+  <div id="rot-sum" class="flow"><span class="muted">Loading the latest rotation…</span></div>
+  <div id="rot-body"></div>
+  <div id="sw-line" class="sw" hidden></div>
+  <div id="tv-dl" hidden></div>
+  <details class="why"><summary>What is money rotation?</summary><div class="wb">
+   <p>Which crypto sectors money is moving into or out of: each sector's price vs BTC today and over 7 days, and its share of trading volume now vs its 7-day average. Same numbers as the Discord report. Not a trade signal.</p>
+   <p>It updates at 7am, 10am, 2pm and 6pm Sydney. The TradingView list (when there is one) holds coins in Money-IN sectors that haven't moved yet - a watchlist, not a signal.</p>
+  </div></details>
+ </div>
 </div>
-<p class="note"><b>Others dominance</b> = every coin outside the top 10, as a share of the whole crypto market (TradingView's OTHERS.D, worked out from CoinGecko, adjusted −0.5 pt to match TradingView; calibrated 25 Sep 2026). Mike's rule: <b>at 13% it's time to sell out of alts</b> (past cycle tops: ~13% in 2018 and 2024, ~14% May 2021, ~17% Jan 2022).</p>
-<h3>Money rotation</h3>
-<p class="sub">Which crypto sectors money is moving into or out of: price vs BTC today and this week, and each sector's share of trading volume now vs its 7-day average. Same numbers as the Discord report. Not a trade signal.</p>
-<div id="rot-sum" class="sum">Loading the latest rotation&hellip;</div>
-<div id="rot-body"></div>
-</section>
 </div>
 </details>
 
 <script>
 (function(){
- function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
- function p(x){return x==null?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(1)+"%"}
+ var H=window.HLD,esc=H.esc;
+ function p(x){return x==null||!isFinite(x)?"—":(x>=0?"+":"−")+Math.abs(x).toFixed(1)+"%"}
  function cls(x){return x==null?"":x>=0?"good":"bad"}
- function when(iso){iso=String(iso||"");var d=new Date(/T\d\d:\d\dZ$/.test(iso)?iso.replace("Z",":00Z"):iso);return isNaN(d)?iso:d.toLocaleString([],{timeZone:"Australia/Sydney",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
+ function arr(x){return Array.isArray(x)?x:[]}
+ function f1(x){return typeof x==="number"&&isFinite(x)?x.toFixed(1):"—"}
  function run(){
-  fetch("rotation_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error("HTTP "+x.status);return x.json()}).then(function(B){
-   var mi=Array.isArray(B.money_in)?B.money_in:[],mo=Array.isArray(B.money_out)?B.money_out:[];
-   var ins=mi.length?mi.join(", "):"nothing clear",outs=mo.length?mo.join(", "):"nothing clear";
-   document.getElementById("rot-sum").innerHTML='<span class="rot-flow in">▲ In:</span> <b>'+esc(ins)+'</b> · <span class="rot-flow out">▼ Out:</span> <b>'+esc(outs)+"</b>"
-    +' <small style="color:var(--ink-3,#8b949e)">· '+esc(when(B.as_of))+"</small>";
-   var rows=(Array.isArray(B.sectors)?B.sectors:[]).map(function(s){var f=s.flow==="in"?'<span class="rot-flow in">▲ in</span>':s.flow==="out"?'<span class="rot-flow out">▼ out</span>':"";
-    return "<tr><td><b>"+esc(s.name)+"</b></td><td class=\""+cls(s.rel24)+"\">"+p(s.rel24)+"</td><td class=\""+cls(s.rel7)+"\">"+p(s.rel7)+"</td><td>"
-     +(s.share_avg==null?"—":s.share_avg.toFixed(1)+"% → "+s.share_now.toFixed(1)+"%")+"</td><td>"+f+"</td><td>"+esc(s.top)+" <small>"+p(s.top_r24)+"</small></td></tr>"}).join("");
+  return fetch("rotation_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw new Error(x.status===404?"not published yet":"HTTP "+x.status);return x.json()}).then(function(B){
+   var mi=arr(B.money_in),mo=arr(B.money_out),d=H.iso(B.as_of);
+   function chips(a,c){return a.length?a.map(function(s){return '<span class="fchip '+c+'">'+esc(s)+"</span>"}).join(""):'<span class="muted">nothing clear</span>'}
+   document.getElementById("rot-sum").innerHTML='<span class="lbl in">▲ In</span>'+chips(mi,"in")+'<span class="lbl out" style="margin-left:6px">▼ Out</span>'+chips(mo,"out");
+   document.getElementById("rot-when").textContent=d?H.syd(d)+" Sydney":"";
+   var rows=arr(B.sectors).map(function(s){var ar=s.flow==="in"?'<span class="fin">▲</span> ':s.flow==="out"?'<span class="fout">▼</span> ':"";
+    var sh=s.share_avg==null||s.share_now==null?"—":f1(s.share_avg)+"→"+f1(s.share_now)+"%";
+    return "<tr><td>"+ar+"<b>"+esc(s.name)+"</b>"+(s.top?"<small>"+esc(s.top)+" "+p(s.top_r24)+"</small>":"")+'</td><td class="r '+cls(s.rel24)+'">'+p(s.rel24)+'</td><td class="r '+cls(s.rel7)+'">'+p(s.rel7)+'</td><td class="r"><small>'+sh+"</small></td></tr>"}).join("");
    var btc=B.btc?"BTC "+p(B.btc.r24)+" today, "+p(B.btc.r7)+" this week":"";
-   var maj=B.majors?" · BTC+ETH "+B.majors.share_now.toFixed(0)+"% of volume (avg "+B.majors.share_avg.toFixed(0)+"%) → "+esc(B.majors.verdict):"";
-   document.getElementById("rot-body").innerHTML='<p class="sub">'+btc+maj+"</p>"
-    +'<div class="tw"><table><thead><tr><th>Sector</th><th>Today vs BTC</th><th>7 days vs BTC</th><th>Volume share (avg → now)</th><th>Flow</th><th>Leader today</th></tr></thead><tbody>'+rows+"</tbody></table></div>";
-  }).catch(function(e){document.getElementById("rot-sum").textContent="Money rotation unavailable ("+e.message+"). It updates at 7am, 10am, 2pm and 6pm Sydney."})}
- run();setInterval(run,600000);
+   var maj=B.majors&&B.majors.share_now!=null?" · BTC+ETH "+B.majors.share_now.toFixed(0)+"% of volume (avg "+(+B.majors.share_avg||0).toFixed(0)+"%) - "+esc(B.majors.verdict||""):"";
+   document.getElementById("rot-body").innerHTML=(rows?'<div class="tw sec"><table><thead><tr><th>Sector · leader</th><th class="r">Today<br>vs BTC</th><th class="r">7 days<br>vs BTC</th><th class="r">Volume<br>share</th></tr></thead><tbody>'+rows+"</tbody></table></div>":"")
+    +(btc||maj?'<p class="foot">'+btc+maj+"</p>":"");
+   window.hlRotLine="In: "+(mi.join(", ")||"nothing clear")+" · Out: "+(mo.join(", ")||"nothing clear");
+  }).catch(function(e){
+   document.getElementById("rot-sum").innerHTML='<span class="muted">Money rotation unavailable ('+esc(e.message)+"). It updates at 7am, 10am, 2pm and 6pm Sydney.</span>";
+   document.getElementById("rot-body").innerHTML="";window.hlRotLine="";})}
+ // sector watch: one line of market regime (info only); hidden when the file is missing
+ function sw(){
+  return fetch("sector_rotation_board.json?t="+Date.now()).then(function(x){if(!x.ok)throw 0;return x.json()}).then(function(B){
+   var box=document.getElementById("sw-line");if(!B||typeof B.regime!=="string"||!B.regime){box.hidden=true;return}
+   var d=H.iso(B.generated_at);
+   box.innerHTML="🧭 <b>Sector watch:</b> "+esc(B.regime)+(d?' <small class="muted">· '+esc(H.syd(d,{weekday:"short",hour:"numeric",minute:"2-digit"}))+" Sydney</small>":"");
+   box.hidden=false;
+  }).catch(function(){document.getElementById("sw-line").hidden=true})}
+ // TradingView catch-up watchlist: offered only when the file has tickers in it
+ function tv(){
+  return fetch("tradingview_catchup.txt?t="+Date.now()).then(function(x){if(!x.ok)throw 0;return x.text()}).then(function(t){
+   var box=document.getElementById("tv-dl"),lines=String(t||"").split(/\r?\n/).map(function(s){return s.trim()}).filter(Boolean);
+   var secs=lines.filter(function(s){return s.indexOf("###")===0}).map(function(s){return s.slice(3)}),n=lines.length-secs.length;
+   if(!n){box.hidden=true;return}
+   box.innerHTML='<a class="dl" href="tradingview_catchup.txt" download="tradingview_catchup.txt">⬇ TradingView watchlist · '+n+" catch-up coin"+(n===1?"":"s")+"</a>"
+    +(secs.length?' <small class="muted">('+esc(secs.join(", "))+")</small>":"");
+   box.hidden=false;
+  }).catch(function(){document.getElementById("tv-dl").hidden=true})}
+ function all(){return Promise.all([run(),sw(),tv()])}
+ window.hlRefreshers.push(all);
+ all();setInterval(all,600000);
 })();
 </script>
 <script>
@@ -856,24 +1073,27 @@ var TV_OFFSET=-0.50;
 function $(id){return document.getElementById(id)}
 function fmtT(n){return n>=1e12?"$"+(n/1e12).toFixed(2)+"T":"$"+(n/1e9).toFixed(0)+"B"}
 function run(){
- fetch("https://api.coingecko.com/api/v3/global").then(function(r){return r.json()}).then(function(j){
+ return fetch("https://api.coingecko.com/api/v3/global").then(function(r){return r.json()}).then(function(j){
   var d=j.data,p=d.market_cap_percentage||{},top10=0,keys=Object.keys(p);
   keys.forEach(function(k){top10+=p[k]});
   if(keys.length<10||!top10)throw new Error("top-10 data missing");
   var raw=100-top10,others=raw+TV_OFFSET,btcd=p.btc||0,total=d.total_market_cap&&d.total_market_cap.usd,chg=d.market_cap_change_percentage_24h_usd;
-  var gap=SELL_AT-others;
+  var gap=SELL_AT-others,lvl=others>=SELL_AT?"sell":others>=WARN_AT?"over":"";
   $("t-others").textContent=others.toFixed(2)+"%";
-  $("t-others").style.color=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--up)";
-  $("t-others-sub").textContent=(gap<=0?"AT/ABOVE the 13% sell line · sell-alts zone":Math.abs(gap).toFixed(2)+" pts below the 13% sell line"+(others>=WARN_AT?" · getting close":" · alts still on"))+" (raw CoinGecko "+raw.toFixed(2)+"%)";
-  var m=$("t-others-meter");m.className="meter"+(others>=WARN_AT?" over":"");m.firstElementChild.style.width=Math.min(100,others/METER_MAX*100).toFixed(1)+"%";
+  $("t-others").style.color=lvl==="sell"?"var(--down)":lvl?"var(--warn)":"var(--up)";
+  $("t-others-sub").textContent=(gap<=0?"At/above the 13% sell line · sell-alts zone":Math.abs(gap).toFixed(2)+" pts below the 13% sell line"+(lvl?" · getting close":" · alts still on"))+" (raw CoinGecko "+raw.toFixed(2)+"%)";
+  var m=$("t-others-meter");m.className="g-bar"+(lvl?" "+lvl:"");m.firstElementChild.style.width=Math.min(100,others/METER_MAX*100).toFixed(1)+"%";
   $("t-btcd").textContent=btcd.toFixed(1)+"%";
   $("t-btcd-sub").textContent="ETH "+(p.eth||0).toFixed(1)+"% · stables "+(((p.usdt||0)+(p.usdc||0))).toFixed(1)+"%";
   $("t-total").textContent=total?fmtT(total):"—";
   $("t-total-sub").textContent=chg==null?"":(chg>=0?"+":"")+chg.toFixed(1)+"% in 24h";
   $("t-total-sub").style.color=chg>=0?"var(--up)":"var(--down)";
-  $("t-others-tile").style.borderColor=others>=SELL_AT?"var(--down)":others>=WARN_AT?"var(--warn)":"var(--line)";
- }).catch(function(e){$("t-others-sub").textContent="CoinGecko unreachable ("+e.message+")"});
+  $("t-others-tile").style.borderColor=lvl==="sell"?"var(--down)":lvl?"var(--warn)":"var(--line)";
+  window.HLD.chip("c-mkt","🌍 Others "+others.toFixed(1)+"% <small>sell at 13%</small>",lvl?"warn":"");
+ }).catch(function(e){$("t-others-sub").textContent="CoinGecko unreachable ("+e.message+")";
+  window.HLD.chip("c-mkt","🌍 <small>market data unavailable</small>","")});
 }
+window.hlRefreshers.push(run);
 run();setInterval(run,600000);
 })();
 </script>
@@ -881,16 +1101,15 @@ run();setInterval(run,600000);
 <!-- 5. Your wallet - read in the VIEWER's browser from an address they type in;
      the address is kept in their browser only. Nothing here is published, and no
      address or balance is ever written into this repo. -->
-<details class="dk" data-key="wallet">
+<details class="dk" data-key="wallet" id="sec-wallet">
 <summary><span class="t">💰 Your wallet</span><span class="tg priv">this browser only</span><span class="s" id="dk-s-wallet"></span><span class="a">▸</span></summary>
-<div class="dk-body">
-<section id="wallet" class="fr">
-  <h3>Account totals</h3>
+<div class="dk-body" id="wallet">
+  <div class="h3">Account totals</div>
   <div id="tot-wrap"><div class="msg">No addresses saved in this browser yet - add them below.</div></div>
-  <p class="note" id="tot-when"></p>
+  <p class="foot" id="tot-when"></p>
 
-  <details class="grp addr-box" id="acct-setup">
-    <summary>Addresses <small>· saved in this browser only, never published</small></summary>
+  <details class="addr-box" id="acct-setup">
+    <summary>🔑 Addresses <small>· saved in this browser only, never published</small></summary>
     <div class="addr-in">
       <label class="fld" for="addr">Main account <span class="saved" id="m-main"></span></label>
       <input type="text" id="addr" placeholder="0x… paste to set or change" spellcheck="false" autocomplete="off">
@@ -904,12 +1123,12 @@ run();setInterval(run,600000);
         <button id="save" type="button">Save</button>
         <button id="forget" class="ghost" type="button">Forget addresses</button>
       </div>
-      <div class="note" id="addr-msg">Public, read-only addresses: they can't sign or move anything. Kept in this browser only - never published on this page or in the repo; only sent to Hyperliquid's and GMX's public APIs to read them. Leave a box empty to keep what's already saved.</div>
+      <div class="note" id="addr-msg">Public, read-only addresses (they can't sign or move anything). Kept in this browser only and only sent to Hyperliquid's and GMX's public APIs. Leave a box empty to keep what's saved.</div>
     </div>
   </details>
 
   <div id="acct" hidden>
-    <h3>Main account and old bot - detail</h3>
+    <div class="h3">Main account and old bot</div>
     <div class="tiles">
       <div class="tile bot">
         <div class="k">Old bot sub-account</div>
@@ -933,33 +1152,25 @@ run();setInterval(run,600000);
         <div class="meter" id="t-lev-meter"><i style="width:0%"></i></div>
       </div>
     </div>
-    <div id="pos-wrap" style="margin-top:12px"></div>
-    <div class="note">
-      Live from Hyperliquid, read by this browser only. Rows tagged <b>old bot</b> are on the old bot's sub-account.
-      bot2's two sub-accounts aren't included here.
-    </div>
+    <div id="pos-wrap" style="margin-top:10px"></div>
+    <p class="foot">Live from Hyperliquid, read by this browser only. Rows tagged <b>old bot</b> are the old bot's; bot2's two sub-accounts aren't in this table.</p>
   </div>
 
-  <h3 id="rp-h" hidden>Realised profit / loss <span style="text-transform:none;letter-spacing:0;font-weight:400">— closed trades only, after fees</span></h3>
+  <div class="h3" id="rp-h" hidden>Realised profit / loss <span>closed trades, after fees</span></div>
   <div id="rp" hidden>
     <div class="tiles" id="rp-tiles"></div>
-    <div id="rp-wrap" style="margin-top:12px"></div>
-    <div class="note" id="rp-note">
-      Money actually banked from closed (or part-closed) trades, after trading fees.
-      Open trades aren't counted here. Funding payments are shown separately.
-    </div>
+    <div id="rp-wrap" style="margin-top:10px"></div>
+    <details class="why"><summary>How is this worked out?</summary>
+      <div class="wb note" id="rp-note">Money actually banked from closed (or part-closed) trades, after trading fees. Open trades aren't counted here. Funding payments are shown separately.</div>
+    </details>
   </div>
 
-  <h3 id="gmx-h" hidden>Your GMX positions <span style="text-transform:none;letter-spacing:0;font-weight:400">— Arbitrum, same wallet</span></h3>
+  <div class="h3" id="gmx-h" hidden>Your GMX positions <span>Arbitrum, same wallet</span></div>
   <div id="gmx" hidden>
     <div class="note" id="gmx-sum"></div>
     <div id="gmx-wrap" style="margin-top:8px"></div>
-    <div class="note">
-      Live from GMX's public data. Profit/loss is <strong>before GMX's borrowing and
-      funding fees</strong>, so the real figure is a little lower.
-    </div>
+    <p class="foot">Live from GMX's public data. P/L is <b>before GMX's borrowing and funding fees</b>, so the real figure is a little lower.</p>
   </div>
-</section>
 </div>
 </details>
 
@@ -1049,7 +1260,7 @@ run();setInterval(run,600000);
   function stamp() {
     var d = new Date();
     document.getElementById("stamp").textContent =
-      "updated " + d.toLocaleTimeString([], { timeZone: "Australia/Sydney", hour: "numeric", minute: "2-digit" });
+      "updated " + d.toLocaleTimeString("en-AU", { timeZone: "Australia/Sydney", hour: "numeric", minute: "2-digit" }) + " Sydney";
   }
 
   // ---------- account ----------
@@ -1716,7 +1927,7 @@ run();setInterval(run,600000);
       if (run !== totalsRun) return;                  // a newer refresh is already drawing
       var total = 0, open = 0, read = 0;
       var sc = el("div", "tw"), tb = el("table"), hd = el("thead"), hr = el("tr");
-      ["Account", "Address", "Value", "Open positions"].forEach(function (h, i) {
+      ["Account", "Address", "Value", "Open"].forEach(function (h, i) {
         hr.appendChild(el("th", i >= 2 ? "r" : null, h)); });
       hd.appendChild(hr); tb.appendChild(hd);
       var body = el("tbody");
@@ -1822,27 +2033,30 @@ run();setInterval(run,600000);
 <!-- 6. Old bot - reference only. The old bot (live.py) is manage-only since
      29 Sep 2026. The trade check reads the old bot's sub-account saved under
      "Your wallet" (this browser only). -->
-<details class="dk" data-key="ref">
-<summary><span class="t">📚 Old bot</span><span class="tg">old rules · reference</span><span class="s" id="dk-s-ref"></span><span class="a">▸</span></summary>
+<details class="dk" data-key="ref" id="sec-ref">
+<summary><span class="t">📚 Old bot</span><span class="tg">reference</span><span class="s" id="dk-s-ref"></span><span class="a">▸</span></summary>
 <div class="dk-body">
 <section id="ref" class="fr">
-<p class="sub">The old bot (live.py) is <b>manage-only</b> since 29 Sep 2026: it opens nothing new and only looks after the positions it still has. Everything here is kept for reference.</p>
-<h3>Its remaining trades vs its rules</h3>
-<section id="lt" class="fr">
-<p class="sub">Checks the old bot's trades (the old bot sub-account saved under <b>Your wallet</b>) against what its rules say should happen - most importantly that every open trade still has a stop. Orange means something doesn't match. bot2 isn't shown here.</p>
-<div id="lt-sum" class="sum">Loading the old bot's trades&hellip;</div>
-<div id="lt-body"></div>
-<p class="note" id="lt-when"></p>
-</section>
-<h3>Old rules (no bot opens trades on these any more)</h3>
-<ul class="old-rules">
- <li><b>1D breakout longs</b> · 23 coins. Close above the 40-day high close and above the 200-day average. 3 ATR stop, 4 ATR trail. 1.5% risk (was 3% until 27 Sep 2026).</li>
- <li><b>1H breakout longs</b> · 9 coins. Close above the 96-hour high close. Gate: daily above 200-day <em>or</em> hourly 50-EMA over 200-EMA. 3 ATR stop, 10 ATR trail. 1% risk.</li>
- <li><b>Dip Buy</b> · 25 coins (1D list minus DOGE, plus LDO, LTC, STX). RSI(2) under 5 while above the 200-day. Fixed 5 ATR stop; out on a close above the 10-day average or after 30 days. 3% risk.</li>
- <li><b>1D shorts</b> · 9 big coins (BTC ETH ZEC SOL NEAR XRP DOGE LINK SUI). Mirror of the 1D longs, only while BTC closes below its 200-day. Own 3 slots / 6% cap. 2% risk.</li>
- <li><b>Limits</b> · 12 long slots / 36% open risk shared by 1D, 1H and Dip. Shorts separate: 3 slots / 6%. Max 3 new orders per run, no chasing past 1.5%, daily loss stop 15%.</li>
-</ul>
-<div id="old-lists"></div>
+ <div class="oldrow" style="margin:0 0 12px"><span class="badge sm">🔒 manage-only</span><small>since 29 Sep 2026: opens nothing new, only looks after what it still holds</small></div>
+ <div class="h3">Its remaining trades vs its rules</div>
+ <section id="lt">
+  <div id="lt-sum" class="sum">Loading the old bot's trades&hellip;</div>
+  <div id="lt-body"></div>
+  <p class="foot" id="lt-when"></p>
+ </section>
+ <details class="why"><summary>What does this check?</summary><div class="wb">
+  <p>The old bot's trades (the old bot sub-account saved under <b>Your wallet</b>) against what its rules say should happen - most importantly that every open trade still has a stop. Orange means something doesn't match. bot2 isn't shown here.</p>
+ </div></details>
+ <details class="why"><summary>Old rules (no bot opens trades on these any more)</summary><div class="wb">
+  <ul class="old-rules">
+   <li><b>1D breakout longs</b> · 23 coins. Close above the 40-day high close and above the 200-day average. 3 ATR stop, 4 ATR trail. 1.5% risk (was 3% until 27 Sep 2026).</li>
+   <li><b>1H breakout longs</b> · 9 coins. Close above the 96-hour high close. Gate: daily above 200-day <em>or</em> hourly 50-EMA over 200-EMA. 3 ATR stop, 10 ATR trail. 1% risk.</li>
+   <li><b>Dip Buy</b> · 25 coins (1D list minus DOGE, plus LDO, LTC, STX). RSI(2) under 5 while above the 200-day. Fixed 5 ATR stop; out on a close above the 10-day average or after 30 days. 3% risk.</li>
+   <li><b>1D shorts</b> · 9 big coins (BTC ETH ZEC SOL NEAR XRP DOGE LINK SUI). Mirror of the 1D longs, only while BTC closes below its 200-day. Own 3 slots / 6% cap. 2% risk.</li>
+   <li><b>Limits</b> · 12 long slots / 36% open risk shared by 1D, 1H and Dip. Shorts separate: 3 slots / 6%. Max 3 new orders per run, no chasing past 1.5%, daily loss stop 15%.</li>
+  </ul>
+ </div></details>
+ <div id="old-lists"></div>
 </section>
 </div>
 </details>
@@ -1904,36 +2118,39 @@ function run(){var sum=document.getElementById("lt-sum"),box=document.getElement
   sum.innerHTML=issues.length?"<b>"+issues.length+" thing"+(issues.length>1?"s":"")+" to look at:</b><br>"+issues.join("<br>"):"<b>All checks pass.</b> Every open trade has a stop, sizes match your risk settings, and entries match the signals.";
   var sh='<div class="tw"><table><thead><tr><th>Strategy</th><th>Closed trades</th><th>Wins</th><th>Avg result</th><th>Backtest expects</th></tr></thead><tbody>';
   ["1D","DIP","1H"].forEach(function(s){var c=score[s]||{n:0,w:0,r:0},bt=BT[s];sh+="<tr><td>"+NAME[s]+"</td><td>"+c.n+"</td><td>"+(c.n?Math.round(100*c.w/c.n)+"%":"\u2014")+"</td><td>"+(c.n?rf(c.r/c.n):"\u2014")+"</td><td>"+bt.w+"% wins \u00b7 "+rf(bt.r)+(c.n<20?" <small>compare after ~20 trades</small>":"")+"</td></tr>"});
-  box.innerHTML='<div class="tw"><table><thead><tr><th>Trade</th><th>Strategy</th><th>Opened</th><th>Entry vs signal</th><th>Risk taken</th><th>Stop</th><th>Result</th></tr></thead><tbody>'+(rows||'<tr><td colspan="7">No bot trades yet.</td></tr>')+"</tbody></table></div>"+sh+"</tbody></table></div>";
-  document.getElementById("lt-when").textContent="Checked "+new Date().toLocaleTimeString([],{timeZone:"Australia/Sydney",hour:"numeric",minute:"2-digit"})+". R = results in multiples of the risk taken: +1R means it made what it risked.";
+  box.innerHTML='<div class="tw"><table><thead><tr><th>Trade</th><th>Strategy</th><th>Opened (Sydney)</th><th>Entry vs signal</th><th>Risk taken</th><th>Stop</th><th>Result</th></tr></thead><tbody>'+(rows||'<tr><td colspan="7">No bot trades yet.</td></tr>')+"</tbody></table></div>"+sh+"</tbody></table></div>";
+  document.getElementById("lt-when").textContent="Checked "+new Date().toLocaleTimeString("en-AU",{timeZone:"Australia/Sydney",hour:"numeric",minute:"2-digit"})+" Sydney. R = results in multiples of the risk taken: +1R means it made what it risked.";
  }).catch(function(e){document.getElementById("lt-sum").textContent="Could not load the old bot's trades: "+e})}
 run();setInterval(run,600000);
 })();
 </script>
 
   <footer>
-    Read-only: nothing on this page can place a trade. Prices and wallet data come straight from Hyperliquid's public API
-    (candles are reused in your browser until they close, to stay under its rate limit), market totals from CoinGecko,
-    and bot status, paper tests and money rotation from files hl-scanner publishes here. All times are Sydney time.
+    Read-only: nothing on this page can place a trade, and no balances, positions or wallet addresses are published.
+    Prices and wallet data: Hyperliquid's public API. Market totals: CoinGecko. Bot status, paper tests and money rotation:
+    files hl-scanner publishes here. All times are Sydney time.
   </footer>
 </div>
 
 <script>
-// One-line summaries on each collapsed card, and remember open/closed in this
-// browser only. Everything still works without this script (plain <details>).
+// One-line summaries on each collapsed card, open/closed remembered in this
+// browser only, status-strip chips open the card they point at, and the
+// refresh button re-runs every card. Everything still works without this
+// script (plain <details> and anchor links).
 (function(){
 var KEY="deck-open-v2";
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
 function save(o){try{localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
 var state=load();
 function $(id){return document.getElementById(id)}
-function txt(id,max){var e=$(id);if(!e)return "";var c=e.cloneNode(true);c.querySelectorAll("br,div,p,li,tr").forEach(function(b){b.before(" \u00b7 ")});
- var t=c.textContent.replace(/\s+/g," ").replace(/^( ?\u00b7 ?)+/,"").replace(/( \u00b7)+/g," \u00b7").trim();if(max&&t.length>max)t=t.slice(0,max-1)+"\u2026";return t}
+function txt(id,max){var e=$(id);if(!e)return "";var c=e.cloneNode(true);c.querySelectorAll("br,div,p,li,tr,small").forEach(function(b){b.before(" · ")});
+ var t=c.textContent.replace(/\s+/g," ").replace(/^( ?· ?)+/,"").replace(/( ·)+/g," ·").trim();if(max&&t.length>max)t=t.slice(0,max-1)+"…";return t}
+function txt2(e,max){var t=e.cloneNode(true);t.querySelectorAll("small").forEach(function(b){b.before(" · ")});t=t.textContent.replace(/\s+/g," ").trim();return max&&t.length>max?t.slice(0,max-1)+"…":t}
 var S={
- bots:function(){return txt("bots-sum",160)},
- fr:function(){return txt("fr-sum",160)},
- pt:function(){return txt("pt-sum",140)},
- mkt:function(){var o=txt("t-others"),r=txt("rot-sum",90);return (o&&o!=="—"?"Others "+o+" (sell line 13%) · BTC.D "+txt("t-btcd")+" · ":"")+r},
+ bots:function(){return "1D "+txt("b2-1D-st")+" · 1H "+txt("b2-1H-st")+" · old bot "+txt("old-st")},
+ fr:function(){var e=document.querySelector("#fr-sum > div");return e?txt2(e,160):""},
+ pt:function(){return window.hlPaperLine||""},
+ mkt:function(){var o=txt("t-others"),r=window.hlRotLine||"";return (o&&o!=="—"?"Others "+o+" (sell line 13%) · BTC.D "+txt("t-btcd")+(r?" · ":""):"")+r},
  wallet:function(){return window.hlWalletLine||"Tap to add your addresses - they stay in this browser."},
  ref:function(){return "🔒 manage-only · trade check: "+txt("lt-sum",120)}
 };
@@ -1941,6 +2158,12 @@ Array.prototype.forEach.call(document.querySelectorAll("details.dk[data-key]"),f
  var k=d.dataset.key;
  if(k in state)d.open=!!state[k];
  d.addEventListener("toggle",function(){state[k]=d.open;save(state)})});
+// strip chips: open the target card, then let the link scroll to it
+Array.prototype.forEach.call(document.querySelectorAll(".strip a[href^='#']"),function(a){
+ a.addEventListener("click",function(){var d=document.querySelector(a.getAttribute("href"));if(d&&d.tagName==="DETAILS")d.open=true})});
+// refresh: the wallet script refreshes the wallet; this re-runs every other card
+var btn=$("refresh");
+if(btn)btn.addEventListener("click",function(){(window.hlRefreshers||[]).forEach(function(f){try{Promise.resolve(f()).catch(function(){})}catch(e){}})});
 function update(){Object.keys(S).forEach(function(k){var e=$("dk-s-"+k);if(!e)return;try{e.textContent=S[k]()||""}catch(x){}})}
 update();setInterval(update,2000);
 })();
