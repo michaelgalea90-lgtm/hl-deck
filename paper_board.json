@@ -56,7 +56,7 @@
      "coin": "SOL",
      "side": "LONG",
      "opened": "2026-09-30",
-     "opened_at": "2026-09-30T21:00Z"
+     "opened_at": "2026-10-01T00:00Z"
     }
    ],
    "recent": [
@@ -232,27 +232,27 @@
     {
      "coin": "CC",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "MET",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "2Z",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "GRAM",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "AZTEC",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     }
    ],
    "recent": [],
@@ -302,62 +302,62 @@
     {
      "coin": "1D kSHIB",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "1D BTC",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "1D ETH",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "1D BNB",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "1D XRP",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "1D ADA",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "1D DOGE",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "1D AVAX",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "1D ZEC",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "1D ALGO",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "1D ATOM",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     },
     {
      "coin": "1D NEAR",
      "side": "LONG",
-     "opened": "2026-09-29"
+     "opened": "2026-09-30"
     }
    ],
    "recent": [
@@ -546,20 +546,18 @@
    "passes": "After 6 months: ahead of BOTH the alt basket and BTC, and most batches beat the alt basket",
    "backtest": "+36%/yr, worst drop -60% (BTC +47%/yr) - weak in backtest",
    "status": "collecting",
-   "progress": "day 5 of 182",
+   "progress": "day 6 of 182",
    "since": "2026-09-26",
-   "ret": -1.63,
-   "btc": -0.76,
-   "alt": -2.11,
+   "ret": -1.82,
+   "btc": -0.72,
+   "alt": -2.03,
    "batches": 0,
-   "open": 5,
+   "open": 6,
    "avg_batch": null,
    "avg_excess": null,
    "beat_pct": null,
    "now_in": [
-    "DeFi",
-    "Infra",
-    "Memes"
+    "Hyperliquid"
    ],
    "now_out": [],
    "curve": [
@@ -582,6 +580,10 @@
     [
      "2026-09-30",
      983.71
+    ],
+    [
+     "2026-10-01",
+     981.84
     ]
    ]
   },
@@ -592,25 +594,22 @@
    "passes": "After 6 months: positive, ahead of cash, and most batches positive",
    "backtest": "+7%/yr, worst drop -22% - weak in backtest",
    "status": "collecting",
-   "progress": "day 5 of 182",
+   "progress": "day 6 of 182",
    "since": "2026-09-26",
-   "ret": -0.44,
-   "btc": -0.76,
-   "alt": -2.11,
+   "ret": -0.78,
+   "btc": -0.72,
+   "alt": -2.03,
    "batches": 0,
-   "open": 5,
+   "open": 6,
    "avg_batch": null,
    "avg_excess": null,
    "beat_pct": null,
    "now_in": [
-    "DeFi",
-    "Infra",
-    "Memes"
+    "Hyperliquid"
    ],
    "now_out": [
     "Payments",
-    "Privacy",
-    "Hyperliquid"
+    "Privacy"
    ],
    "curve": [
     [
@@ -632,6 +631,10 @@
     [
      "2026-09-30",
      995.6
+    ],
+    [
+     "2026-10-01",
+     992.17
     ]
    ]
   }
