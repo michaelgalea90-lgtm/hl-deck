@@ -56,7 +56,7 @@
      "coin": "SOL",
      "side": "LONG",
      "opened": "2026-10-01",
-     "opened_at": "2026-10-01T03:00Z"
+     "opened_at": "2026-10-01T06:00Z"
     }
    ],
    "recent": [
@@ -178,7 +178,14 @@
    "backtest": null,
    "status": "collecting",
    "progress": "1 of 100 trades",
-   "open": [],
+   "open": [
+    {
+     "coin": "ETH",
+     "side": "LONG",
+     "opened": "2026-10-01",
+     "opened_at": "2026-10-01T06:30Z"
+    }
+   ],
    "recent": [
     {
      "coin": "ETH",
