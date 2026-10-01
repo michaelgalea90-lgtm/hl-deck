@@ -16,8 +16,19 @@
  "bot2_lists": [
   {
    "month": "2026-10",
-   "coins": [],
-   "status": "pending",
+   "coins": [
+    "BTC",
+    "ETH",
+    "BNB",
+    "XRP",
+    "SOL",
+    "TRX",
+    "ZEC",
+    "HYPE",
+    "DOGE",
+    "LINK"
+   ],
+   "status": "published",
    "effective": "2026-10-01T00:00Z",
    "source": "bot2-universe"
   }
