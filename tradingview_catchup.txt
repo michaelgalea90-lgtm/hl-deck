@@ -1,0 +1,3 @@
+###Hyperliquid
+BYBIT:PENGUUSDT.P
+BYBIT:XAUT0USDT.P
