@@ -1,5 +1,5 @@
 {
- "as_of": "2026-09-30",
+ "as_of": "2026-10-01",
  "note": "Fake money. Results in R = multiples of the risk taken on each trade.",
  "bots": [
   {
@@ -55,8 +55,8 @@
     {
      "coin": "SOL",
      "side": "LONG",
-     "opened": "2026-09-30",
-     "opened_at": "2026-10-01T00:00Z"
+     "opened": "2026-10-01",
+     "opened_at": "2026-10-01T03:00Z"
     }
    ],
    "recent": [
