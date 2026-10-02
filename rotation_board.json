@@ -1,126 +1,126 @@
 {
- "as_of": "2026-10-01T00:02Z",
+ "as_of": "2026-10-02T00:02Z",
  "money_in": [
   "Hyperliquid"
  ],
  "money_out": [
-  "Payments"
+  "Privacy"
  ],
  "btc": {
-  "r24": -0.11,
-  "r7": -0.99
+  "r24": 1.39,
+  "r7": 0.45
  },
  "majors": {
-  "share_now": 57.26,
-  "share_avg": 53.4,
+  "share_now": 56.77,
+  "share_avg": 52.45,
   "verdict": "money hiding in BTC/ETH"
  },
  "sectors": [
   {
    "name": "Hyperliquid",
-   "rel24": 9.47,
-   "rel7": 8.03,
-   "share_avg": 8.48,
-   "share_now": 11.48,
+   "rel24": -1.18,
+   "rel7": 8.05,
+   "share_avg": 8.26,
+   "share_now": 9.45,
    "flow": "in",
    "top": "PURR",
-   "top_r24": 13.04
-  },
-  {
-   "name": "AI",
-   "rel24": 2.58,
-   "rel7": 11.27,
-   "share_avg": 2.03,
-   "share_now": 1.68,
-   "flow": "flat",
-   "top": "WLD",
-   "top_r24": 10.53
-  },
-  {
-   "name": "DeFi",
-   "rel24": 0.14,
-   "rel7": 12.53,
-   "share_avg": 4.75,
-   "share_now": 5.45,
-   "flow": "flat",
-   "top": "ENA",
-   "top_r24": 6.29
-  },
-  {
-   "name": "Layer 2s",
-   "rel24": 0.56,
-   "rel7": 8.54,
-   "share_avg": 0.47,
-   "share_now": 0.27,
-   "flow": "flat",
-   "top": "MNT",
-   "top_r24": 5.0
-  },
-  {
-   "name": "Layer 1s",
-   "rel24": 0.43,
-   "rel7": 6.72,
-   "share_avg": 13.34,
-   "share_now": 11.69,
-   "flow": "flat",
-   "top": "MON",
-   "top_r24": 17.98
-  },
-  {
-   "name": "RWA",
-   "rel24": -0.47,
-   "rel7": 10.08,
-   "share_avg": 1.16,
-   "share_now": 0.59,
-   "flow": "flat",
-   "top": "ONDO",
-   "top_r24": -0.41
+   "top_r24": 4.1
   },
   {
    "name": "Infra",
-   "rel24": -1.87,
-   "rel7": 16.85,
-   "share_avg": 1.0,
-   "share_now": 0.89,
+   "rel24": -1.75,
+   "rel7": 7.73,
+   "share_avg": 1.11,
+   "share_now": 1.04,
    "flow": "flat",
-   "top": "ZRO",
-   "top_r24": 4.22
+   "top": "AR",
+   "top_r24": 4.52
   },
   {
-   "name": "Privacy",
-   "rel24": 1.02,
-   "rel7": 1.16,
-   "share_avg": 8.29,
-   "share_now": 6.0,
+   "name": "DeFi",
+   "rel24": -2.67,
+   "rel7": 5.11,
+   "share_avg": 4.95,
+   "share_now": 3.96,
    "flow": "flat",
-   "top": "ZEN",
-   "top_r24": 5.31
+   "top": "SKY",
+   "top_r24": 8.25
+  },
+  {
+   "name": "AI",
+   "rel24": -2.25,
+   "rel7": 1.7,
+   "share_avg": 2.09,
+   "share_now": 1.44,
+   "flow": "flat",
+   "top": "FET",
+   "top_r24": 0.87
+  },
+  {
+   "name": "Layer 1s",
+   "rel24": -2.2,
+   "rel7": 0.89,
+   "share_avg": 14.06,
+   "share_now": 12.52,
+   "flow": "flat",
+   "top": "MON",
+   "top_r24": 5.55
+  },
+  {
+   "name": "RWA",
+   "rel24": -1.53,
+   "rel7": -3.84,
+   "share_avg": 0.91,
+   "share_now": 0.29,
+   "flow": "flat",
+   "top": "PAXG",
+   "top_r24": 0.55
   },
   {
    "name": "Memes",
-   "rel24": 0.67,
-   "rel7": 2.87,
-   "share_avg": 3.68,
-   "share_now": 3.15,
+   "rel24": -2.46,
+   "rel7": -1.27,
+   "share_avg": 4.03,
+   "share_now": 3.65,
    "flow": "flat",
-   "top": "SPX",
-   "top_r24": 6.44
+   "top": "kPEPE",
+   "top_r24": 3.53
+  },
+  {
+   "name": "Layer 2s",
+   "rel24": -2.81,
+   "rel7": 0.3,
+   "share_avg": 0.48,
+   "share_now": 0.39,
+   "flow": "flat",
+   "top": "MEGA",
+   "top_r24": 20.7
   },
   {
    "name": "Payments",
-   "rel24": -0.03,
-   "rel7": 1.38,
-   "share_avg": 3.4,
-   "share_now": 1.55,
+   "rel24": -1.78,
+   "rel7": -5.95,
+   "share_avg": 3.17,
+   "share_now": 1.93,
+   "flow": "flat",
+   "top": "LTC",
+   "top_r24": 1.27
+  },
+  {
+   "name": "Privacy",
+   "rel24": -4.88,
+   "rel7": -6.78,
+   "share_avg": 8.49,
+   "share_now": 8.56,
    "flow": "out",
-   "top": "XLM",
-   "top_r24": 1.73
+   "top": "XMR",
+   "top_r24": -0.34
   }
  ],
  "catchup": {
   "Hyperliquid": {
-   "sector_24h": 0.3,
-   "sector_7d": 0.1,
+   "sector_24h": 0.0,
+   "sector_7d": 0.7,
    "picks": [
     {
      "coin": "PENGU",
@@ -128,22 +128,23 @@
       "HL",
       "GMX"
      ],
-     "cap": 603339006,
-     "ch24": -3.8,
-     "ch7": -1.9,
-     "turnover": 0.3974596298519443,
+     "cap": 593166914,
+     "ch24": -1.6,
+     "ch7": -2.6,
+     "turnover": 0.3542863080188589,
      "tv": "BYBIT:PENGUUSDT.P"
     },
     {
-     "coin": "XAUT0",
+     "coin": "HYPE",
      "venues": [
+      "HL",
       "GMX"
      ],
-     "cap": 109831147,
-     "ch24": -0.8,
-     "ch7": -3.2,
-     "turnover": 0.08278122598501134,
-     "tv": "BYBIT:XAUT0USDT.P"
+     "cap": 19480462481,
+     "ch24": -3.6,
+     "ch7": -5.0,
+     "turnover": 0.04593328735766579,
+     "tv": "BYBIT:HYPEUSDT.P"
     }
    ]
   }

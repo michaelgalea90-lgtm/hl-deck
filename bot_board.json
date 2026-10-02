@@ -1,16 +1,16 @@
 {
- "as_of": "2026-10-01T00:02Z",
+ "as_of": "2026-10-02T00:02Z",
  "note": "bot2: 70% 1D-R / 30% corrected 1H-AL on two separate sub-accounts; 70/30 is the INITIAL allocation only, never rebalanced. Status comes from each run's actual state. Coin lists are the public monthly top-10 rule, not holdings.",
  "bot2": {
   "1D": {
    "status": "LIVE",
    "stale": false,
-   "last_run": "2026-09-30T23:02Z"
+   "last_run": "2026-10-01T23:02Z"
   },
   "1H": {
    "status": "LIVE",
    "stale": false,
-   "last_run": "2026-09-30T23:02Z"
+   "last_run": "2026-10-01T23:02Z"
   }
  },
  "bot2_lists": [
