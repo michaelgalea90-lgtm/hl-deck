@@ -51,7 +51,14 @@
    "backtest": 0.24,
    "status": "collecting",
    "progress": "7 of 300 trades",
-   "open": [],
+   "open": [
+    {
+     "coin": "BTC",
+     "side": "LONG",
+     "opened": "2026-10-02",
+     "opened_at": "2026-10-02T03:00Z"
+    }
+   ],
    "recent": [
     {
      "coin": "BTC",
