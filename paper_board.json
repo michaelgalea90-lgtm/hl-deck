@@ -11,7 +11,14 @@
    "backtest": 0.2,
    "status": "collecting",
    "progress": "2 of 300 trades",
-   "open": [],
+   "open": [
+    {
+     "coin": "SOL",
+     "side": "LONG",
+     "opened": "2026-10-02",
+     "opened_at": "2026-10-02T06:00Z"
+    }
+   ],
    "recent": [
     {
      "coin": "SOL",
@@ -56,7 +63,7 @@
      "coin": "BTC",
      "side": "LONG",
      "opened": "2026-10-02",
-     "opened_at": "2026-10-02T03:00Z"
+     "opened_at": "2026-10-02T06:00Z"
     }
    ],
    "recent": [
@@ -224,7 +231,13 @@
    "backtest": null,
    "status": "collecting",
    "progress": "0 of 30 trades",
-   "open": [],
+   "open": [
+    {
+     "coin": "BTC",
+     "side": "LONG",
+     "opened": "2026-10-02"
+    }
+   ],
    "recent": [],
    "kind": "test",
    "n": 0,
