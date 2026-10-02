@@ -10,15 +10,8 @@
    "target": 300,
    "backtest": 0.2,
    "status": "collecting",
-   "progress": "3 of 300 trades",
-   "open": [
-    {
-     "coin": "SOL",
-     "side": "LONG",
-     "opened": "2026-10-02",
-     "opened_at": "2026-10-02T18:00Z"
-    }
-   ],
+   "progress": "4 of 300 trades",
+   "open": [],
    "recent": [
     {
      "coin": "SOL",
@@ -46,16 +39,25 @@
      "r": -1.04,
      "opened_at": "2026-10-02T16:00Z",
      "closed_at": "2026-10-02T18:30Z"
+    },
+    {
+     "coin": "SOL",
+     "side": "LONG",
+     "opened": "2026-10-02",
+     "closed": "2026-10-02",
+     "r": -1.03,
+     "opened_at": "2026-10-02T19:00Z",
+     "closed_at": "2026-10-02T21:30Z"
     }
    ],
    "kind": "test",
-   "n": 3,
-   "avg": -0.877,
+   "n": 4,
+   "avg": -0.915,
    "win": 0,
    "lo": null,
    "hi": null,
    "overlap": 0,
-   "avg_solo": -1.04,
+   "avg_solo": -1.037,
    "okx_agree_pct": 17
   },
   {
@@ -66,15 +68,8 @@
    "target": 300,
    "backtest": 0.24,
    "status": "collecting",
-   "progress": "7 of 300 trades",
-   "open": [
-    {
-     "coin": "BTC",
-     "side": "LONG",
-     "opened": "2026-10-02",
-     "opened_at": "2026-10-02T18:00Z"
-    }
-   ],
+   "progress": "8 of 300 trades",
+   "open": [],
    "recent": [
     {
      "coin": "BTC",
@@ -138,16 +133,25 @@
      "r": -0.94,
      "opened_at": "2026-10-01T14:00Z",
      "closed_at": "2026-10-01T15:30Z"
+    },
+    {
+     "coin": "BTC",
+     "side": "LONG",
+     "opened": "2026-10-02",
+     "closed": "2026-10-02",
+     "r": -0.71,
+     "opened_at": "2026-10-02T19:00Z",
+     "closed_at": "2026-10-02T21:30Z"
     }
    ],
    "kind": "test",
-   "n": 7,
-   "avg": -0.753,
-   "win": 14,
+   "n": 8,
+   "avg": -0.748,
+   "win": 12,
    "lo": null,
    "hi": null,
    "overlap": 0,
-   "avg_solo": -0.95,
+   "avg_solo": -0.902,
    "live_breakouts_avg": 0.767,
    "live_breakouts_n": 1
   },
@@ -178,6 +182,12 @@
      "side": "SHORT",
      "opened": "2026-10-02",
      "opened_at": "2026-10-02T18:30Z"
+    },
+    {
+     "coin": "ZEC",
+     "side": "LONG",
+     "opened": "2026-10-02",
+     "opened_at": "2026-10-02T21:30Z"
     }
    ],
    "recent": [
