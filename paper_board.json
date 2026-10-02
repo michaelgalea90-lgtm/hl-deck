@@ -1,5 +1,5 @@
 {
- "as_of": "2026-10-01",
+ "as_of": "2026-10-02",
  "note": "Fake money. Results in R = multiples of the risk taken on each trade.",
  "bots": [
   {
@@ -236,39 +236,48 @@
    "target": 30,
    "backtest": 1.14,
    "status": "collecting",
-   "progress": "0 of 30 trades",
+   "progress": "1 of 30 trades",
    "open": [
     {
      "coin": "CC",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "MET",
      "side": "LONG",
-     "opened": "2026-09-30"
-    },
-    {
-     "coin": "2Z",
-     "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "GRAM",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "AZTEC",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
+    },
+    {
+     "coin": "MON",
+     "side": "LONG",
+     "opened": "2026-10-01"
     }
    ],
-   "recent": [],
+   "recent": [
+    {
+     "coin": "2Z",
+     "side": "LONG",
+     "opened": "2026-10-01",
+     "closed": "2026-10-02",
+     "r": -1.0,
+     "closed_at": "2026-10-02T00:30Z"
+    }
+   ],
    "kind": "test",
-   "n": 0,
-   "avg": null,
-   "win": null,
+   "n": 1,
+   "avg": -1.0,
+   "win": 0,
    "lo": null,
    "hi": null,
    "overlap": null,
@@ -311,62 +320,62 @@
     {
      "coin": "1D kSHIB",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "1D BTC",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "1D ETH",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "1D BNB",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "1D XRP",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "1D ADA",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "1D DOGE",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "1D AVAX",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "1D ZEC",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "1D ALGO",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "1D ATOM",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     },
     {
      "coin": "1D NEAR",
      "side": "LONG",
-     "opened": "2026-09-30"
+     "opened": "2026-10-01"
     }
    ],
    "recent": [
@@ -555,13 +564,13 @@
    "passes": "After 6 months: ahead of BOTH the alt basket and BTC, and most batches beat the alt basket",
    "backtest": "+36%/yr, worst drop -60% (BTC +47%/yr) - weak in backtest",
    "status": "collecting",
-   "progress": "day 6 of 182",
+   "progress": "day 7 of 182",
    "since": "2026-09-26",
-   "ret": -1.82,
-   "btc": -0.72,
-   "alt": -2.03,
+   "ret": -1.66,
+   "btc": 0.86,
+   "alt": -2.06,
    "batches": 0,
-   "open": 6,
+   "open": 7,
    "avg_batch": null,
    "avg_excess": null,
    "beat_pct": null,
@@ -593,6 +602,10 @@
     [
      "2026-10-01",
      981.84
+    ],
+    [
+     "2026-10-02",
+     983.38
     ]
    ]
   },
@@ -603,13 +616,13 @@
    "passes": "After 6 months: positive, ahead of cash, and most batches positive",
    "backtest": "+7%/yr, worst drop -22% - weak in backtest",
    "status": "collecting",
-   "progress": "day 6 of 182",
+   "progress": "day 7 of 182",
    "since": "2026-09-26",
-   "ret": -0.78,
-   "btc": -0.72,
-   "alt": -2.03,
+   "ret": -0.5,
+   "btc": 0.86,
+   "alt": -2.06,
    "batches": 0,
-   "open": 6,
+   "open": 7,
    "avg_batch": null,
    "avg_excess": null,
    "beat_pct": null,
@@ -617,7 +630,6 @@
     "Hyperliquid"
    ],
    "now_out": [
-    "Payments",
     "Privacy"
    ],
    "curve": [
@@ -644,6 +656,10 @@
     [
      "2026-10-01",
      992.17
+    ],
+    [
+     "2026-10-02",
+     994.98
     ]
    ]
   }
