@@ -1,5 +1,5 @@
 {
- "as_of": "2026-10-02",
+ "as_of": "2026-10-03",
  "note": "Fake money. Results in R = multiples of the risk taken on each trade.",
  "bots": [
   {
@@ -218,15 +218,8 @@
    "target": 100,
    "backtest": null,
    "status": "collecting",
-   "progress": "1 of 100 trades",
-   "open": [
-    {
-     "coin": "ETH",
-     "side": "LONG",
-     "opened": "2026-10-01",
-     "opened_at": "2026-10-01T06:30Z"
-    }
-   ],
+   "progress": "2 of 100 trades",
+   "open": [],
    "recent": [
     {
      "coin": "ETH",
@@ -236,12 +229,21 @@
      "r": 0.03,
      "opened_at": "2026-09-29T04:18Z",
      "closed_at": "2026-09-30T18:30Z"
+    },
+    {
+     "coin": "ETH",
+     "side": "LONG",
+     "opened": "2026-10-01",
+     "closed": "2026-10-03",
+     "r": -0.18,
+     "opened_at": "2026-10-01T06:30Z",
+     "closed_at": "2026-10-03T00:30Z"
     }
    ],
    "kind": "test",
-   "n": 1,
-   "avg": 0.03,
-   "win": 100,
+   "n": 2,
+   "avg": -0.075,
+   "win": 50,
    "lo": null,
    "hi": null,
    "overlap": null,
@@ -286,27 +288,27 @@
     {
      "coin": "CC",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "MET",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "GRAM",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "AZTEC",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "MON",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     }
    ],
    "recent": [
@@ -365,62 +367,62 @@
     {
      "coin": "1D kSHIB",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "1D BTC",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "1D ETH",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "1D BNB",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "1D XRP",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "1D ADA",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "1D DOGE",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "1D AVAX",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "1D ZEC",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "1D ALGO",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "1D ATOM",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     },
     {
      "coin": "1D NEAR",
      "side": "LONG",
-     "opened": "2026-10-01"
+     "opened": "2026-10-02"
     }
    ],
    "recent": [
@@ -609,16 +611,16 @@
    "passes": "After 6 months: ahead of BOTH the alt basket and BTC, and most batches beat the alt basket",
    "backtest": "+36%/yr, worst drop -60% (BTC +47%/yr) - weak in backtest",
    "status": "collecting",
-   "progress": "day 7 of 182",
+   "progress": "day 8 of 182",
    "since": "2026-09-26",
-   "ret": -1.66,
-   "btc": 0.86,
-   "alt": -2.06,
-   "batches": 0,
-   "open": 7,
-   "avg_batch": null,
-   "avg_excess": null,
-   "beat_pct": null,
+   "ret": -1.97,
+   "btc": 0.6,
+   "alt": -2.42,
+   "batches": 1,
+   "open": 6,
+   "avg_batch": -2.8,
+   "avg_excess": -0.38,
+   "beat_pct": 0,
    "now_in": [
     "Hyperliquid"
    ],
@@ -651,6 +653,10 @@
     [
      "2026-10-02",
      983.38
+    ],
+    [
+     "2026-10-03",
+     980.27
     ]
    ]
   },
@@ -661,16 +667,16 @@
    "passes": "After 6 months: positive, ahead of cash, and most batches positive",
    "backtest": "+7%/yr, worst drop -22% - weak in backtest",
    "status": "collecting",
-   "progress": "day 7 of 182",
+   "progress": "day 8 of 182",
    "since": "2026-09-26",
-   "ret": -0.5,
-   "btc": 0.86,
-   "alt": -2.06,
-   "batches": 0,
-   "open": 7,
-   "avg_batch": null,
-   "avg_excess": null,
-   "beat_pct": null,
+   "ret": -0.41,
+   "btc": 0.6,
+   "alt": -2.42,
+   "batches": 1,
+   "open": 6,
+   "avg_batch": -0.09,
+   "avg_excess": 2.33,
+   "beat_pct": 100,
    "now_in": [
     "Hyperliquid"
    ],
@@ -705,6 +711,10 @@
     [
      "2026-10-02",
      994.98
+    ],
+    [
+     "2026-10-03",
+     995.91
     ]
    ]
   }
