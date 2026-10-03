@@ -262,7 +262,7 @@
     {
      "coin": "BTC",
      "side": "LONG",
-     "opened": "2026-10-02"
+     "opened": "2026-10-03"
     }
    ],
    "recent": [],
@@ -353,6 +353,30 @@
    "hedged_avg": null,
    "big_n": 0,
    "big_avg": null
+  },
+  {
+   "id": "S2",
+   "name": "Short the rip in a downtrend (S2)",
+   "rule": "Short a bot2 top-10 coin when it closes under its 200-day average but RSI(2) jumps above 95, only while BTC is under its own 200-day average; stop 5 ATR (never moved), cover on a close under the 10-day average or after 30 days",
+   "passes": "Judged on the first 50 trades (or at 24 months): average at least +0.10R, month-by-month 95% range above zero, and still positive without the best trade. Stopped early if the first 25 trades average -0.15R or worse; under 30 trades at 24 months = not enough data (backtest 2025-26: +0.085R, but -0.10R in 2022-25)",
+   "target": 50,
+   "backtest": 0.085,
+   "status": "collecting",
+   "progress": "0 of 50 trades",
+   "open": [],
+   "recent": [],
+   "kind": "test",
+   "n": 0,
+   "avg": null,
+   "win": null,
+   "lo": null,
+   "hi": null,
+   "overlap": null,
+   "avg_solo": null,
+   "futility_avg": null,
+   "verdict": null,
+   "days": 0,
+   "health": null
   },
   {
    "id": "MIRROR",
